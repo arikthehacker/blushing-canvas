@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Blush for Canvas</title>
+<link rel="stylesheet" href="../styles/theme.css">
+<link rel="stylesheet" href="popup.css">
+</head>
+<body>
+<main>
+  <p class="eyebrow"><b>//</b> settings</p>
+  <h1>Blush for Canvas</h1>
+
+  <fieldset>
+    <legend>Theme</legend>
+    <div class="seg" role="radiogroup" aria-label="Theme">
+      <input type="radio" name="theme" id="t-auto" value="auto"><label for="t-auto">Auto</label>
+      <input type="radio" name="theme" id="t-light" value="light"><label for="t-light">Light</label>
+      <input type="radio" name="theme" id="t-dark" value="dark"><label for="t-dark">Dark</label>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Speed and focus</legend>
+    <div class="row"><label for="calm">Calm mode<small>Turns off Canvas animations</small></label><input class="switch" type="checkbox" id="calm"></div>
+    <div class="row"><label for="hideClutter">Declutter<small>Hides footer, card images, duplicate to-do</small></label><input class="switch" type="checkbox" id="hideClutter"></div>
+    <div class="row"><label for="prefetch">Instant navigation<small>Preloads links you hover</small></label><input class="switch" type="checkbox" id="prefetch"></div>
+    <div class="row"><label for="shortcuts">Single-key shortcuts<small>Press <kbd>?</kbd> on Canvas for the list</small></label><input class="switch" type="checkbox" id="shortcuts"></div>
+    <div class="row"><label for="cheers">Cheers<small>Little notes when you finish things</small></label><input class="switch" type="checkbox" id="cheers"></div>
+  </fieldset>
+  <p class="foot"><kbd>Ctrl</kbd> + <kbd>K</kbd> opens quick jump on any Canvas page.</p>
+</main>
+<script src="popup.js"></script>
+</body>
+</html>

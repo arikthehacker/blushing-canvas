@@ -1,0 +1,47 @@
+{
+  "manifest_version": 3,
+  "name": "Blush for Canvas",
+  "version": "1.0.0",
+  "description": "A dusty-pink, fast, accessible Canvas: quick jump, shortcuts, instant navigation, and a to-do panel that cheers you on.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "permissions": ["storage"],
+  "host_permissions": ["https://*.instructure.com/*"],
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "Blush for Canvas"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*.instructure.com/*"],
+      "css": ["styles/theme.css"],
+      "js": [
+        "content/settings.js",
+        "content/canvas.js",
+        "content/helpers.js",
+        "content/panel.js",
+        "content/actions.js",
+        "content/dock.js",
+        "content/quick-jump.js",
+        "content/help.js",
+        "content/prefetch.js",
+        "content/keyboard.js",
+        "content/recents.js",
+        "content/ui.js",
+        "content/main.js"
+      ],
+      "run_at": "document_start",
+      "all_frames": false
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["styles/ui.css"],
+      "matches": ["https://*.instructure.com/*"]
+    }
+  ]
+}

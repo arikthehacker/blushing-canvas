@@ -1,0 +1,134 @@
+/* Blush for Canvas: the toolbar popup */
+body {
+  margin: 0;
+  width: 320px;
+  font-family: var(--bl-font);
+  color: var(--bl-text);
+  font-size: 14px;
+}
+main {
+  padding: 16px;
+}
+.eyebrow {
+  margin: 0 0 2px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--bl-muted);
+}
+.eyebrow b {
+  color: var(--bl-accent);
+}
+h1 {
+  margin: 0 0 14px;
+  font-size: 19px;
+  letter-spacing: -0.015em;
+}
+fieldset {
+  border: 1px solid var(--bl-border);
+  border-radius: 14px;
+  padding: 10px 12px 12px;
+  margin: 0 0 12px;
+  background: var(--bl-surface);
+}
+legend {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--bl-muted);
+  padding: 0 6px;
+}
+.seg {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  padding: 4px;
+  border-radius: 12px;
+  background: var(--bl-surface-2);
+}
+.seg input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+.seg label {
+  text-align: center;
+  padding: 8px 0;
+  border-radius: 9px;
+  font-weight: 600;
+  color: var(--bl-muted);
+  cursor: pointer;
+}
+.seg input:checked + label {
+  background: var(--bl-surface);
+  color: var(--bl-text);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+.seg input:focus-visible + label {
+  outline: 3px solid var(--bl-focus);
+  outline-offset: 1px;
+}
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  border-top: 1px solid var(--bl-border);
+}
+.row:first-of-type {
+  border-top: 0;
+}
+.row small {
+  display: block;
+  color: var(--bl-muted);
+  font-size: 12px;
+}
+.switch {
+  appearance: none;
+  -webkit-appearance: none;
+  flex: none;
+  width: 42px;
+  height: 24px;
+  border-radius: 999px;
+  background: var(--bl-border-ui);
+  position: relative;
+  cursor: pointer;
+  margin: 0;
+}
+.switch::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--bl-surface);
+}
+.switch:checked {
+  background: var(--bl-accent);
+}
+.switch:checked::after {
+  left: 21px;
+}
+.switch:focus-visible {
+  outline: 3px solid var(--bl-focus);
+  outline-offset: 2px;
+}
+p.foot {
+  margin: 4px 2px 0;
+  font-size: 12px;
+  color: var(--bl-muted);
+}
+kbd {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border: 1px solid var(--bl-border-ui);
+  border-radius: 5px;
+  background: var(--bl-surface-2);
+}

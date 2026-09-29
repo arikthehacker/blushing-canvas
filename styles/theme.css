@@ -1,0 +1,505 @@
+/* Blush for Canvas: page theme
+   Tokens live on :root so the extension UI (in shadow DOM) inherits them too. */
+
+:root {
+  --bl-font:
+    "Inter", "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial,
+    sans-serif;
+  --bl-bg: #faf6f6;
+  --bl-grid: rgba(150, 96, 112, 0.09);
+  --bl-surface: #ffffff;
+  --bl-surface-2: #f5ecee;
+  --bl-border: #e8d9dc;
+  --bl-border-ui: #b58a96;
+  --bl-text: #2a2025;
+  --bl-muted: #6b5a61;
+  --bl-accent: #a3526a;
+  --bl-accent-strong: #8a4157;
+  --bl-accent-soft: #f2dfe4;
+  --bl-on-accent: #ffffff;
+  --bl-nav: #35262d;
+  --bl-nav-text: #f4e6ea;
+  --bl-nav-muted: #cdb4bc;
+  --bl-success: #2f7356;
+  --bl-danger: #a82d3c;
+  --bl-warn: #8a5210;
+  --bl-focus: #a3526a;
+  --bl-shadow: 0 1px 2px rgba(60, 30, 40, 0.06), 0 8px 24px rgba(60, 30, 40, 0.07);
+  --bl-radius: 14px;
+  --bl-hero-opacity: 0.22;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-bl-theme="light"]) {
+    --bl-bg: #151114;
+    --bl-grid: rgba(227, 165, 180, 0.07);
+    --bl-surface: #1f191d;
+    --bl-surface-2: #292126;
+    --bl-border: #3a2e34;
+    --bl-border-ui: #7a5f6a;
+    --bl-text: #f3e8eb;
+    --bl-muted: #b7a3aa;
+    --bl-accent: #e3a5b4;
+    --bl-accent-strong: #f0bcc8;
+    --bl-accent-soft: #3a2830;
+    --bl-on-accent: #2a161d;
+    --bl-nav: #0f0c0e;
+    --bl-nav-text: #f3e8eb;
+    --bl-nav-muted: #b7a3aa;
+    --bl-success: #86cca8;
+    --bl-danger: #f2939c;
+    --bl-warn: #e8b870;
+    --bl-focus: #f0bcc8;
+    --bl-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 30px rgba(0, 0, 0, 0.35);
+    --bl-hero-opacity: 0.3;
+    color-scheme: dark;
+  }
+}
+
+:root[data-bl-theme="dark"] {
+  --bl-bg: #151114;
+  --bl-grid: rgba(227, 165, 180, 0.07);
+  --bl-surface: #1f191d;
+  --bl-surface-2: #292126;
+  --bl-border: #3a2e34;
+  --bl-border-ui: #7a5f6a;
+  --bl-text: #f3e8eb;
+  --bl-muted: #b7a3aa;
+  --bl-accent: #e3a5b4;
+  --bl-accent-strong: #f0bcc8;
+  --bl-accent-soft: #3a2830;
+  --bl-on-accent: #2a161d;
+  --bl-nav: #0f0c0e;
+  --bl-nav-text: #f3e8eb;
+  --bl-nav-muted: #b7a3aa;
+  --bl-success: #86cca8;
+  --bl-danger: #f2939c;
+  --bl-warn: #e8b870;
+  --bl-focus: #f0bcc8;
+  --bl-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 30px rgba(0, 0, 0, 0.35);
+  --bl-hero-opacity: 0.3;
+  color-scheme: dark;
+}
+
+/* ---------- Canvas brand variables (Canvas reads these everywhere) ---------- */
+:root {
+  --ic-brand-primary: var(--bl-accent) !important;
+  --ic-brand-primary-darkened-5: var(--bl-accent-strong) !important;
+  --ic-brand-primary-darkened-10: var(--bl-accent-strong) !important;
+  --ic-brand-primary-darkened-15: var(--bl-accent-strong) !important;
+  --ic-link-color: var(--bl-accent) !important;
+  --ic-link-color-darkened-10: var(--bl-accent-strong) !important;
+  --ic-brand-font-color-dark: var(--bl-text) !important;
+  --ic-brand-font-color-dark-lightened-28: var(--bl-muted) !important;
+  --ic-brand-button--primary-bgd: var(--bl-accent) !important;
+  --ic-brand-button--primary-bgd-darkened-5: var(--bl-accent-strong) !important;
+  --ic-brand-button--primary-bgd-darkened-15: var(--bl-accent-strong) !important;
+  --ic-brand-button--primary-text: var(--bl-on-accent) !important;
+  --ic-brand-button--secondary-bgd: var(--bl-surface-2) !important;
+  --ic-brand-button--secondary-text: var(--bl-text) !important;
+  --ic-brand-global-nav-bgd: var(--bl-nav) !important;
+  --ic-brand-global-nav-ic-icon-svg-fill: var(--bl-nav-muted) !important;
+  --ic-brand-global-nav-ic-icon-svg-fill--active: var(--bl-accent-strong) !important;
+  --ic-brand-global-nav-menu-item__text-color: var(--bl-nav-text) !important;
+  --ic-brand-global-nav-menu-item__text-color--active: var(--bl-accent-strong) !important;
+  --ic-brand-global-nav-menu-item__badge-bgd: var(--bl-accent) !important;
+  --ic-brand-global-nav-menu-item__badge-text: var(--bl-on-accent) !important;
+  --ic-brand-global-nav-avatar-border: var(--bl-accent) !important;
+  --ic-brand-global-nav-logo-bgd: var(--bl-nav) !important;
+}
+
+/* ---------- Base ---------- */
+html,
+body {
+  background-color: var(--bl-bg) !important;
+  color: var(--bl-text);
+}
+body {
+  background-image: radial-gradient(var(--bl-grid) 1px, transparent 1px) !important;
+  background-size: 18px 18px !important;
+  line-height: 1.55;
+}
+body,
+button,
+input,
+select,
+textarea,
+#application *:not(i):not([class*="icon"]):not(svg):not(svg *) {
+  font-family: var(--bl-font) !important;
+}
+#application,
+#wrapper,
+#main,
+#content-wrapper,
+#content,
+#not_right_side,
+.ic-Layout-wrapper,
+.ic-Layout-columns,
+.ic-Layout-contentWrapper,
+.ic-Layout-contentMain,
+#right-side-wrapper,
+#left-side,
+.ic-app-nav-toggle-and-crumbs,
+.ic-app-course-menu,
+.ic-app-main-content,
+.ic-app-main-content__secondary {
+  background: transparent !important;
+  color: var(--bl-text);
+}
+h1,
+h2,
+h3,
+h4,
+.ic-Dashboard-header__title,
+.page-title,
+.screenreader-only + h1 {
+  color: var(--bl-text) !important;
+  letter-spacing: -0.01em;
+}
+.ic-Dashboard-header__title,
+h1.page-title {
+  font-weight: 700 !important;
+}
+::selection {
+  background: var(--bl-accent-soft);
+  color: var(--bl-text);
+}
+
+/* tabular numbers read cleaner for dates, points and grades */
+.grade,
+.points_possible,
+.score,
+.ig-details,
+.date,
+time,
+td,
+.ic-Table td {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Global nav ---------- */
+#header,
+.ic-app-header {
+  background: var(--bl-nav) !important;
+  border-right: 1px solid var(--bl-border) !important;
+}
+.ic-app-header__logomark-container {
+  background: transparent !important;
+}
+.ic-app-header__menu-list-link {
+  border-radius: 12px;
+  margin: 2px 6px;
+}
+.ic-app-header__menu-list-item--active .ic-app-header__menu-list-link,
+.ic-app-header__menu-list-item--active .ic-app-header__menu-list-link:hover {
+  background: var(--bl-accent-soft) !important;
+}
+.ic-app-header__menu-list-item--active .ic-app-header__menu-list-link,
+.ic-app-header__menu-list-item--active .menu-item__text {
+  color: var(--bl-accent-strong) !important;
+}
+.ic-app-header__menu-list-link:hover {
+  background: rgba(255, 255, 255, 0.06) !important;
+}
+
+/* ---------- Breadcrumbs + course nav ---------- */
+.ic-app-nav-toggle-and-crumbs {
+  border-bottom: 1px solid var(--bl-border) !important;
+}
+.ic-app-crumbs a,
+.ic-app-crumbs span {
+  color: var(--bl-muted) !important;
+}
+.ic-app-crumbs li:last-child span {
+  color: var(--bl-text) !important;
+  font-weight: 600;
+}
+
+#section-tabs li a,
+.ic-app-course-menu .section a {
+  border-radius: 10px !important;
+  border-left: 0 !important;
+  padding: 7px 12px !important;
+  color: var(--bl-muted) !important;
+}
+#section-tabs li a:hover {
+  background: var(--bl-surface-2) !important;
+  color: var(--bl-text) !important;
+  text-decoration: none !important;
+}
+#section-tabs li a.active {
+  background: var(--bl-accent-soft) !important;
+  color: var(--bl-accent-strong) !important;
+  font-weight: 650 !important;
+  box-shadow: inset 3px 0 0 var(--bl-accent);
+}
+
+/* ---------- Dashboard cards ---------- */
+.ic-DashboardCard {
+  background: var(--bl-surface) !important;
+  border: 1px solid var(--bl-border) !important;
+  border-radius: var(--bl-radius) !important;
+  box-shadow: var(--bl-shadow) !important;
+  overflow: hidden;
+}
+.ic-DashboardCard__header_hero {
+  opacity: var(--bl-hero-opacity) !important;
+}
+.ic-DashboardCard__header_content {
+  background: var(--bl-surface) !important;
+}
+.ic-DashboardCard__header-title,
+.ic-DashboardCard__header-title span {
+  color: var(--bl-text) !important;
+  font-weight: 650 !important;
+}
+.ic-DashboardCard__header-subtitle,
+.ic-DashboardCard__header-term {
+  color: var(--bl-muted) !important;
+}
+.ic-DashboardCard__action-container {
+  border-top: 1px solid var(--bl-border);
+}
+.ic-DashboardCard__action,
+.ic-DashboardCard__action-container a {
+  color: var(--bl-muted) !important;
+}
+.ic-DashboardCard__action:hover {
+  color: var(--bl-accent) !important;
+}
+.ic-DashboardCard__header-button-bg {
+  background: var(--bl-surface) !important;
+  opacity: 0.9 !important;
+  border-radius: 999px;
+}
+html.bl-motion .ic-DashboardCard {
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+html.bl-motion .ic-DashboardCard:hover {
+  transform: translateY(-2px);
+}
+
+/* ---------- Surfaces: lists, tables, modules, sidebars ---------- */
+.ig-list,
+.item-group-container,
+.ig-header,
+.context_module,
+.ic-Table,
+table.table,
+#grades_summary,
+.ic-item-row,
+.assignment_group,
+.discussion-topic,
+.announcement_topic,
+.ic-notification,
+.Sidebar__TodoListContainer,
+.events_list,
+.ic-Layout-contentMain .ui-dialog,
+.ui-widget-content,
+.ic-sidebar-logo,
+.user_content table {
+  background-color: var(--bl-surface) !important;
+  color: var(--bl-text) !important;
+  border-color: var(--bl-border) !important;
+}
+.ig-header,
+.context_module .header,
+.ic-Table thead th,
+table.table thead th,
+#grades_summary th,
+.ui-widget-header {
+  background: var(--bl-surface-2) !important;
+  color: var(--bl-text) !important;
+  border-color: var(--bl-border) !important;
+}
+.context_module,
+.item-group-condensed,
+.ig-list .ig-row,
+.ic-Table td,
+table.table td,
+#grades_summary td {
+  border-color: var(--bl-border) !important;
+}
+.context_module,
+.item-group-condensed,
+.ig-list {
+  border-radius: var(--bl-radius) !important;
+  overflow: hidden;
+}
+.ig-row:hover,
+.context_module_item:hover {
+  background: var(--bl-surface-2) !important;
+}
+.ig-title,
+.item_name a,
+.ig-row a.ig-title {
+  color: var(--bl-text) !important;
+  font-weight: 600;
+}
+.ig-details,
+.text-muted,
+.muted,
+.ic-item-row__meta-content,
+.screenreader-only + .muted {
+  color: var(--bl-muted) !important;
+}
+
+#right-side h2,
+#right-side .h2 {
+  font-size: 0.75rem !important;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--bl-muted) !important;
+}
+
+/* ---------- Buttons and inputs ---------- */
+.btn,
+.Button,
+a.btn,
+button.btn {
+  border-radius: 10px !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  border: 1px solid var(--bl-border-ui) !important;
+  background-color: var(--bl-surface) !important;
+  color: var(--bl-text) !important;
+}
+.btn-primary,
+.Button--primary,
+a.btn-primary,
+button.btn-primary {
+  background-color: var(--bl-accent) !important;
+  border-color: var(--bl-accent) !important;
+  color: var(--bl-on-accent) !important;
+}
+.btn:hover,
+.Button:hover {
+  filter: brightness(0.97);
+}
+input[type="text"],
+input[type="search"],
+input[type="email"],
+input[type="number"],
+input[type="password"],
+input[type="url"],
+input[type="date"],
+select,
+textarea,
+.ic-Input {
+  background-color: var(--bl-surface) !important;
+  color: var(--bl-text) !important;
+  border: 1px solid var(--bl-border-ui) !important;
+  border-radius: 10px !important;
+}
+
+/* ---------- Accessibility pass ---------- */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible,
+summary:focus-visible,
+[role="button"]:focus-visible,
+[role="tab"]:focus-visible {
+  outline: 3px solid var(--bl-focus) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 6px var(--bl-accent-soft) !important;
+  border-radius: 6px;
+}
+/* links inside written content are underlined so color is not the only cue */
+.user_content a,
+.show-content a,
+.discussion-section a,
+.message a {
+  text-decoration: underline !important;
+  text-underline-offset: 2px;
+}
+.user_content,
+.show-content {
+  line-height: 1.65;
+  max-width: 78ch;
+}
+.user_content p,
+.show-content p {
+  font-size: max(1rem, 15px);
+}
+/* keep Canvas skip link visible and on-brand when focused */
+#skip_navigation_link:focus,
+.ic-app-skip-link:focus {
+  background: var(--bl-accent) !important;
+  color: var(--bl-on-accent) !important;
+  border-radius: 10px;
+}
+kbd {
+  font-family: var(--bl-font) !important;
+}
+
+/* ---------- Calm mode: near-zero motion (default on) ----------
+   Durations are tiny instead of "none" so Canvas trays still get their transitionend events. */
+html:not(.bl-motion) *,
+html:not(.bl-motion) *::before,
+html:not(.bl-motion) *::after {
+  animation-duration: 0.001ms !important;
+  animation-delay: 0s !important;
+  transition-duration: 0.001ms !important;
+  transition-delay: 0s !important;
+  scroll-behavior: auto !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------- Declutter (default on) ---------- */
+html:not(.bl-show-clutter) #footer,
+html:not(.bl-show-clutter) .ic-app-footer,
+html:not(.bl-show-clutter) .ic-DashboardCard__header_image,
+html:not(.bl-show-clutter) .ic-sidebar-logo,
+html:not(.bl-show-clutter) #right-side.bl-has-inline .Sidebar__TodoListContainer,
+html:not(.bl-show-clutter) #right-side.bl-has-inline .coming_up,
+html:not(.bl-show-clutter) #right-side.bl-has-inline .events_list {
+  display: none !important;
+}
+
+/* ---------- Dark-only extras (html.bl-dark is set by the content script) ---------- */
+html.bl-dark .ic-app-header__menu-list-item--active .ic-app-header__menu-list-link {
+  background: var(--bl-accent-soft) !important;
+}
+html.bl-dark img.ic-avatar,
+html.bl-dark .ic-avatar img {
+  filter: none;
+}
+/* Instructure UI blocks hard-code white; soften them inside the main page only (best effort) */
+html.bl-dark #content [class^="css-"][class$="-view"],
+html.bl-dark #right-side [class^="css-"][class$="-view"],
+html.bl-dark #dashboard-planner [class^="css-"][class$="-view"] {
+  background-color: transparent !important;
+  border-color: var(--bl-border) !important;
+}
+html.bl-dark #content [class^="css-"][class$="-text"],
+html.bl-dark #content [class^="css-"][class$="-heading"],
+html.bl-dark #dashboard-planner [class^="css-"][class$="-text"],
+html.bl-dark #dashboard-planner [class^="css-"][class$="-heading"] {
+  color: inherit !important;
+}
+html.bl-dark .user_content,
+html.bl-dark .show-content {
+  color: var(--bl-text) !important;
+}
+html.bl-dark .user_content [style*="color: #000"],
+html.bl-dark .user_content [style*="color: rgb(0, 0, 0)"] {
+  color: var(--bl-text) !important;
+}
+html.bl-dark .user_content [style*="background-color: #fff"],
+html.bl-dark .user_content [style*="background-color: rgb(255, 255, 255)"] {
+  background-color: transparent !important;
+}
