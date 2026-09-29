@@ -132,3 +132,85 @@ kbd {
   border-radius: 5px;
   background: var(--bl-surface-2);
 }
+.field {
+  display: grid;
+  gap: 6px;
+  padding: 4px 0 8px;
+}
+.field label {
+  font-weight: 600;
+}
+.text {
+  font: inherit;
+  padding: 9px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--bl-border-ui);
+  background: var(--bl-surface);
+  color: var(--bl-text);
+}
+.seg.two {
+  grid-template-columns: repeat(3, 1fr);
+}
+.photos {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-top: 8px;
+}
+.photo {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--bl-border);
+}
+.photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.photo button {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: 7px;
+  border: 0;
+  background: rgba(255, 255, 255, 0.85);
+  color: #2a2025;
+  font: inherit;
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+}
+.add-photo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 8px;
+  width: 100%;
+  min-height: 38px;
+  border-radius: 10px;
+  border: 1px dashed var(--bl-border-ui);
+  color: var(--bl-accent-strong);
+  font-weight: 600;
+  cursor: pointer;
+  background: transparent;
+}
+.add-photo:focus-within {
+  outline: 3px solid var(--bl-focus);
+  outline-offset: 2px;
+}
+.add-photo input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+.hint {
+  font-size: 12px;
+  color: var(--bl-muted);
+  margin: 6px 0 0;
+}

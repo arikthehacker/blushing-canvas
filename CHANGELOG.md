@@ -1,5 +1,13 @@
 # changelog
 
+## 2.0.0
+
+- a banner on every page with the date, a greeting, a big clock and your next due item. on the dashboard you can type today's focus and check it off
+- the to-do panel is a real column now, and Canvas shrinks to make room. T folds it into a slim rail
+- a new public domain painting each day from the art institute of chicago, or your own photos
+- no underlines on links, and smaller headers on course cards
+- set the name the greeting uses in the popup
+
 ## 1.0.0
 
 - dusty pink theme for canvas in light and dark, following your system by default

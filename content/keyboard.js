@@ -68,8 +68,8 @@ function onKeyDown(e)
       closeHelp();
       return;
     }
-    const d = uiRoot.querySelector(".bl-drawer");
-    if (!d.hidden && d.contains(e.composedPath()[0]))
+    const d = uiRoot.querySelector(".bl-dock-panel");
+    if (!d.hidden && d.contains(e.composedPath()[0]) && matchMedia("(max-width: 1099px)").matches)
     {
       e.preventDefault();
       closeDrawer();

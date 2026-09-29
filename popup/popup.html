@@ -21,6 +21,27 @@
   </fieldset>
 
   <fieldset>
+    <legend>You</legend>
+    <div class="field"><label for="name">Name in the greeting</label><input class="text" id="name" placeholder="Uses your Canvas name if empty" maxlength="30" autocomplete="off"></div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Banner</legend>
+    <div class="row"><label for="hero">Greeting banner<small>Clock, focus, and next due on every page</small></label><input class="switch" type="checkbox" id="hero"></div>
+    <div class="field">
+      <span id="src-label" style="font-weight:600">Pictures</span>
+      <div class="seg two" role="radiogroup" aria-labelledby="src-label">
+        <input type="radio" name="src" id="s-both" value="both"><label for="s-both">Both</label>
+        <input type="radio" name="src" id="s-art" value="art"><label for="s-art">Paintings</label>
+        <input type="radio" name="src" id="s-mine" value="mine"><label for="s-mine">Mine</label>
+      </div>
+      <p class="hint">Paintings are public-domain works from the Art Institute of Chicago, a new one each day.</p>
+    </div>
+    <div class="photos" id="photos" aria-label="Your photos"></div>
+    <label class="add-photo">Add your own photos<input type="file" id="file" accept="image/*" multiple></label>
+  </fieldset>
+
+  <fieldset>
     <legend>Speed and focus</legend>
     <div class="row"><label for="calm">Calm mode<small>Turns off Canvas animations</small></label><input class="switch" type="checkbox" id="calm"></div>
     <div class="row"><label for="hideClutter">Declutter<small>Hides footer, card images, duplicate to-do</small></label><input class="switch" type="checkbox" id="hideClutter"></div>

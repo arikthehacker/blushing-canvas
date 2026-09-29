@@ -410,13 +410,31 @@ summary:focus-visible,
   box-shadow: 0 0 0 6px var(--bl-accent-soft) !important;
   border-radius: 6px;
 }
-/* links inside written content are underlined so color is not the only cue */
+/* no underlines anywhere (overrides Canvas's "underline links" option too) */
+#application a,
+#application a *,
+#application a:hover,
+#application a:hover *,
+body.underline-all-links a,
+body.underline-all-links a * {
+  text-decoration: none !important;
+}
+/* links inside written content: accent color plus a soft pink highlighter, so they still stand out without an underline */
 .user_content a,
 .show-content a,
 .discussion-section a,
 .message a {
-  text-decoration: underline !important;
-  text-underline-offset: 2px;
+  color: var(--bl-accent) !important;
+  font-weight: 600;
+  background-image: linear-gradient(var(--bl-accent-soft), var(--bl-accent-soft));
+  background-repeat: no-repeat;
+  background-size: 100% 0.42em;
+  background-position: 0 90%;
+  border-radius: 2px;
+}
+.user_content a:hover,
+.show-content a:hover {
+  background-size: 100% 100%;
 }
 .user_content,
 .show-content {
@@ -462,11 +480,8 @@ html:not(.bl-motion) *::after {
 /* ---------- Declutter (default on) ---------- */
 html:not(.bl-show-clutter) #footer,
 html:not(.bl-show-clutter) .ic-app-footer,
-html:not(.bl-show-clutter) .ic-DashboardCard__header_image,
 html:not(.bl-show-clutter) .ic-sidebar-logo,
-html:not(.bl-show-clutter) #right-side.bl-has-inline .Sidebar__TodoListContainer,
-html:not(.bl-show-clutter) #right-side.bl-has-inline .coming_up,
-html:not(.bl-show-clutter) #right-side.bl-has-inline .events_list {
+html.bl-on-dashboard.bl-dock-open:not(.bl-show-clutter) #right-side-wrapper {
   display: none !important;
 }
 
@@ -502,4 +517,54 @@ html.bl-dark .user_content [style*="color: rgb(0, 0, 0)"] {
 html.bl-dark .user_content [style*="background-color: #fff"],
 html.bl-dark .user_content [style*="background-color: rgb(255, 255, 255)"] {
   background-color: transparent !important;
+}
+
+/* ---------- docked column: Canvas makes room for it ---------- */
+html.bl-docked body {
+  padding-right: 60px !important;
+  box-sizing: border-box;
+}
+@media (min-width: 1100px) {
+  html.bl-docked.bl-dock-open body {
+    padding-right: 360px !important;
+  }
+}
+
+/* ---------- cleaner dashboard cards ---------- */
+.ic-DashboardCard__header_hero,
+.ic-DashboardCard__header_image {
+  height: 112px !important;
+}
+.ic-DashboardCard__header_image {
+  background-size: cover !important;
+  background-position: center !important;
+}
+.ic-DashboardCard__header-button {
+  width: 32px !important;
+  height: 32px !important;
+  top: 10px !important;
+  right: 10px !important;
+}
+.ic-DashboardCard__header-button-bg {
+  background: rgba(255, 255, 255, 0.72) !important;
+  opacity: 1 !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+html.bl-dark .ic-DashboardCard__header-button-bg {
+  background: rgba(30, 22, 27, 0.7) !important;
+}
+.ic-DashboardCard__header-title {
+  font-size: 15px !important;
+}
+.ic-DashboardCard__header-subtitle {
+  font-size: 13px !important;
+}
+.ic-DashboardCard__header-term {
+  font-size: 12px !important;
+}
+.ic-DashboardCard__action-container {
+  min-height: 44px;
 }

@@ -132,12 +132,12 @@ function panelHTML(m)
   return `<div class="bl-panel">
     <div class="bl-head">
       <div>
-        <p class="bl-eyebrow"><b>//</b> ${esc(date)}</p>
-        <h2 class="bl-hello" id="bl-hello-${m.id}" tabindex="-1">${esc(greeting())}</h2>
+        <p class="bl-eyebrow"><b>//</b> ${settings.hero ? "your week" : esc(date)}</p>
+        <h2 class="bl-hello" id="bl-hello-${m.id}" tabindex="-1">${settings.hero ? "Up next" : esc(greeting())}</h2>
       </div>
       <div class="bl-head-actions">
         ${themeBtnHTML()}
-        ${m.withClose ? `<button class="bl-icon-btn" type="button" data-act="close" data-fk="close" aria-label="Close panel">${ICON.close}</button>` : ""}
+        ${m.withClose ? `<button class="bl-icon-btn" type="button" data-act="close" data-fk="close" aria-label="Collapse panel" aria-keyshortcuts="t">${ICON.collapse}</button>` : ""}
       </div>
     </div>
     <div class="bl-stats">
@@ -184,5 +184,6 @@ function renderPanels()
       if (target) target.focus();
     }
   }
-  updateFab();
+  updateRail();
+  renderHero();
 }

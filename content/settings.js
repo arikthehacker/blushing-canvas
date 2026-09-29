@@ -9,6 +9,11 @@ const DEFAULTS = {
   shortcuts: true,
   prefetch: true,
   cheers: true,
+  hero: true,
+  heroFull: "dashboard",
+  artSource: "both",
+  name: "",
+  dockOpen: true,
 };
 const root = document.documentElement;
 const darkMQ = matchMedia("(prefers-color-scheme: dark)");
@@ -35,6 +40,8 @@ function applySettings()
   {
     updateThemeButtons();
     installSpeculation();
+    applyDock();
+    renderHero();
   }
 }
 root.classList.toggle("bl-dark", darkMQ.matches);
@@ -51,6 +58,10 @@ chrome.storage.onChanged.addListener((changes, area) =>
   {
     settings = { ...DEFAULTS, ...(changes.settings.newValue || {}) };
     applySettings();
+  }
+  if (area === "local" && changes["bl:art:current"] && changes["bl:art:current"].newValue)
+  {
+    if (ready) setArt(changes["bl:art:current"].newValue);
   }
 });
 const saveSettings = () => store.set("sync", "settings", settings);

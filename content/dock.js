@@ -1,35 +1,50 @@
-// The floating to-do button and the drawer it opens.
+// The to-do column docked on the right, and the slim rail it folds into.
 "use strict";
 
-let drawerMount = null;
-function updateFab()
+let dockMount = null;
+function updateRail()
 {
   if (!uiRoot) return;
   const n = openCount();
-  const count = uiRoot.querySelector(".bl-fab-count");
-  count.textContent = n;
-  count.toggleAttribute("data-zero", n === 0);
-  uiRoot.querySelector(".bl-fab").setAttribute("aria-label", `To-do panel, ${n} due in the next 7 days`);
+  const c = uiRoot.querySelector(".bl-rail-count");
+  c.textContent = n;
+  c.toggleAttribute("data-zero", n === 0);
+  uiRoot
+    .querySelector('[data-act="rail-open"]')
+    .setAttribute("aria-label", `Open to-do panel, ${n} due in the next 7 days`);
+  const tb = uiRoot.querySelector('[data-act="rail-theme"]');
+  tb.setAttribute("aria-label", `Switch to ${isDark() ? "light" : "dark"} theme`);
+  tb.innerHTML = isDark() ? ICON.sun : ICON.moon;
 }
-function openDrawer()
+function applyDock()
 {
-  const d = uiRoot.querySelector(".bl-drawer");
-  d.hidden = false;
-  uiRoot.querySelector(".bl-fab").setAttribute("aria-expanded", "true");
-  renderPanels();
-  const h = d.querySelector(`#bl-hello-${drawerMount.id}`);
-  if (h) h.focus();
+  if (!uiRoot || !dockMount) return;
+  const open = !!settings.dockOpen;
+  root.classList.add("bl-docked");
+  root.classList.toggle("bl-dock-open", open);
+  uiRoot.querySelector(".bl-dock").classList.toggle("is-open", open);
+  dockMount.el.hidden = !open;
+  uiRoot.querySelector(".bl-rail").hidden = open;
+  uiRoot.querySelector('[data-act="rail-open"]').setAttribute("aria-expanded", String(open));
 }
-function closeDrawer()
+function setDock(open, moveFocus = true)
 {
-  const d = uiRoot.querySelector(".bl-drawer");
-  if (d.hidden) return;
-  d.hidden = true;
-  const fab = uiRoot.querySelector(".bl-fab");
-  fab.setAttribute("aria-expanded", "false");
-  fab.focus();
+  settings.dockOpen = open;
+  saveSettings();
+  applyDock();
+  if (open)
+  {
+    renderPanels();
+    const h = moveFocus && dockMount.el.querySelector(`#bl-hello-${dockMount.id}`);
+    if (h) h.focus();
+  }
+  else if (moveFocus)
+  {
+    uiRoot.querySelector('[data-act="rail-open"]').focus();
+  }
 }
-const toggleDrawer = () => (uiRoot.querySelector(".bl-drawer").hidden ? openDrawer() : closeDrawer());
+const closeDrawer = () => setDock(false);
+const toggleDrawer = () => setDock(!settings.dockOpen);
 
 function updateThemeButtons()
 {

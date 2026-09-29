@@ -19,11 +19,17 @@ async function buildUI()
 
   const shell = document.createElement("div");
   shell.innerHTML = `
-    <button class="bl-fab" type="button" aria-expanded="false" aria-controls="bl-drawer" aria-keyshortcuts="t">
-      <span class="bl-fab-spark" aria-hidden="true">✦</span><span aria-hidden="true">To do</span>
-      <span class="bl-fab-count" aria-hidden="true">·</span>
-    </button>
-    <aside class="bl-drawer" id="bl-drawer" aria-label="Blush to-do panel" hidden></aside>
+    <aside class="bl-dock" aria-label="Blush to-do panel">
+      <div class="bl-rail">
+        <button class="bl-rail-btn is-main" type="button" data-act="rail-open" aria-expanded="false" aria-controls="bl-dock-panel" aria-keyshortcuts="t">
+          <span class="bl-fab-spark" aria-hidden="true">✦</span>
+          <span class="bl-rail-count" aria-hidden="true">·</span>
+        </button>
+        <button class="bl-rail-btn" type="button" data-act="rail-search" aria-label="Quick jump" aria-keyshortcuts="Control+K">${ICON.search}</button>
+        <button class="bl-rail-btn" type="button" data-act="rail-theme" aria-label="Switch theme"></button>
+      </div>
+      <div class="bl-dock-panel" id="bl-dock-panel"></div>
+    </aside>
     <div class="bl-toasts" aria-hidden="true"></div>
     <div class="bl-sr" id="bl-live" role="status" aria-live="polite"></div>
 
@@ -79,28 +85,22 @@ async function buildUI()
     </div>`;
   while (shell.firstChild) uiRoot.appendChild(shell.firstChild);
 
-  // drawer mount
-  drawerMount = { id: "d", el: uiRoot.querySelector(".bl-drawer"), withClose: true, tab: "due" };
-  mounts.push(drawerMount);
-  handlePanelEvents(drawerMount.el, drawerMount);
-  uiRoot.querySelector(".bl-fab").addEventListener("click", toggleDrawer);
-
-  // dashboard inline mount
-  const rs = location.pathname === "/" && document.getElementById("right-side");
-  if (rs)
+  // docked column
+  dockMount = { id: "d", el: uiRoot.querySelector(".bl-dock-panel"), withClose: true, tab: "due" };
+  mounts.push(dockMount);
+  handlePanelEvents(dockMount.el, dockMount);
+  uiRoot.querySelector('[data-act="rail-open"]').addEventListener("click", () => setDock(true));
+  uiRoot.querySelector('[data-act="rail-search"]').addEventListener("click", () => openPalette());
+  uiRoot.querySelector('[data-act="rail-theme"]').addEventListener("click", () =>
   {
-    const ih = document.createElement("div");
-    ih.id = "blush-inline";
-    rs.prepend(ih);
-    rs.classList.add("bl-has-inline");
-    const isr = await makeShadow(ih);
-    const wrap = document.createElement("div");
-    wrap.className = "bl-inline";
-    isr.appendChild(wrap);
-    const m = { id: "i", el: wrap, withClose: false, tab: "due" };
-    mounts.push(m);
-    handlePanelEvents(wrap, m);
-  }
+    settings.theme = isDark() ? "light" : "dark";
+    applySettings();
+    saveSettings();
+  });
+  root.classList.toggle("bl-on-dashboard", location.pathname === "/");
+  applyDock();
+
+  await buildHero();
 
   // palette events
   const input = uiRoot.querySelector("#bl-pal-input");
