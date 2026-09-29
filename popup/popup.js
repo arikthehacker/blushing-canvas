@@ -123,6 +123,30 @@ function resize(file)
   });
 }
 
+const isFirefox = navigator.userAgent.includes("Firefox");
+const inPopup = (() =>
+{
+  try
+  {
+    return chrome.extension.getViews({ type: "popup" }).includes(window);
+  }
+  catch (e)
+  {
+    return false;
+  }
+})();
+if (!inPopup) document.body.style.margin = "32px auto";
+if (isFirefox && inPopup)
+{
+  const label = document.querySelector(".add-photo");
+  label.addEventListener("click", e =>
+  {
+    e.preventDefault();
+    chrome.runtime.openOptionsPage();
+    window.close();
+  });
+}
+
 document.getElementById("file").addEventListener("change", async e =>
 {
   const files = [...e.target.files];

@@ -1,5 +1,11 @@
 # changelog
 
+## 2.4.0
+
+- the course code line under each card title is smaller and fainter
+- settings can open in a full tab
+- fixed course names that end in a number losing everything after the first word
+
 ## 2.3.0
 
 - course titles drop the section number and term, so "Intro To Biology 001 Fall 2026" becomes "Intro to Biology". hover a title to see the full name

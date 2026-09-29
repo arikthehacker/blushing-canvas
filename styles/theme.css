@@ -555,8 +555,12 @@ html.bl-dark .ic-DashboardCard__header-button-bg {
 .ic-DashboardCard__header-title {
   font-size: 15px !important;
 }
-.ic-DashboardCard__header-subtitle {
-  font-size: 13px !important;
+.ic-DashboardCard__header-subtitle,
+.ic-DashboardCard__header-subtitle * {
+  font-size: 10px !important;
+  line-height: 1.4 !important;
+  letter-spacing: 0.04em;
+  opacity: 0.85;
 }
 .ic-DashboardCard__header-term {
   font-size: 12px !important;

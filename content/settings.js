@@ -34,6 +34,9 @@ function applySettings()
   if (settings.theme === "auto") root.removeAttribute("data-bl-theme");
   else root.setAttribute("data-bl-theme", settings.theme);
   root.classList.toggle("bl-dark", isDark());
+  document
+    .querySelectorAll("#blush-root, #blush-hero")
+    .forEach(h => h.classList.toggle("bl-dark-host", isDark()));
   root.classList.toggle("bl-motion", !settings.calm);
   root.classList.toggle("bl-show-clutter", !settings.hideClutter);
   if (ready)

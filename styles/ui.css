@@ -410,7 +410,7 @@ a.bl-credit:hover {
 }
 
 /* banner in dark theme */
-:host-context(html.bl-dark) .bl-hero {
+:host(.bl-dark-host) .bl-hero {
   --bl-hero-text: #f6ecef;
   --bl-hero-muted: #d9c3cb;
   --bl-hero-accent: #f0bcc8;
@@ -418,10 +418,10 @@ a.bl-credit:hover {
     radial-gradient(60% 90% at 85% 20%, rgba(120, 60, 82, 0.6), transparent 70%),
     linear-gradient(120deg, #231a20, #2c1f27 50%, #211a1e);
 }
-:host-context(html.bl-dark) .bl-hero-img {
+:host(.bl-dark-host) .bl-hero-img {
   filter: saturate(0.75) brightness(0.8);
 }
-:host-context(html.bl-dark) .bl-hero-wash {
+:host(.bl-dark-host) .bl-hero-wash {
   background:
     linear-gradient(
       90deg,
@@ -432,16 +432,16 @@ a.bl-credit:hover {
     ),
     rgba(120, 60, 82, 0.15);
 }
-:host-context(html.bl-dark) .bl-next,
-:host-context(html.bl-dark) .bl-glass-btn {
+:host(.bl-dark-host) .bl-next,
+:host(.bl-dark-host) .bl-glass-btn {
   background: rgba(30, 22, 27, 0.6);
   border-color: rgba(255, 255, 255, 0.1);
 }
-:host-context(html.bl-dark) a.bl-next:hover,
-:host-context(html.bl-dark) .bl-glass-btn:hover {
+:host(.bl-dark-host) a.bl-next:hover,
+:host(.bl-dark-host) .bl-glass-btn:hover {
   background: rgba(40, 28, 35, 0.8);
 }
-:host-context(html.bl-dark) .bl-focus-input {
+:host(.bl-dark-host) .bl-focus-input {
   border-bottom-color: rgba(240, 188, 200, 0.4);
 }
 

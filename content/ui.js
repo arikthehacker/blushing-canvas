@@ -14,6 +14,7 @@ async function buildUI()
 
   const host = document.createElement("div");
   host.id = "blush-root";
+  host.classList.toggle("bl-dark-host", isDark());
   document.body.appendChild(host);
   uiRoot = await makeShadow(host);
 

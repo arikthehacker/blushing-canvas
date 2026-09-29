@@ -166,6 +166,7 @@ async function buildHero()
   const host = document.createElement("div");
   host.id = "blush-hero";
   host.className = "bl-hero-host";
+  host.classList.toggle("bl-dark-host", isDark());
   const wrapper = document.getElementById("wrapper") || document.querySelector(".ic-Layout-wrapper");
   if (wrapper) wrapper.prepend(host);
   else document.body.prepend(host);

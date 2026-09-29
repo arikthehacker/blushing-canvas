@@ -24,7 +24,8 @@ function cleanCourseName(name)
   let n = String(name || "").trim();
   const original = n;
   n = n.replace(/[\s\-–—:|,(]*\b(Fall|Winter|Spring|Summer)(\s+Term)?\s+\d{2,4}\)?\s*$/i, "");
-  n = n.replace(/[\s\-–—:|,(]*\b(sec(tion)?\.?\s*)?\d{3}[A-Z]?\)?\s*$/i, "");
+  // section numbers look like 001 or 002A, and a course number like "Bio 101" stays
+  n = n.replace(/[\s\-–—:|,(]*\b(sec(tion)?\.?\s*\d{1,3}|0\d{2})[A-Z]?\)?\s*$/i, "");
   n = n.trim();
   if (!n) return original;
   return n
