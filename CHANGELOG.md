@@ -1,5 +1,12 @@
 # changelog
 
+## 2.1.0
+
+- a color fixer that repaints the white boxes, grey text and blue links canvas hard-codes, so dark mode reaches the whole page
+- blue text turns pink, tinted boxes get a dark version of their color, and colored text from teachers stays readable
+- links inside course content are pink and a little bolder
+- no italics in canvas menus, and the banner says "Nothing due." when you're clear
+
 ## 2.0.0
 
 - a banner on every page with the date, a greeting, a big clock and your next due item. on the dashboard you can type today's focus and check it off

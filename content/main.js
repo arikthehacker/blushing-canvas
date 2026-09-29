@@ -20,6 +20,7 @@ async function init()
   recordVisit();
   renderPanels();
   loadArt();
+  startColorFixer();
 
   swr("user", 24 * 3600e3, loadUser, v =>
   {

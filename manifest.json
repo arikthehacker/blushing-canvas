@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Blush for Canvas",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "A dusty-pink, fast, accessible Canvas: quick jump, shortcuts, instant navigation, and a to-do panel that cheers you on.",
   "icons": {
     "16": "icons/icon16.png",
@@ -32,6 +32,7 @@
         "content/keyboard.js",
         "content/recents.js",
         "content/banner.js",
+        "content/color-fixer.js",
         "content/ui.js",
         "content/main.js"
       ],

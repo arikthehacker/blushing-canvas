@@ -426,15 +426,11 @@ body.underline-all-links a * {
 .message a {
   color: var(--bl-accent) !important;
   font-weight: 600;
-  background-image: linear-gradient(var(--bl-accent-soft), var(--bl-accent-soft));
-  background-repeat: no-repeat;
-  background-size: 100% 0.42em;
-  background-position: 0 90%;
-  border-radius: 2px;
+  border-radius: 4px;
 }
 .user_content a:hover,
 .show-content a:hover {
-  background-size: 100% 100%;
+  background: var(--bl-accent-soft);
 }
 .user_content,
 .show-content {
@@ -567,4 +563,52 @@ html.bl-dark .ic-DashboardCard__header-button-bg {
 }
 .ic-DashboardCard__action-container {
   min-height: 44px;
+}
+
+/* ---------- color fixer tags (set by content/color-fixer.js) ---------- */
+.bl-df-link,
+.bl-df-link a {
+  color: var(--bl-accent) !important;
+}
+html.bl-dark .bl-df-bg {
+  background-color: var(--bl-surface) !important;
+}
+html.bl-dark .bl-df-tint {
+  background-color: var(--bl-df-t, var(--bl-surface-2)) !important;
+}
+html.bl-dark .bl-df-fg {
+  color: var(--bl-text) !important;
+}
+html.bl-dark .bl-df-muted {
+  color: var(--bl-muted) !important;
+}
+html.bl-dark .bl-df-hue {
+  color: var(--bl-df-c) !important;
+}
+html.bl-dark .bl-df-bd {
+  border-color: var(--bl-border) !important;
+}
+.bl-df-accentbg {
+  background-color: var(--bl-accent) !important;
+  color: var(--bl-on-accent) !important;
+}
+.bl-df-bdblue {
+  border-color: var(--bl-border-ui) !important;
+}
+html.bl-dark *,
+html.bl-dark *::before,
+html.bl-dark *::after {
+  text-shadow: none !important;
+}
+html.bl-dark hr {
+  border-color: var(--bl-border) !important;
+}
+
+/* no italics in Canvas's own chrome (course nav term label, cards) */
+#left-side *,
+.ic-app-course-menu *,
+.ic-DashboardCard *,
+#section-tabs-header-subtitle,
+.ic-app-crumbs * {
+  font-style: normal !important;
 }

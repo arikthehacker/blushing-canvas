@@ -96,7 +96,7 @@ function renderHero()
             <span class="bl-next-title">${esc(nu.title)}</span>
             <span class="bl-next-due">${esc(nu.course)}${nu.course ? " · " : ""}${esc(fmtDue(nu.due))}</span>
           </a>`
-          : `<p class="bl-next is-clear"><span class="bl-next-label">Next up</span><span class="bl-next-title">${state.items ? "Nothing due. Breathe." : "Loading…"}</span></p>`
+          : `<p class="bl-next is-clear"><span class="bl-next-label">Next up</span><span class="bl-next-title">${state.items ? "Nothing due." : "Loading…"}</span></p>`
       }
     </div>
     <div class="bl-hero-foot">
