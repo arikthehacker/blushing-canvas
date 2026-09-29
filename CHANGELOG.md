@@ -1,5 +1,10 @@
 # changelog
 
+## 2.3.0
+
+- course titles drop the section number and term, so "Intro To Biology 001 Fall 2026" becomes "Intro to Biology". hover a title to see the full name
+- long names wrap instead of getting cut off, and the clean names show up everywhere in blush
+
 ## 2.2.0
 
 - dark mode is one shade lighter, and the main text is softer

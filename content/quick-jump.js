@@ -58,7 +58,7 @@ function paletteEntries(q)
       label: c.name,
       sub: c.code,
       url: `/courses/${c.id}`,
-      hay: `${c.code} ${c.name}`,
+      hay: `${c.code} ${c.full || c.name}`,
       w: 4,
     });
     for (const [name, path] of SECTIONS.slice(1))

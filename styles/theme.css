@@ -622,3 +622,18 @@ html.bl-dark .ig-title,
 html.bl-dark .item_name a {
   font-weight: 500 !important;
 }
+
+/* full course names on cards, no "..." */
+.ic-DashboardCard__header-title,
+.ic-DashboardCard__header-title span {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  -webkit-line-clamp: unset !important;
+  max-height: none !important;
+  height: auto !important;
+}
+.ic-DashboardCard__header_content {
+  height: auto !important;
+  min-height: 0 !important;
+}

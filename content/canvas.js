@@ -82,7 +82,7 @@ const loadCourses = async () =>
   return {
     courses: (list || [])
       .filter(c => c && c.name && !c.access_restricted_by_date)
-      .map(c => ({ id: c.id, name: c.name, code: c.course_code || "" })),
+      .map(c => ({ id: c.id, name: cleanCourseName(c.name), full: c.name, code: c.course_code || "" })),
     colors,
   };
 };
@@ -109,7 +109,7 @@ const loadItems = async () =>
         title: p.title || p.name || "Untitled",
         due: i.plannable_date || p.due_at || p.todo_date || null,
         url: i.html_url || null,
-        course: i.context_name || "",
+        course: cleanCourseName(i.context_name || ""),
         courseId: i.course_id || null,
         points: typeof p.points_possible === "number" ? p.points_possible : null,
         submitted: !!(s.submitted || s.graded || s.excused),

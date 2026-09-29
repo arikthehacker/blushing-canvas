@@ -1,6 +1,37 @@
 // Small shared helpers: escaping, dates, greetings, weekly progress and icons.
 "use strict";
 
+// "Intro To Biology 001 Fall 2026" -> "Intro to Biology"
+const SMALL_WORDS = new Set([
+  "a",
+  "an",
+  "and",
+  "as",
+  "at",
+  "by",
+  "for",
+  "in",
+  "of",
+  "on",
+  "or",
+  "the",
+  "to",
+  "with",
+  "vs",
+]);
+function cleanCourseName(name)
+{
+  let n = String(name || "").trim();
+  const original = n;
+  n = n.replace(/[\s\-–—:|,(]*\b(Fall|Winter|Spring|Summer)(\s+Term)?\s+\d{2,4}\)?\s*$/i, "");
+  n = n.replace(/[\s\-–—:|,(]*\b(sec(tion)?\.?\s*)?\d{3}[A-Z]?\)?\s*$/i, "");
+  n = n.trim();
+  if (!n) return original;
+  return n
+    .split(/\s+/)
+    .map((w, i) => (i > 0 && SMALL_WORDS.has(w.toLowerCase()) ? w.toLowerCase() : w))
+    .join(" ");
+}
 const esc = s =>
   String(s == null ? "" : s).replace(
     /[&<>"']/g,

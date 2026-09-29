@@ -163,14 +163,41 @@ function dfFlush()
     requestAnimationFrame(dfFlush);
   }
 }
+function cleanCardTitles(scope)
+{
+  if (!scope || scope.nodeType !== 1) return;
+  const titles = scope.matches(".ic-DashboardCard__header-title")
+    ? [scope]
+    : scope.querySelectorAll(".ic-DashboardCard__header-title");
+  titles.forEach(t =>
+  {
+    const walker = document.createTreeWalker(t, NodeFilter.SHOW_TEXT);
+    for (let n = walker.nextNode(); n; n = walker.nextNode())
+    {
+      if (!n.nodeValue.trim()) continue;
+      const clean = cleanCourseName(n.nodeValue);
+      if (clean !== n.nodeValue.trim())
+      {
+        if (!t.getAttribute("title")) t.setAttribute("title", n.nodeValue.trim());
+        n.nodeValue = clean;
+      }
+    }
+  });
+}
 function startColorFixer()
 {
+  cleanCardTitles(document.body);
   dfEnqueue(document.body);
   new MutationObserver(records =>
   {
     for (const r of records)
     {
-      if (r.type === "childList") r.addedNodes.forEach(dfEnqueue);
+      if (r.type === "childList")
+        r.addedNodes.forEach(n =>
+        {
+          dfEnqueue(n);
+          cleanCardTitles(n);
+        });
       else if (r.type === "attributes")
       {
         // React re-renders can wipe our classes, so put them back
