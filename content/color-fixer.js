@@ -84,7 +84,7 @@ function dfDecide(el)
       else if (!leaf)
       {
         out.cls.push("bl-df-tint");
-        out.vars = { "--bl-df-t": `hsl(${hsl.h} ${Math.round(Math.min(hsl.s, 0.45) * 100)}% 15%)` };
+        out.vars = { "--bl-df-t": `hsl(${hsl.h} ${Math.round(Math.min(hsl.s, 0.45) * 100)}% 19%)` };
       }
     }
     else if (isBlue(hsl) && !leaf)

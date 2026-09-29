@@ -1,5 +1,10 @@
 # changelog
 
+## 2.2.0
+
+- dark mode is one shade lighter, and the main text is softer
+- course card and module titles use a lighter weight in dark mode
+
 ## 2.1.0
 
 - a color fixer that repaints the white boxes, grey text and blue links canvas hard-codes, so dark mode reaches the whole page

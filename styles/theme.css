@@ -32,19 +32,19 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-bl-theme="light"]) {
-    --bl-bg: #151114;
+    --bl-bg: #1b161a;
     --bl-grid: rgba(227, 165, 180, 0.07);
-    --bl-surface: #1f191d;
-    --bl-surface-2: #292126;
-    --bl-border: #3a2e34;
-    --bl-border-ui: #7a5f6a;
-    --bl-text: #f3e8eb;
+    --bl-surface: #251e23;
+    --bl-surface-2: #2f272c;
+    --bl-border: #42363c;
+    --bl-border-ui: #86697a;
+    --bl-text: #ece1e4;
     --bl-muted: #b7a3aa;
     --bl-accent: #e3a5b4;
     --bl-accent-strong: #f0bcc8;
-    --bl-accent-soft: #3a2830;
+    --bl-accent-soft: #412e37;
     --bl-on-accent: #2a161d;
-    --bl-nav: #0f0c0e;
+    --bl-nav: #151114;
     --bl-nav-text: #f3e8eb;
     --bl-nav-muted: #b7a3aa;
     --bl-success: #86cca8;
@@ -58,19 +58,19 @@
 }
 
 :root[data-bl-theme="dark"] {
-  --bl-bg: #151114;
+  --bl-bg: #1b161a;
   --bl-grid: rgba(227, 165, 180, 0.07);
-  --bl-surface: #1f191d;
-  --bl-surface-2: #292126;
-  --bl-border: #3a2e34;
-  --bl-border-ui: #7a5f6a;
-  --bl-text: #f3e8eb;
+  --bl-surface: #251e23;
+  --bl-surface-2: #2f272c;
+  --bl-border: #42363c;
+  --bl-border-ui: #86697a;
+  --bl-text: #ece1e4;
   --bl-muted: #b7a3aa;
   --bl-accent: #e3a5b4;
   --bl-accent-strong: #f0bcc8;
-  --bl-accent-soft: #3a2830;
+  --bl-accent-soft: #412e37;
   --bl-on-accent: #2a161d;
-  --bl-nav: #0f0c0e;
+  --bl-nav: #151114;
   --bl-nav-text: #f3e8eb;
   --bl-nav-muted: #b7a3aa;
   --bl-success: #86cca8;
@@ -252,7 +252,7 @@ td,
 .ic-DashboardCard__header-title,
 .ic-DashboardCard__header-title span {
   color: var(--bl-text) !important;
-  font-weight: 650 !important;
+  font-weight: 550 !important;
 }
 .ic-DashboardCard__header-subtitle,
 .ic-DashboardCard__header-term {
@@ -611,4 +611,14 @@ html.bl-dark hr {
 #section-tabs-header-subtitle,
 .ic-app-crumbs * {
   font-style: normal !important;
+}
+
+/* dark mode: slightly lighter weights so text doesn't glare */
+html.bl-dark .ic-DashboardCard__header-title,
+html.bl-dark .ic-DashboardCard__header-title span {
+  font-weight: 500 !important;
+}
+html.bl-dark .ig-title,
+html.bl-dark .item_name a {
+  font-weight: 500 !important;
 }
