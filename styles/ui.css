@@ -410,7 +410,7 @@ a.bl-credit:hover {
 }
 
 /* banner in dark theme */
-:host(.bl-dark-host) .bl-hero {
+:host-context(html.bl-dark) .bl-hero {
   --bl-hero-text: #f6ecef;
   --bl-hero-muted: #d9c3cb;
   --bl-hero-accent: #f0bcc8;
@@ -418,10 +418,10 @@ a.bl-credit:hover {
     radial-gradient(60% 90% at 85% 20%, rgba(120, 60, 82, 0.6), transparent 70%),
     linear-gradient(120deg, #231a20, #2c1f27 50%, #211a1e);
 }
-:host(.bl-dark-host) .bl-hero-img {
+:host-context(html.bl-dark) .bl-hero-img {
   filter: saturate(0.75) brightness(0.8);
 }
-:host(.bl-dark-host) .bl-hero-wash {
+:host-context(html.bl-dark) .bl-hero-wash {
   background:
     linear-gradient(
       90deg,
@@ -432,16 +432,16 @@ a.bl-credit:hover {
     ),
     rgba(120, 60, 82, 0.15);
 }
-:host(.bl-dark-host) .bl-next,
-:host(.bl-dark-host) .bl-glass-btn {
+:host-context(html.bl-dark) .bl-next,
+:host-context(html.bl-dark) .bl-glass-btn {
   background: rgba(30, 22, 27, 0.6);
   border-color: rgba(255, 255, 255, 0.1);
 }
-:host(.bl-dark-host) a.bl-next:hover,
-:host(.bl-dark-host) .bl-glass-btn:hover {
+:host-context(html.bl-dark) a.bl-next:hover,
+:host-context(html.bl-dark) .bl-glass-btn:hover {
   background: rgba(40, 28, 35, 0.8);
 }
-:host(.bl-dark-host) .bl-focus-input {
+:host-context(html.bl-dark) .bl-focus-input {
   border-bottom-color: rgba(240, 188, 200, 0.4);
 }
 
@@ -474,6 +474,12 @@ a.bl-credit:hover {
 .bl-eyebrow b {
   color: var(--bl-accent);
   font-weight: 700;
+}
+.bl-hello,
+.bl-hero-greet,
+.bl-clock,
+.bl-help h2 {
+  font-family: var(--bl-font-heading, var(--bl-font));
 }
 .bl-hello {
   margin: 0;
@@ -1006,4 +1012,60 @@ kbd {
   .bl-opt[aria-selected="true"] {
     outline: 2px solid Highlight;
   }
+}
+
+/* banner with your own colors */
+:host-context(html.bl-custom-colors) .bl-hero {
+  --bl-hero-text: var(--bl-c-hero-text);
+  --bl-hero-muted: var(--bl-c-hero-muted);
+  --bl-hero-accent: var(--bl-c-hero-accent);
+  background:
+    radial-gradient(
+      60% 90% at 85% 20%,
+      color-mix(in srgb, var(--bl-c-hero-tint) 30%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      50% 80% at 20% 100%,
+      color-mix(in srgb, var(--bl-c-hero-tint) 16%, transparent),
+      transparent 70%
+    ),
+    linear-gradient(
+      120deg,
+      var(--bl-c-hero-bg),
+      color-mix(in srgb, var(--bl-c-hero-bg) 88%, var(--bl-c-hero-tint)) 50%,
+      var(--bl-c-hero-bg)
+    );
+}
+:host-context(html.bl-custom-colors) .bl-hero-wash {
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--bl-c-hero-bg) 92%, transparent) 0%,
+      color-mix(in srgb, var(--bl-c-hero-bg) 78%, transparent) 34%,
+      color-mix(in srgb, var(--bl-c-hero-bg) 35%, transparent) 70%,
+      color-mix(in srgb, var(--bl-c-hero-bg) 20%, transparent) 100%
+    ),
+    color-mix(in srgb, var(--bl-c-hero-tint) 12%, transparent);
+}
+:host-context(html.bl-custom-colors) .bl-hero:not(.has-art) .bl-hero-wash {
+  background: transparent;
+}
+:host-context(html.bl-custom-colors) .bl-next,
+:host-context(html.bl-custom-colors) .bl-glass-btn {
+  background: color-mix(in srgb, var(--bl-surface) 62%, transparent);
+  border-color: color-mix(in srgb, var(--bl-surface) 70%, transparent);
+}
+:host-context(html.bl-custom-colors) a.bl-next:hover,
+:host-context(html.bl-custom-colors) .bl-glass-btn:hover {
+  background: color-mix(in srgb, var(--bl-surface) 85%, transparent);
+}
+:host-context(html.bl-custom-colors) .bl-focus-input {
+  border-bottom-color: color-mix(in srgb, var(--bl-c-hero-accent) 40%, transparent);
+}
+
+/* drop a picture on the banner */
+.bl-hero.is-drop {
+  outline: 3px dashed var(--bl-accent);
+  outline-offset: -8px;
 }

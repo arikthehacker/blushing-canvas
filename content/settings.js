@@ -14,11 +14,14 @@ const DEFAULTS = {
   artSource: "both",
   name: "",
   dockOpen: true,
+  study: true,
 };
 const root = document.documentElement;
 const darkMQ = matchMedia("(prefers-color-scheme: dark)");
 const reduceMQ = matchMedia("(prefers-reduced-motion: reduce)");
 let settings = { ...DEFAULTS };
+let look = null; // custom colors + fonts from the popup
+let lookDark = null; // a custom palette used for both modes decides light or dark itself
 let ready = false;
 
 const store = {
@@ -33,10 +36,8 @@ function applySettings()
 {
   if (settings.theme === "auto") root.removeAttribute("data-bl-theme");
   else root.setAttribute("data-bl-theme", settings.theme);
-  root.classList.toggle("bl-dark", isDark());
-  document
-    .querySelectorAll("#blush-root, #blush-hero")
-    .forEach(h => h.classList.toggle("bl-dark-host", isDark()));
+  lookDark = self.BlushLook ? self.BlushLook.applyLook(look, isDark(), root) : null;
+  root.classList.toggle("bl-dark", lookDark === null ? isDark() : lookDark);
   root.classList.toggle("bl-motion", !settings.calm);
   root.classList.toggle("bl-show-clutter", !settings.hideClutter);
   if (ready)
@@ -50,18 +51,21 @@ function applySettings()
 root.classList.toggle("bl-dark", darkMQ.matches);
 darkMQ.addEventListener("change", applySettings);
 
-store.get("sync", "settings").then(s =>
+Promise.all([store.get("sync", "settings"), store.get("sync", "look")]).then(([s, l]) =>
 {
   settings = { ...DEFAULTS, ...(s || {}) };
+  look = l || null;
   applySettings();
 });
 chrome.storage.onChanged.addListener((changes, area) =>
 {
-  if (area === "sync" && changes.settings)
+  if (area === "sync" && (changes.settings || changes.look))
   {
-    settings = { ...DEFAULTS, ...(changes.settings.newValue || {}) };
+    if (changes.settings) settings = { ...DEFAULTS, ...(changes.settings.newValue || {}) };
+    if (changes.look) look = changes.look.newValue || null;
     applySettings();
   }
+  if (area === "local" && changes["bl:bgimg"]) applyPageImage(changes["bl:bgimg"].newValue || null);
   if (area === "local" && changes["bl:art:current"] && changes["bl:art:current"].newValue)
   {
     if (ready) setArt(changes["bl:art:current"].newValue);

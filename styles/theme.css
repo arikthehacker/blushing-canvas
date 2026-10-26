@@ -128,6 +128,16 @@ textarea,
 #application *:not(i):not([class*="icon"]):not(svg):not(svg *) {
   font-family: var(--bl-font) !important;
 }
+/* heading font (same as body unless you pick one in the popup) */
+#application
+  :is(h1, h2, h3, h4, h5, h6, .ic-Dashboard-header__title, .page-title, .ic-DashboardCard__header-title):not(
+    #bl-none
+  ),
+h1,
+h2,
+h3 {
+  font-family: var(--bl-font-heading, var(--bl-font)) !important;
+}
 #application,
 #wrapper,
 #main,
@@ -640,4 +650,84 @@ html.bl-dark .item_name a {
 .ic-DashboardCard__header_content {
   height: auto !important;
   min-height: 0 !important;
+}
+
+/* ---------- your page background photo ---------- */
+html.bl-has-bgimg body {
+  background-image:
+    linear-gradient(
+      color-mix(in srgb, var(--bl-bg) var(--bl-bg-fade, 70%), transparent),
+      color-mix(in srgb, var(--bl-bg) var(--bl-bg-fade, 70%), transparent)
+    ),
+    var(--bl-page-img) !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-attachment: fixed !important;
+}
+
+/* ---------- your course card photos ---------- */
+.ic-DashboardCard__header {
+  position: relative;
+}
+.bl-photo-card .ic-DashboardCard__header_image,
+.bl-photo-card .ic-DashboardCard__header_hero {
+  background-image: var(--bl-card-img) !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-color: transparent !important;
+  opacity: 1 !important;
+}
+.bl-card-tools {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 3;
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+.ic-DashboardCard:hover .bl-card-tools,
+.ic-DashboardCard:focus-within .bl-card-tools,
+.bl-card-drop .bl-card-tools {
+  opacity: 1;
+}
+.bl-card-btn {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  cursor: pointer;
+  border: 0 !important;
+  border-radius: 10px !important;
+  background: color-mix(in srgb, var(--bl-surface) 82%, transparent) !important;
+  color: var(--bl-text) !important;
+  font-size: 18px;
+  line-height: 1;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+.bl-card-btn[hidden] {
+  display: none !important;
+}
+.bl-card-btn svg {
+  width: 18px;
+  height: 18px;
+}
+.bl-card-btn:focus-visible {
+  outline: 3px solid var(--bl-focus) !important;
+  outline-offset: 2px;
+}
+.bl-card-drop .ic-DashboardCard__header {
+  outline: 3px dashed var(--bl-accent);
+  outline-offset: -6px;
+}
+
+/* ---------- Arik's handwriting: a touch bigger so it reads well ---------- */
+html.bl-hand #application *:not(i):not([class*="icon"]):not(svg):not(svg *) {
+  letter-spacing: 0.01em;
+}
+html.bl-hand body {
+  font-size: 1.06em;
 }

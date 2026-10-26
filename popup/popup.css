@@ -2,7 +2,6 @@
 body {
   margin: 0;
   width: 320px;
-  min-height: 100%;
   font-family: var(--bl-font);
   color: var(--bl-text);
   font-size: 14px;
@@ -214,4 +213,240 @@ kbd {
   font-size: 12px;
   color: var(--bl-muted);
   margin: 6px 0 0;
+}
+.sub {
+  margin: 10px 0 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--bl-text);
+}
+.presets {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+.preset {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border-radius: 10px;
+  border: 1px solid var(--bl-border);
+  background: var(--bl-surface);
+  color: var(--bl-text);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.preset:hover {
+  border-color: var(--bl-border-ui);
+}
+.preset .dots {
+  display: inline-flex;
+}
+.preset .dots i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: -3px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+.roles {
+  display: grid;
+  gap: 4px;
+}
+.role {
+  display: grid;
+  grid-template-columns: 34px 1fr 84px;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 6px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+.role.is-on {
+  border-color: var(--bl-accent);
+  background: var(--bl-accent-soft);
+}
+.role input[type="color"] {
+  width: 34px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--bl-border-ui);
+  border-radius: 8px;
+  background: none;
+  cursor: pointer;
+}
+.role input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 2px;
+}
+.role input[type="color"]::-webkit-color-swatch {
+  border: 0;
+  border-radius: 6px;
+}
+.role span {
+  font-weight: 600;
+  font-size: 13px;
+}
+.role span small {
+  display: block;
+  font-weight: 400;
+  color: var(--bl-muted);
+  font-size: 11px;
+}
+.hex {
+  font: inherit;
+  font-size: 12px;
+  width: 100%;
+  padding: 5px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--bl-border-ui);
+  background: var(--bl-surface);
+  color: var(--bl-text);
+  text-transform: uppercase;
+  box-sizing: border-box;
+}
+.swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+.swatches:empty {
+  display: none;
+}
+.sw {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.14);
+  cursor: pointer;
+  padding: 0;
+}
+.sw:focus-visible,
+.preset:focus-visible,
+.btn:focus-visible {
+  outline: 3px solid var(--bl-focus);
+  outline-offset: 2px;
+}
+.btns {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+.btn {
+  flex: 1;
+  min-height: 34px;
+  border-radius: 10px;
+  border: 1px solid var(--bl-border-ui);
+  background: var(--bl-surface);
+  color: var(--bl-text);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn.primary {
+  background: var(--bl-accent);
+  border-color: var(--bl-accent);
+  color: var(--bl-on-accent);
+}
+.paste {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+.paste .text {
+  flex: 1;
+  min-width: 0;
+  font-size: 12px;
+  padding: 7px 10px;
+}
+.paste .btn {
+  flex: none;
+  padding: 0 12px;
+}
+.warn {
+  font-size: 12px;
+  color: var(--bl-warn);
+  margin: 6px 0 0;
+}
+.warn:empty {
+  display: none;
+}
+.font-status {
+  font-size: 12px;
+  color: var(--bl-muted);
+  margin: 0;
+  min-height: 1em;
+}
+.font-status.bad {
+  color: var(--bl-danger);
+}
+.font-preview {
+  margin: 2px 0 0;
+  font-size: 18px;
+  color: var(--bl-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.link {
+  color: var(--bl-accent-strong);
+  font-weight: 600;
+}
+.hand-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1.5px dashed var(--bl-accent);
+  background: var(--bl-accent-soft);
+  color: var(--bl-text);
+  font: inherit;
+  cursor: pointer;
+}
+.hand-btn b {
+  display: block;
+  font-family: "Arik Hand", var(--bl-font);
+  font-size: 21px;
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--bl-accent-strong);
+}
+.hand-btn small {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--bl-muted);
+}
+.hand-btn[aria-pressed="true"] {
+  border-style: solid;
+  background: var(--bl-accent);
+}
+.hand-btn[aria-pressed="true"] b,
+.hand-btn[aria-pressed="true"] small {
+  color: var(--bl-on-accent);
+}
+.hand-btn:focus-visible {
+  outline: 3px solid var(--bl-focus);
+  outline-offset: 2px;
+}
+.bg-preview {
+  margin-top: 8px;
+  height: 70px;
+  border-radius: 10px;
+  border: 1px solid var(--bl-border);
+  background-size: cover;
+  background-position: center;
+}
+.bg-preview[hidden] {
+  display: none;
+}
+.range {
+  width: 100%;
+  accent-color: var(--bl-accent);
 }

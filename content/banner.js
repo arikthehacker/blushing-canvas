@@ -166,7 +166,6 @@ async function buildHero()
   const host = document.createElement("div");
   host.id = "blush-hero";
   host.className = "bl-hero-host";
-  host.classList.toggle("bl-dark-host", isDark());
   const wrapper = document.getElementById("wrapper") || document.querySelector(".ic-Layout-wrapper");
   if (wrapper) wrapper.prepend(host);
   else document.body.prepend(host);
@@ -177,6 +176,46 @@ async function buildHero()
   section.innerHTML =
     '<div class="bl-hero-img" aria-hidden="true"></div><div class="bl-hero-wash" aria-hidden="true"></div><div class="bl-hero-content"></div>';
   heroRoot.appendChild(section);
+
+  // drop a picture on the banner to add it to your photos and show it right away
+  section.addEventListener("dragover", e =>
+  {
+    if (hasImageDrag(e))
+    {
+      e.preventDefault();
+      section.classList.add("is-drop");
+    }
+  });
+  section.addEventListener("dragleave", () => section.classList.remove("is-drop"));
+  section.addEventListener("drop", async e =>
+  {
+    const file = imageFromDrop(e);
+    section.classList.remove("is-drop");
+    if (!file) return;
+    e.preventDefault();
+    try
+    {
+      const dataUrl = await self.BlushLook.resizeImage(file);
+      const photos = (await store.get("local", "bl:photos")) || [];
+      const id = Math.random().toString(36).slice(2, 10);
+      photos.push({ id, dataUrl });
+      await store.set("local", "bl:photos", photos);
+      await store.set("local", "bl:art:current", {
+        day: dayKey(new Date()),
+        id,
+        kind: "photo",
+        dataUrl,
+        title: "Your photo",
+        artist: "",
+        link: "",
+      });
+      toast("Added to your banner photos.", true);
+    }
+    catch (err)
+    {
+      toast("That picture would not load.");
+    }
+  });
 
   section.addEventListener("submit", e =>
   {

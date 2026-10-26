@@ -107,6 +107,12 @@ function onKeyDown(e)
     toggleDrawer();
     return;
   }
+  if (k === "p" && settings.study)
+  {
+    e.preventDefault();
+    chrome.runtime.sendMessage({ type: "bl:study", act: "toggle" });
+    return;
+  }
   if (k === "?")
   {
     e.preventDefault();

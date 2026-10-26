@@ -21,6 +21,67 @@
   </fieldset>
 
   <fieldset>
+    <legend>Colors</legend>
+    <div class="row"><label for="colorsOn">Use my colors<small>Your palette instead of dusty pink</small></label><input class="switch" type="checkbox" id="colorsOn"></div>
+
+    <p class="sub">Start from a preset</p>
+    <div class="presets" id="presets"></div>
+
+    <p class="sub">Or bring your own palette</p>
+    <label class="add-photo">Upload a palette<input type="file" id="palFile" accept="image/*,.json,.txt,.css,.scss,.gpl,.ase,.hex,.csv"></label>
+    <div class="paste">
+      <input class="text" id="palPaste" placeholder="Paste hex codes or a Coolors link" autocomplete="off" aria-label="Paste hex codes or a Coolors link">
+      <button class="btn" type="button" id="palUse">Use</button>
+    </div>
+    <p class="hint">Works with a palette picture, Coolors links, .ase, .gpl, or any file with hex codes.</p>
+    <div class="swatches" id="palette" aria-label="Your palette"></div>
+    <p class="hint" id="palHint" hidden>Pick a role below, then tap a swatch to use it there.</p>
+
+    <p class="sub">Roles</p>
+    <div class="roles" id="roles"></div>
+    <p class="warn" id="contrastWarn" role="status"></p>
+
+    <div class="field" style="padding-top:10px">
+      <span id="apply-label" style="font-weight:600">Use these colors in</span>
+      <div class="seg" role="radiogroup" aria-labelledby="apply-label">
+        <input type="radio" name="applyTo" id="a-both" value="both"><label for="a-both">Both</label>
+        <input type="radio" name="applyTo" id="a-light" value="light"><label for="a-light">Light</label>
+        <input type="radio" name="applyTo" id="a-dark" value="dark"><label for="a-dark">Dark</label>
+      </div>
+    </div>
+    <div class="btns">
+      <button class="btn" type="button" id="autoLight">Auto-pick light</button>
+      <button class="btn" type="button" id="autoDark">Auto-pick dark</button>
+    </div>
+    <div class="btns"><button class="btn" type="button" id="resetColors">Back to Blush pink</button></div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Handwriting</legend>
+    <button class="hand-btn" type="button" id="hand" aria-pressed="false">
+      <b>Toggle Arik's handwriting for all your Canvas material...</b>
+      <small id="handState">Off. Tap to write everything by hand.</small>
+    </button>
+  </fieldset>
+
+  <fieldset>
+    <legend>Fonts</legend>
+    <div class="field">
+      <label for="fontBody">Body font</label>
+      <input class="text" id="fontBody" placeholder="Google Fonts link or font name" autocomplete="off" spellcheck="false">
+      <p class="font-status" id="fontBodyStatus" role="status"></p>
+      <p class="font-preview" id="fontBodyPreview">Due Friday: Lab 4 write-up</p>
+    </div>
+    <div class="field">
+      <label for="fontHeading">Heading font</label>
+      <input class="text" id="fontHeading" placeholder="Same as body if empty" autocomplete="off" spellcheck="false">
+      <p class="font-status" id="fontHeadingStatus" role="status"></p>
+      <p class="font-preview" id="fontHeadingPreview" style="font-weight:700">Good morning</p>
+    </div>
+    <p class="hint">Find one on <a class="link" href="https://fonts.google.com" target="_blank" rel="noopener">Google Fonts</a>, copy the page link or the embed link, and paste it here. Clear the box to go back to the default.</p>
+  </fieldset>
+
+  <fieldset>
     <legend>You</legend>
     <div class="field"><label for="name">Name in the greeting</label><input class="text" id="name" placeholder="Uses your Canvas name if empty" maxlength="30" autocomplete="off"></div>
   </fieldset>
@@ -42,6 +103,25 @@
   </fieldset>
 
   <fieldset>
+    <legend>Photos</legend>
+    <div class="field">
+      <span style="font-weight:600">Page background</span>
+      <div class="bg-preview" id="bgPreview" hidden></div>
+      <label class="add-photo" id="bgAddLabel">Add a background photo<input type="file" id="bgFile" accept="image/*"></label>
+      <div class="btns" id="bgTools" hidden><button class="btn" type="button" id="bgRemove">Remove background</button></div>
+      <label for="bgFade" style="font-weight:600;margin-top:6px">Soften the photo<small style="display:block;font-weight:400;color:var(--bl-muted);font-size:12px">More softening keeps text easy to read</small></label>
+      <input class="range" type="range" id="bgFade" min="0" max="95" step="5">
+    </div>
+    <p class="hint">Course cards: hover a card on the dashboard and tap the camera, or drop a picture right on it. You can drop pictures on the banner too.</p>
+  </fieldset>
+
+  <fieldset>
+    <legend>Study buddy</legend>
+    <div class="row"><label for="study">Study timer<small>Pomodoro with a pet and a garden that grows every 25 minutes</small></label><input class="switch" type="checkbox" id="study"></div>
+    <p class="hint">Press <kbd>P</kbd> on Canvas to start or pause. Tap the pet's name to rename it.</p>
+  </fieldset>
+
+  <fieldset>
     <legend>Speed and focus</legend>
     <div class="row"><label for="calm">Calm mode<small>Turns off Canvas animations</small></label><input class="switch" type="checkbox" id="calm"></div>
     <div class="row"><label for="hideClutter">Declutter<small>Hides footer, card images, duplicate to-do</small></label><input class="switch" type="checkbox" id="hideClutter"></div>
@@ -51,6 +131,7 @@
   </fieldset>
   <p class="foot"><kbd>Ctrl</kbd> + <kbd>K</kbd> opens quick jump on any Canvas page.</p>
 </main>
+<script src="../shared/look.js"></script>
 <script src="popup.js"></script>
 </body>
 </html>

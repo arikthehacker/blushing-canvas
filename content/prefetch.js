@@ -35,33 +35,8 @@ function isSafeUrl(url)
 }
 const specSupported = () => HTMLScriptElement.supports && HTMLScriptElement.supports("speculationrules");
 
-let hoverPrefetchOn = false;
-const prefetched = new Set();
-function hoverPrefetch(e)
-{
-  if (!settings.prefetch) return;
-  const a = e.target && e.target.closest && e.target.closest("a[href]");
-  if (!a || a.hasAttribute("download") || a.hasAttribute("data-method") || a.target === "_blank") return;
-  const url = a.href;
-  if (prefetched.has(url) || !isSafeUrl(url) || url.split("#")[0] === location.href.split("#")[0]) return;
-  const t = setTimeout(() =>
-  {
-    prefetched.add(url);
-    const l = document.createElement("link");
-    l.rel = "prefetch";
-    l.href = url;
-    document.head.appendChild(l);
-  }, 90);
-  a.addEventListener("mouseleave", () => clearTimeout(t), { once: true });
-}
 function installSpeculation()
 {
-  if (!specSupported() && !hoverPrefetchOn)
-  {
-    hoverPrefetchOn = true;
-    document.addEventListener("mouseover", hoverPrefetch, { passive: true });
-    document.addEventListener("focusin", hoverPrefetch);
-  }
   const old = document.getElementById("bl-spec");
   if (old) old.remove();
   if (!settings.prefetch || !specSupported()) return;

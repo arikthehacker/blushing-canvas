@@ -14,7 +14,6 @@ async function buildUI()
 
   const host = document.createElement("div");
   host.id = "blush-root";
-  host.classList.toggle("bl-dark-host", isDark());
   document.body.appendChild(host);
   uiRoot = await makeShadow(host);
 
@@ -63,6 +62,7 @@ async function buildUI()
             <tr><th colspan="2" scope="colgroup">Anywhere</th></tr>
             <tr><td><kbd>Ctrl</kbd> + <kbd>K</kbd> or <kbd>/</kbd></td><td>Quick jump</td></tr>
             <tr><td><kbd>T</kbd></td><td>Open or close the to-do panel</td></tr>
+            <tr><td><kbd>P</kbd></td><td>Start or pause the study timer</td></tr>
             <tr><td><kbd>1</kbd> to <kbd>9</kbd></td><td>Open your 1st to 9th course</td></tr>
             <tr><td><kbd>G</kbd> then <kbd>D</kbd></td><td>Dashboard</td></tr>
             <tr><td><kbd>G</kbd> then <kbd>K</kbd></td><td>Calendar</td></tr>

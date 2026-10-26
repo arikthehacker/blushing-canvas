@@ -1,5 +1,13 @@
 # changelog
 
+## 2.5.0
+
+- colors: six presets, or upload a palette (a picture, a coolors link, .ase, .gpl or anything with hex codes) and tap roles to fill them
+- fonts: paste any google fonts link or font name for body text and headings
+- handwriting: one button switches all of canvas to arik hand
+- photos: a page background, pictures on course cards, and drag and drop onto the banner
+- study buddy: a pomodoro timer (15, 25 or 50 minutes) with a pet named mochi. every 25 focused minutes plants a flower in your garden, and the timer keeps going across pages
+
 ## 2.4.0
 
 - the course code line under each card title is smaller and fainter

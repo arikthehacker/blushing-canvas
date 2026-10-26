@@ -26,7 +26,7 @@ const DF_SKIP_TAGS = new Set([
   "math",
 ]);
 const DF_SKIP_SEL =
-  "#blush-root, #blush-hero, .ic-DashboardCard__header_hero, .ic-DashboardCard__header_image, .mce-tinymce, .tox";
+  "#blush-root, #blush-hero, #blush-study, .bl-card-tools, .ic-DashboardCard__header_hero, .ic-DashboardCard__header_image, .mce-tinymce, .tox";
 const dfApplied = new WeakMap();
 const dfQueue = [];
 let dfScheduled = false;
@@ -68,13 +68,52 @@ function hslOf(c)
 }
 const isBlue = hsl => hsl.s > 0.35 && hsl.h >= 190 && hsl.h <= 235;
 
+// colors that already come from Blush (or your own palette) are never "Canvas blue",
+// so a teal or blue palette does not get re-tinted by the fixer
+const DF_TOKENS = [
+  "--bl-text",
+  "--bl-muted",
+  "--bl-accent",
+  "--bl-accent-strong",
+  "--bl-surface",
+  "--bl-surface-2",
+  "--bl-bg",
+  "--bl-nav",
+  "--bl-nav-text",
+  "--bl-nav-muted",
+  "--bl-on-accent",
+  "--bl-border",
+  "--bl-border-ui",
+  "--bl-accent-soft",
+];
+let dfOwn = new Set();
+function dfReadTokens()
+{
+  const cs = getComputedStyle(root);
+  dfOwn = new Set();
+  DF_TOKENS.forEach(k =>
+  {
+    let h = cs.getPropertyValue(k).trim().replace("#", "");
+    if (h.length === 3)
+      h = h
+        .split("")
+        .map(c => c + c)
+        .join("");
+    if (/^[0-9a-f]{6}$/i.test(h))
+      dfOwn.add(
+        `${parseInt(h.slice(0, 2), 16)},${parseInt(h.slice(2, 4), 16)},${parseInt(h.slice(4, 6), 16)}`,
+      );
+  });
+}
+const dfIsOwn = c => dfOwn.has(`${Math.round(c.r)},${Math.round(c.g)},${Math.round(c.b)}`);
+
 function dfDecide(el)
 {
   const cs = getComputedStyle(el);
   const out = { cls: [], vars: null };
   const bg = parseRGB(cs.backgroundColor);
   const leaf = !el.firstElementChild && !el.textContent.trim();
-  if (bg && bg.a > 0.4 && !/url\(/.test(cs.backgroundImage))
+  if (bg && bg.a > 0.4 && !dfIsOwn(bg) && !/url\(/.test(cs.backgroundImage))
   {
     const L = lumOf(bg),
       hsl = hslOf(bg);
@@ -93,7 +132,7 @@ function dfDecide(el)
     }
   }
   const fg = parseRGB(cs.color);
-  if (fg)
+  if (fg && !dfIsOwn(fg))
   {
     const L = lumOf(fg),
       hsl = hslOf(fg);
@@ -143,6 +182,7 @@ function dfFlush()
   dfScheduled = false;
   const batch = dfQueue.splice(0, 1500);
   // read everything first, then write, so the browser recalculates styles once per batch
+  dfReadTokens();
   const decisions = batch.map(el => (el.isConnected ? dfDecide(el) : null));
   batch.forEach((el, i) =>
   {
@@ -187,6 +227,7 @@ function cleanCardTitles(scope)
 function startColorFixer()
 {
   cleanCardTitles(document.body);
+  decorateCards(document.body);
   dfEnqueue(document.body);
   new MutationObserver(records =>
   {
@@ -197,6 +238,7 @@ function startColorFixer()
         {
           dfEnqueue(n);
           cleanCardTitles(n);
+          decorateCards(n);
         });
       else if (r.type === "attributes")
       {

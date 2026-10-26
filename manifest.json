@@ -1,16 +1,22 @@
 {
   "manifest_version": 3,
   "name": "Blush for Canvas",
-  "version": "2.4.0",
-  "description": "A dusty-pink, fast, accessible Canvas: quick jump, shortcuts, instant navigation, and a to-do panel that cheers you on.",
+  "version": "2.5.0",
+  "description": "A dusty-pink, fast, accessible Canvas: quick jump, shortcuts, your own colors and fonts, a study timer with a garden and a pet, and a to-do panel that cheers you on.",
   "icons": {
     "16": "icons/icon16.png",
     "32": "icons/icon32.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   },
-  "permissions": ["storage", "unlimitedStorage"],
-  "host_permissions": ["https://*.instructure.com/*", "https://api.artic.edu/*", "https://www.artic.edu/*"],
+  "permissions": ["storage", "unlimitedStorage", "alarms", "notifications"],
+  "host_permissions": [
+    "https://*.instructure.com/*",
+    "https://api.artic.edu/*",
+    "https://www.artic.edu/*",
+    "https://fonts.googleapis.com/*",
+    "https://fonts.gstatic.com/*"
+  ],
   "action": {
     "default_popup": "popup/popup.html",
     "default_title": "Blush for Canvas"
@@ -20,6 +26,8 @@
       "matches": ["https://*.instructure.com/*"],
       "css": ["styles/theme.css"],
       "js": [
+        "shared/look.js",
+        "content/study.js",
         "content/settings.js",
         "content/canvas.js",
         "content/helpers.js",
@@ -32,6 +40,7 @@
         "content/keyboard.js",
         "content/recents.js",
         "content/banner.js",
+        "content/photos.js",
         "content/color-fixer.js",
         "content/ui.js",
         "content/main.js"
@@ -42,15 +51,11 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["styles/ui.css"],
+      "resources": ["styles/ui.css", "styles/study.css", "fonts/*"],
       "matches": ["https://*.instructure.com/*"]
     }
   ],
   "background": {
     "service_worker": "background.js"
-  },
-  "options_ui": {
-    "page": "popup/popup.html",
-    "open_in_tab": true
   }
 }
