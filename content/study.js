@@ -7,9 +7,8 @@
 
   const KEY = "bl:study";
   const UI_KEY = "bl:study:ui";
-  const reduceMQ = matchMedia("(prefers-reduced-motion: reduce)");
   let state = null;
-  let settings = { study: true, calm: true };
+  let settings = { study: true, calm: true, petWalk: true };
   let ui = { open: true };
   let host = null,
     sr = null,
@@ -29,8 +28,8 @@
         r(res);
       }),
     );
-  // the pet always moves (calm mode only quiets Canvas itself); reduced motion still stops it
-  const motion = () => !reduceMQ.matches;
+  // your buddy walks unless you switch walking off in the popup
+  const motion = () => settings.petWalk !== false;
 
   // ---------------------------------------------------------------- art
   const PETAL = ["var(--bl-accent)", "#EBA2B6", "#F2C46D", "#B9A6E3", "#F4A6A0", "#8FCBB0"];
@@ -185,7 +184,8 @@
     }
     else if (act === "pet")
     {
-      say(QUIPS[Math.floor(Math.random() * QUIPS.length)], 3200);
+      // tapping shows how the session is going, or a quip
+      say(Math.random() < 0.45 ? line(state) : QUIPS[Math.floor(Math.random() * QUIPS.length)], 3200);
       hop();
     }
     else
@@ -386,7 +386,7 @@
             <div class="sb-info">
               <p class="sb-mode">${esc(modeLabel(state))}</p>
               <p class="sb-time" aria-live="off">${fmt(leftMs(state))}</p>
-              <p class="sb-line" aria-live="polite">${esc(line(state))}</p>
+              <p class="sb-line" aria-live="polite"></p>
             </div>
           </div>
           <div class="sb-controls">
@@ -664,7 +664,6 @@
 
   function onState(next)
   {
-    const prev = state;
     const prevDone = seenDone;
     state = next;
     seenDone = state.lastDone || 0;
@@ -675,9 +674,7 @@
     {
       hearts();
       hop();
-      say("New sprout! A statistically significant result.", 4200);
     }
-    else if (prev && (prev.running !== state.running || prev.mode !== state.mode)) say(line(state));
   }
 
   // ---------------------------------------------------------------- start
@@ -685,8 +682,9 @@
   {
     const [{ settings: s }, local] = await Promise.all([
       new Promise(r => chrome.storage.sync.get("settings", r)),
-      new Promise(r => chrome.storage.local.get([KEY, UI_KEY], r)),
+      new Promise(r => chrome.storage.local.get([KEY, UI_KEY, "bl:pet:custom"], r)),
     ]);
+    self.BlushPets.setCustom(local["bl:pet:custom"]);
     settings = { ...settings, ...(s || {}) };
     ui = { ...ui, ...(local[UI_KEY] || {}) };
     await build();
@@ -716,6 +714,12 @@
 
     chrome.storage.onChanged.addListener((changes, area) =>
     {
+      if (area === "local" && changes["bl:pet:custom"])
+      {
+        self.BlushPets.setCustom(changes["bl:pet:custom"].newValue);
+        lastKind = ""; // redraw the buddy
+        render(true);
+      }
       if (area === "local" && changes[KEY] && changes[KEY].newValue) onState(changes[KEY].newValue);
       if (area === "sync" && changes.settings)
       {

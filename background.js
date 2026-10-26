@@ -440,6 +440,7 @@ async function studyAct(msg)
         duck: "Puddle",
         bear: "Honey",
         penguin: "Pebble",
+        custom: "Buddy",
       };
       if (NAMES[msg.kind])
       {

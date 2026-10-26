@@ -253,8 +253,48 @@
 .sb-ground.is-motion:not(.is-walk) .sb-flip {
   animation-play-state: paused;
 }
-.sb-ground.is-motion.is-walk .sb-petbtn svg {
+.sb-ground.is-motion.is-walk .sb-petbtn > * {
   animation: sb-step 0.42s ease-in-out infinite alternate;
+}
+/* your own pet: two-frame waddle when you upload a walking step */
+.sb-pet-custom {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.sb-pet-custom img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: 50% 100%;
+}
+.sb-ground.is-motion.is-walk .sb-pet-custom.has-step .sb-f1 {
+  animation: sb-frame-a 0.5s steps(1) infinite;
+}
+.sb-ground.is-motion.is-walk .sb-pet-custom.has-step .sb-f2 {
+  animation: sb-frame-b 0.5s steps(1) infinite;
+}
+.sb-pet-custom.has-step .sb-f2 {
+  opacity: 0;
+}
+@keyframes sb-frame-a {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+@keyframes sb-frame-b {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 .sb-ground.is-motion .sb-blink {
   animation: sb-blink 5s infinite;
@@ -418,12 +458,5 @@
   100% {
     opacity: 0;
     transform: translateY(-40px) scale(1.1);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .sb-ground * {
-    animation: none !important;
-    transition: none !important;
   }
 }

@@ -1,5 +1,13 @@
 # changelog
 
+## 3.0.1
+
+- real twinkling stars over soft gradients made from your current colors, on the stars banner and the calm screen
+- your buddy always walks back and forth now. turn it off under study buddy > walks around
+- draw your own buddy: upload PNG poses in the popup, with a template to trace in templates/
+- on super declutter your buddy holds a YOU GOT THIS!!! sign. tap it for a secret quote
+- your buddy only talks when you tap it
+
 ## 2.9.0
 
 - super declutter cheers "YOU GOT THIS!!!" over a sky of twinkly stars

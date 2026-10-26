@@ -48,6 +48,7 @@ function applySettings()
     applyDock();
     renderHero();
     renderCalm();
+    skies.forEach(k => k.refresh()); // stars pick up new palette colors
   }
 }
 root.classList.toggle("bl-dark", darkMQ.matches);

@@ -176,8 +176,9 @@ async function buildHero()
   const section = document.createElement("section");
   section.className = "bl-hero";
   section.setAttribute("aria-label", "Today");
-  section.innerHTML = `<div class="bl-hero-img" aria-hidden="true"></div><div class="bl-hero-wash" aria-hidden="true"></div><div class="bl-stars bl-hero-stars" aria-hidden="true">${starsHTML(90)}</div><div class="bl-hero-content"></div>`;
+  section.innerHTML = `<div class="bl-hero-img" aria-hidden="true"></div><div class="bl-hero-wash" aria-hidden="true"></div><div class="bl-hero-stars" aria-hidden="true"></div><div class="bl-hero-content"></div>`;
   heroRoot.appendChild(section);
+  heroSky = mountSky(section.querySelector(".bl-hero-stars"), "night");
 
   // drop a picture on the banner to add it to your photos and show it right away
   section.addEventListener("dragover", e =>
@@ -261,7 +262,7 @@ async function buildHero()
     }
     else if (act === "shuffle" && settings.artSource === "stars")
     {
-      heroRoot.querySelector(".bl-hero-stars").innerHTML = starsHTML(90); // a fresh sky
+      if (heroSky) heroSky.reseed(); // a fresh sky
     }
     else if (act === "shuffle")
     {

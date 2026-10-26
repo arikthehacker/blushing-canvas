@@ -488,3 +488,71 @@ kbd {
   outline: 3px solid var(--bl-focus);
   outline-offset: 2px;
 }
+.pet .pet-svg.sb-pet-custom {
+  position: relative;
+  display: block;
+  width: 44px;
+  height: 44px;
+}
+.pet .sb-pet-custom img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.pet .sb-pet-custom .sb-f2 {
+  display: none;
+}
+.poses {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+.pose {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+  padding: 6px 2px;
+  border-radius: 12px;
+  border: 1px dashed var(--bl-border-ui);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+}
+.pose:focus-within {
+  outline: 3px solid var(--bl-focus);
+  outline-offset: 2px;
+}
+.pose input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+.pose .pv {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background: var(--bl-surface-2) center / contain no-repeat;
+}
+.pose small {
+  color: var(--bl-muted);
+  font-weight: 400;
+  font-size: 10px;
+}
+.pose .x {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 18px;
+  height: 18px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--bl-surface);
+  color: var(--bl-text);
+  font: inherit;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+}

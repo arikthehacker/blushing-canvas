@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1184" height="366" viewBox="0 0 1184 366">
+  <text x="32" y="30" font-size="16" font-weight="700" fill="#2A2025" font-family="Inter, Arial, sans-serif">Blush study buddy template</text>
+  <text x="32" y="50" font-size="11.5" fill="#6B5A61" font-family="Inter, Arial, sans-serif">Each box is 256 × 256 px. Draw one pose per box on a new layer, hide this guide layer, then export each box as its own transparent PNG.</text>
+  <text x="32" y="80" font-size="11" font-weight="700" letter-spacing="1.5" fill="#A3526A" font-family="Inter, Arial, sans-serif">STANDING</text>
+  <text x="288" y="80" text-anchor="end" font-size="10" fill="#6B5A61" font-family="Inter, Arial, sans-serif">needed · facing right</text>
+  <g transform="translate(32 92)">
+  <rect x=".5" y=".5" width="255" height="255" rx="6" fill="none" stroke="#B58A96" stroke-width="1"/>
+  <circle cx="128" cy="136" r="108" fill="none" stroke="#B58A96" stroke-width="1" stroke-dasharray="3 5" opacity=".7"/>
+  <line x1="128" y1="8" x2="128" y2="248" stroke="#B58A96" stroke-width="1" stroke-dasharray="2 6" opacity=".6"/>
+  <line x1="8" y1="240" x2="248" y2="240" stroke="#7DAF7F" stroke-width="1.5"/>
+  <text x="12" y="234" font-size="9" fill="#6A9C6E" font-family="Inter, Arial, sans-serif">feet on this line</text>
+  <path d="M206 22 h28 m-6 -5 l6 5 l-6 5" fill="none" stroke="#B58A96" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="200" y="40" font-size="8.5" fill="#B58A96" font-family="Inter, Arial, sans-serif">faces right</text>
+  <g transform="scale(4)" fill="none" stroke="#D9C2C9" stroke-width=".45" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M32 9 C30 4 33.5 1.5 37 2.5 C36.5 6 34.5 8.5 32 9Z"/><path d="M32 10 V13"/>
+  <ellipse cx="17" cy="20" rx="5" ry="6" transform="rotate(-18 17 20)"/><ellipse cx="47" cy="20" rx="5" ry="6" transform="rotate(18 47 20)"/>
+  <path d="M32 12 C47 12 55 23 55 36 C55 49 45 56 32 56 C19 56 9 49 9 36 C9 23 17 12 32 12Z"/>
+  <ellipse cx="19.5" cy="39" rx="4" ry="2.6"/><ellipse cx="44.5" cy="39" rx="4" ry="2.6"/><ellipse cx="25" cy="33" rx="2.4" ry="3"/><ellipse cx="39" cy="33" rx="2.4" ry="3"/><path d="M29 39.5 q3 3 6 0"/></g>
+</g><text x="320" y="80" font-size="11" font-weight="700" letter-spacing="1.5" fill="#A3526A" font-family="Inter, Arial, sans-serif">WALKING STEP</text>
+  <text x="576" y="80" text-anchor="end" font-size="10" fill="#6B5A61" font-family="Inter, Arial, sans-serif">lean forward, lift a foot</text>
+  <g transform="translate(320 92)">
+  <rect x=".5" y=".5" width="255" height="255" rx="6" fill="none" stroke="#B58A96" stroke-width="1"/>
+  <circle cx="128" cy="136" r="108" fill="none" stroke="#B58A96" stroke-width="1" stroke-dasharray="3 5" opacity=".7"/>
+  <line x1="128" y1="8" x2="128" y2="248" stroke="#B58A96" stroke-width="1" stroke-dasharray="2 6" opacity=".6"/>
+  <line x1="8" y1="240" x2="248" y2="240" stroke="#7DAF7F" stroke-width="1.5"/>
+  <text x="12" y="234" font-size="9" fill="#6A9C6E" font-family="Inter, Arial, sans-serif">feet on this line</text>
+  <path d="M206 22 h28 m-6 -5 l6 5 l-6 5" fill="none" stroke="#B58A96" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="200" y="40" font-size="8.5" fill="#B58A96" font-family="Inter, Arial, sans-serif">faces right</text>
+  <g transform="scale(4)" fill="none" stroke="#D9C2C9" stroke-width=".45" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M32 9 C30 4 33.5 1.5 37 2.5 C36.5 6 34.5 8.5 32 9Z"/><path d="M32 10 V13"/>
+  <ellipse cx="17" cy="20" rx="5" ry="6" transform="rotate(-18 17 20)"/><ellipse cx="47" cy="20" rx="5" ry="6" transform="rotate(18 47 20)"/>
+  <path d="M32 12 C47 12 55 23 55 36 C55 49 45 56 32 56 C19 56 9 49 9 36 C9 23 17 12 32 12Z"/>
+  <ellipse cx="19.5" cy="39" rx="4" ry="2.6"/><ellipse cx="44.5" cy="39" rx="4" ry="2.6"/><ellipse cx="25" cy="33" rx="2.4" ry="3"/><ellipse cx="39" cy="33" rx="2.4" ry="3"/><path d="M29 39.5 q3 3 6 0"/><path d="M40 57 q4 -4 8 -2" stroke-dasharray="1.2 1.2"/></g>
+</g><text x="608" y="80" font-size="11" font-weight="700" letter-spacing="1.5" fill="#A3526A" font-family="Inter, Arial, sans-serif">STUDYING</text>
+  <text x="864" y="80" text-anchor="end" font-size="10" fill="#6B5A61" font-family="Inter, Arial, sans-serif">shown while you focus</text>
+  <g transform="translate(608 92)">
+  <rect x=".5" y=".5" width="255" height="255" rx="6" fill="none" stroke="#B58A96" stroke-width="1"/>
+  <circle cx="128" cy="136" r="108" fill="none" stroke="#B58A96" stroke-width="1" stroke-dasharray="3 5" opacity=".7"/>
+  <line x1="128" y1="8" x2="128" y2="248" stroke="#B58A96" stroke-width="1" stroke-dasharray="2 6" opacity=".6"/>
+  <line x1="8" y1="240" x2="248" y2="240" stroke="#7DAF7F" stroke-width="1.5"/>
+  <text x="12" y="234" font-size="9" fill="#6A9C6E" font-family="Inter, Arial, sans-serif">feet on this line</text>
+  <path d="M206 22 h28 m-6 -5 l6 5 l-6 5" fill="none" stroke="#B58A96" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="200" y="40" font-size="8.5" fill="#B58A96" font-family="Inter, Arial, sans-serif">faces right</text>
+  <g transform="scale(4)" fill="none" stroke="#D9C2C9" stroke-width=".45" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M32 9 C30 4 33.5 1.5 37 2.5 C36.5 6 34.5 8.5 32 9Z"/><path d="M32 10 V13"/>
+  <ellipse cx="17" cy="20" rx="5" ry="6" transform="rotate(-18 17 20)"/><ellipse cx="47" cy="20" rx="5" ry="6" transform="rotate(18 47 20)"/>
+  <path d="M32 12 C47 12 55 23 55 36 C55 49 45 56 32 56 C19 56 9 49 9 36 C9 23 17 12 32 12Z"/>
+  <ellipse cx="19.5" cy="39" rx="4" ry="2.6"/><ellipse cx="44.5" cy="39" rx="4" ry="2.6"/><path d="M22 33 q3 2.4 6 0 M36 33 q3 2.4 6 0"/><path d="M30 40 h4"/><path d="M20 47 L32 45 L44 47 V57 L32 55 L20 57Z"/></g>
+</g><text x="896" y="80" font-size="11" font-weight="700" letter-spacing="1.5" fill="#A3526A" font-family="Inter, Arial, sans-serif">HAPPY</text>
+  <text x="1152" y="80" text-anchor="end" font-size="10" fill="#6B5A61" font-family="Inter, Arial, sans-serif">breaks + new plants</text>
+  <g transform="translate(896 92)">
+  <rect x=".5" y=".5" width="255" height="255" rx="6" fill="none" stroke="#B58A96" stroke-width="1"/>
+  <circle cx="128" cy="136" r="108" fill="none" stroke="#B58A96" stroke-width="1" stroke-dasharray="3 5" opacity=".7"/>
+  <line x1="128" y1="8" x2="128" y2="248" stroke="#B58A96" stroke-width="1" stroke-dasharray="2 6" opacity=".6"/>
+  <line x1="8" y1="240" x2="248" y2="240" stroke="#7DAF7F" stroke-width="1.5"/>
+  <text x="12" y="234" font-size="9" fill="#6A9C6E" font-family="Inter, Arial, sans-serif">feet on this line</text>
+  <path d="M206 22 h28 m-6 -5 l6 5 l-6 5" fill="none" stroke="#B58A96" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="200" y="40" font-size="8.5" fill="#B58A96" font-family="Inter, Arial, sans-serif">faces right</text>
+  <g transform="scale(4)" fill="none" stroke="#D9C2C9" stroke-width=".45" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M32 9 C30 4 33.5 1.5 37 2.5 C36.5 6 34.5 8.5 32 9Z"/><path d="M32 10 V13"/>
+  <ellipse cx="17" cy="20" rx="5" ry="6" transform="rotate(-18 17 20)"/><ellipse cx="47" cy="20" rx="5" ry="6" transform="rotate(18 47 20)"/>
+  <path d="M32 12 C47 12 55 23 55 36 C55 49 45 56 32 56 C19 56 9 49 9 36 C9 23 17 12 32 12Z"/>
+  <ellipse cx="19.5" cy="39" rx="4" ry="2.6"/><ellipse cx="44.5" cy="39" rx="4" ry="2.6"/><path d="M22 34 q3 -3.4 6 0 M36 34 q3 -3.4 6 0"/><path d="M29 39.5 q3 3 6 0"/></g>
+</g>
+</svg>

@@ -1,6 +1,65 @@
 // Super declutter: hides the dashboard except what is due before midnight tonight.
 "use strict";
 
+// your buddy holds the sign, and tapping the sign shows another secret quote
+const CALM_QUOTES = [
+  "Procrastination is just a high learning rate on the wrong objective. Retune and go.",
+  "Every model starts with random weights. Starting messy still counts as starting.",
+  "You do not need the global optimum tonight. A good local one ships.",
+  "Gradient descent never sees the whole mountain. It only takes the next step. So can you.",
+  "Loss is always highest at epoch one. That is not failure. That is the beginning.",
+  "Overthinking is just overfitting to test cases that will never show up.",
+  "Small steady updates beat one giant step that diverges.",
+  "Your capacity is far larger than this assignment's parameter count.",
+  "Even the biggest transformer reads one token at a time.",
+  "Convergence is not about speed. It is about not stopping.",
+  "Your prior said you could not. The evidence keeps saying you can.",
+  "Momentum is real. The first step is the hardest, and then you accelerate.",
+  "Done is a better metric than perfect.",
+  "Universal approximation theorem: with enough small steps, you can learn anything.",
+  "Noise is normal. The signal is you showing up anyway.",
+  "Nobody remembers the failed runs. They remember what you shipped.",
+];
+let calmQuote = "";
+let calmPet = { kind: "mochi", name: "Mochi" };
+store.get("local", "bl:study").then(st =>
+{
+  if (st) calmPet = { kind: st.petKind || "mochi", name: st.petName || "Mochi" };
+});
+store.get("local", "bl:pet:custom").then(c =>
+{
+  if (self.BlushPets) self.BlushPets.setCustom(c);
+});
+chrome.storage.onChanged.addListener((ch, area) =>
+{
+  if (area !== "local") return;
+  if (ch["bl:study"] && ch["bl:study"].newValue)
+  {
+    const st = ch["bl:study"].newValue;
+    const changed = st.petKind !== calmPet.kind;
+    calmPet = { kind: st.petKind || "mochi", name: st.petName || "Mochi" };
+    if (changed && calmOn()) renderCalm();
+  }
+});
+const pickQuote = () =>
+{
+  let q = calmQuote;
+  while (q === calmQuote) q = CALM_QUOTES[Math.floor(Math.random() * CALM_QUOTES.length)];
+  calmQuote = q;
+};
+function calmBuddyHTML()
+{
+  const pet = self.BlushPets ? self.BlushPets.svg(calmPet.kind, "happy", "bl-calm-pet-art") : "";
+  return `<div class="bl-calm-buddy">
+      <span class="bl-calm-spark is-a" aria-hidden="true">✦</span><span class="bl-calm-spark is-b" aria-hidden="true">✧</span><span class="bl-calm-spark is-c" aria-hidden="true">✦</span>
+      <button class="bl-calm-sign" type="button" data-calm-quote aria-label="YOU GOT THIS! Tap for another quote from ${esc(calmPet.name)}">
+        <span class="bl-calm-sign-board">YOU GOT THIS!!!</span>
+        <span class="bl-calm-stick is-l" aria-hidden="true"></span><span class="bl-calm-stick is-r" aria-hidden="true"></span>
+      </button>
+      <button class="bl-calm-pet" type="button" data-calm-quote aria-label="Tap ${esc(calmPet.name)} for a secret quote">${pet}</button>
+    </div>
+    <p class="bl-calm-quote" aria-live="polite"${calmQuote ? "" : " hidden"}>${esc(calmQuote)}</p>`;
+}
 // On the dashboard, hides everything except what is due before midnight tonight.
 const calmOn = () => !!settings.stress && location.pathname === "/";
 function tonightItems()
@@ -58,7 +117,8 @@ function renderCalm()
     el.setAttribute("aria-modal", "true");
     el.setAttribute("aria-labelledby", "bl-calm-h");
     uiRoot.appendChild(el);
-    el.innerHTML = `<div class="bl-stars bl-calm-sky" aria-hidden="true">${starsHTML(70)}</div><div class="bl-calm-wrap"></div>`;
+    el.innerHTML = '<div class="bl-calm-sky" aria-hidden="true"></div><div class="bl-calm-wrap"></div>';
+    mountSky(el.querySelector(".bl-calm-sky"), "day");
     el.addEventListener("change", e =>
     {
       const key = e.target.dataset.calm;
@@ -69,6 +129,27 @@ function renderCalm()
     });
     el.addEventListener("click", e =>
     {
+      if (e.target.closest("[data-calm-quote]"))
+      {
+        pickQuote();
+        const q = el.querySelector(".bl-calm-quote");
+        if (q)
+        {
+          q.textContent = calmQuote;
+          q.hidden = false;
+        }
+        const pet = el.querySelector(".bl-calm-pet");
+        if (pet && pet.animate && !reduceMQ.matches)
+          pet.animate(
+            [
+              { transform: "translateY(0)" },
+              { transform: "translateY(-14px)" },
+              { transform: "translateY(0)" },
+            ],
+            { duration: 500, easing: "ease-out" },
+          );
+        return;
+      }
       if (e.target.closest("[data-calm-exit]"))
       {
         settings.stress = false;
@@ -79,6 +160,7 @@ function renderCalm()
     });
   }
   const wasHidden = el.hidden;
+  if (wasHidden) calmQuote = ""; // quotes only show once you tap your buddy
   el.hidden = false;
   const list = tonightItems();
   const open = list ? list.filter(i => !isDone(i)) : [];
@@ -96,7 +178,7 @@ function renderCalm()
       <p class="bl-calm-sub">${esc(sub)}</p>
       ${list && list.length ? `<ol class="bl-calm-list">${list.map(calmItemHTML).join("")}</ol>` : ""}
       ${next ? `<p class="bl-calm-next">Next thing on the horizon: <a href="${esc(next.url || "#")}">${esc(next.title)}</a> · ${esc(fmtDue(next.due))}</p>` : ""}
-      <p class="bl-calm-cheer"><span class="bl-cheer-star" aria-hidden="true">✦</span>YOU GOT THIS!!!<span class="bl-cheer-star is-b" aria-hidden="true">✦</span><span class="bl-cheer-star is-c" aria-hidden="true">✧</span></p>
+      ${calmBuddyHTML()}
       <button class="bl-calm-exit" type="button" data-calm-exit>I feel better. Bring my dashboard back.</button>
     </div>`;
   if (wasHidden)

@@ -110,8 +110,18 @@
       <path d="M29 36.5 L35 36.5 L32 40.5Z" fill="#F59E4C"/>`,
   };
 
+  // your own pet: PNG poses uploaded in the popup
+  let custom = null;
+  function customHTML(mood, cls)
+  {
+    const main = (mood === "focus" && custom.study) || (mood === "happy" && custom.happy) || custom.idle;
+    const step = mood === "idle" && custom.step ? custom.step : "";
+    return `<span class="sb-pet-custom ${cls}${step ? " has-step" : ""}" aria-hidden="true"><img class="sb-f1" src="${main}" alt="">${step ? `<img class="sb-f2" src="${step}" alt="">` : ""}</span>`;
+  }
+
   function svg(kind, mood = "idle", cls = "sb-pet-svg")
   {
+    if (kind === "custom" && custom && custom.idle) return customHTML(mood, cls);
     const draw = PARTS[kind] || PARTS.mochi;
     return `<svg class="${cls}" viewBox="0 0 64 64" aria-hidden="true">
       <ellipse cx="32" cy="59" rx="16" ry="2.4" fill="#000" opacity=".08"/>
@@ -119,5 +129,14 @@
     </svg>`;
   }
 
-  self.BlushPets = { KINDS, svg, defaultName: kind => (KINDS.find(k => k.id === kind) || KINDS[0]).name };
+  self.BlushPets = {
+    KINDS,
+    svg,
+    defaultName: kind => (kind === "custom" ? "Buddy" : (KINDS.find(k => k.id === kind) || KINDS[0]).name),
+    setCustom: c =>
+    {
+      custom = c && c.idle ? c : null;
+    },
+    hasCustom: () => !!custom,
+  };
 })();

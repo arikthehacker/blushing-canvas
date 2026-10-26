@@ -13,8 +13,9 @@ const DEFAULTS = {
   dockOpen: true,
   study: true,
   stress: false,
+  petWalk: true,
 };
-const BOOLS = ["calm", "hideClutter", "prefetch", "shortcuts", "cheers", "hero", "study"];
+const BOOLS = ["calm", "hideClutter", "prefetch", "shortcuts", "cheers", "hero", "study", "petWalk"];
 const PHOTOS_KEY = "bl:photos";
 
 chrome.storage.sync.get("settings", ({ settings }) =>
@@ -553,6 +554,102 @@ chrome.storage.sync.get("look", ({ look: stored }) =>
       r.addEventListener("change", async () => paint(await studyAct("length", { min: +r.value }))),
     );
   document.getElementById("studyReset").addEventListener("click", async () => paint(await studyAct("reset")));
+  const POSES = [
+    { key: "idle", label: "Standing", hint: "needed" },
+    { key: "step", label: "Step", hint: "waddle" },
+    { key: "study", label: "Studying", hint: "focus" },
+    { key: "happy", label: "Happy", hint: "cheer" },
+  ];
+  const CUSTOM_KEY = "bl:pet:custom";
+  const getCustom = () => new Promise(r => chrome.storage.local.get(CUSTOM_KEY, v => r(v[CUSTOM_KEY] || {})));
+  // keep transparency: shrink to 256 px and save as PNG
+  const toPet = file =>
+    new Promise((resolve, reject) =>
+    {
+      const img = new Image();
+      img.onload = () =>
+      {
+        const scale = Math.min(1, 256 / Math.max(img.width, img.height));
+        const c = document.createElement("canvas");
+        c.width = Math.round(img.width * scale);
+        c.height = Math.round(img.height * scale);
+        c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+        URL.revokeObjectURL(img.src);
+        resolve(c.toDataURL("image/png"));
+      };
+      img.onerror = reject;
+      img.src = URL.createObjectURL(file);
+    });
+  const poseBox = document.getElementById("poses");
+  let customTile = null;
+  async function renderPoses()
+  {
+    const cur = await getCustom();
+    self.BlushPets.setCustom(cur);
+    poseBox.innerHTML = "";
+    POSES.forEach(p =>
+    {
+      const lab = document.createElement("label");
+      lab.className = "pose";
+      lab.innerHTML = `<span class="pv"${cur[p.key] ? ` style="background-image:url('${cur[p.key]}')"` : ""}></span><span>${p.label}</span><small>${p.hint}</small><input type="file" accept="image/png,image/webp,image/gif,image/*" aria-label="Upload ${p.label} pose">`;
+      lab.querySelector("input").addEventListener("change", async e =>
+      {
+        const f = e.target.files[0];
+        if (!f) return;
+        try
+        {
+          const next = { ...(await getCustom()), [p.key]: await toPet(f) };
+          await new Promise(r => chrome.storage.local.set({ [CUSTOM_KEY]: next }, r));
+          if (p.key === "idle") paint(await studyAct("kind", { kind: "custom" }));
+          renderPoses();
+        }
+        catch (err)
+        {
+          /* unreadable image */
+        }
+      });
+      if (cur[p.key])
+      {
+        const x = document.createElement("button");
+        x.type = "button";
+        x.className = "x";
+        x.textContent = "×";
+        x.setAttribute("aria-label", `Remove ${p.label} pose`);
+        x.addEventListener("click", async e =>
+        {
+          e.preventDefault();
+          const next = { ...(await getCustom()) };
+          delete next[p.key];
+          await new Promise(r => chrome.storage.local.set({ [CUSTOM_KEY]: next }, r));
+          if (p.key === "idle") paint(await studyAct("kind", { kind: "mochi" }));
+          renderPoses();
+        });
+        lab.appendChild(x);
+      }
+      poseBox.appendChild(lab);
+    });
+    // "Yours" tile in the picker once a standing pose exists
+    if (cur.idle)
+    {
+      if (!customTile)
+      {
+        customTile = document.createElement("button");
+        customTile.type = "button";
+        customTile.className = "pet";
+        customTile.dataset.kind = "custom";
+        customTile.addEventListener("click", async () => paint(await studyAct("kind", { kind: "custom" })));
+        box.appendChild(customTile);
+      }
+      customTile.innerHTML = `${self.BlushPets.svg("custom", "idle", "pet-svg")}<span>Yours</span>`;
+    }
+    else if (customTile)
+    {
+      customTile.remove();
+      customTile = null;
+    }
+    studyAct("noop").then(paint);
+  }
+
   self.BlushPets.KINDS.forEach(k =>
   {
     const b = document.createElement("button");
@@ -569,5 +666,5 @@ chrome.storage.sync.get("look", ({ look: stored }) =>
     clearTimeout(t);
     t = setTimeout(() => studyAct("name", { name: nameIn.value }), 400);
   });
-  studyAct("noop").then(paint);
+  renderPoses();
 })();
