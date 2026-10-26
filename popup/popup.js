@@ -527,7 +527,15 @@ chrome.storage.sync.get("look", ({ look: stored }) =>
       .querySelectorAll(".pet")
       .forEach(b => b.setAttribute("aria-pressed", String(b.dataset.kind === kind)));
     if (document.activeElement !== nameIn) nameIn.value = (st && st.petName) || "Mochi";
+    const len = document.getElementById(`l-${(st && st.focusMin) || 25}`);
+    if (len) len.checked = true;
   };
+  document
+    .querySelectorAll('input[name="focusLen"]')
+    .forEach(r =>
+      r.addEventListener("change", async () => paint(await studyAct("length", { min: +r.value }))),
+    );
+  document.getElementById("studyReset").addEventListener("click", async () => paint(await studyAct("reset")));
   self.BlushPets.KINDS.forEach(k =>
   {
     const b = document.createElement("button");

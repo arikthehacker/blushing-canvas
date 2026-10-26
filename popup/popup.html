@@ -118,10 +118,19 @@
   <fieldset>
     <legend>Study buddy</legend>
     <div class="row"><label for="study">Study timer<small>Pomodoro with a pet and a garden that grows every 25 minutes</small></label><input class="switch" type="checkbox" id="study"></div>
+    <div class="field" style="padding-top:8px">
+      <span id="len-label" style="font-weight:600">Focus length</span>
+      <div class="seg" role="radiogroup" aria-labelledby="len-label">
+        <input type="radio" name="focusLen" id="l-15" value="15"><label for="l-15">15 min</label>
+        <input type="radio" name="focusLen" id="l-25" value="25"><label for="l-25">25 min</label>
+        <input type="radio" name="focusLen" id="l-50" value="50"><label for="l-50">50 min</label>
+      </div>
+    </div>
+    <div class="btns"><button class="btn" type="button" id="studyReset">Restart the timer</button></div>
     <p class="sub">Pick your buddy</p>
     <div class="pets" id="pets" role="group" aria-label="Pick your study buddy"></div>
     <div class="field" style="padding-top:10px"><label for="petName">Name</label><input class="text" id="petName" maxlength="20" autocomplete="off"></div>
-    <p class="hint">Your buddy walks around the banner and studies with you. Press <kbd>P</kbd> on Canvas to start or pause.</p>
+    <p class="hint">Your buddy walks through a little garden along the bottom of the banner. Every 25 focused minutes a new plant grows. Press <kbd>P</kbd> on Canvas to start or pause.</p>
   </fieldset>
 
   <fieldset>

@@ -128,23 +128,38 @@
   function line(s)
   {
     const n = todayCount(s);
-    if (justDone(s)) return "A new plant! Look at it!";
+    if (justDone(s)) return "New sprout! A statistically significant result.";
     if (s.running && s.mode === "focus")
     {
       const p = progress(s);
       return p < 0.1
-        ? "Studying with you."
+        ? "Initializing weights. Focus mode on."
         : p < 0.6
-          ? "You are doing great."
+          ? "Gradients look stable. Keep descending."
           : p < 0.9
-            ? "Almost a new sprout."
-            : "So close. Keep going.";
+            ? "Validation loss is dropping nicely."
+            : "Nearly converged. No early stopping.";
     }
-    if (s.running) return s.mode === "long" ? "Big break. Get a snack." : "Stretch, sip some water.";
-    if (s.mode !== "focus") return "Break paused.";
-    if (isPaused(s)) return "Paused. I will wait.";
-    return n ? `${n} today. One more?` : "Ready when you are.";
+    if (s.running)
+      return s.mode === "long"
+        ? "Long break. Let the weights settle."
+        : "Regularization break. Hydrate your neurons.";
+    if (s.mode !== "focus") return "Break paused. Learning rate set to zero.";
+    if (isPaused(s)) return "Checkpoint saved. Resume when ready.";
+    return n ? `${n} epochs today. Shall we run another?` : "Ready to minimize some loss?";
   }
+  const QUIPS = [
+    "Attention is all you need. Also snacks.",
+    "My posterior says you will ace this.",
+    "A local minimum of motivation? We can escape it.",
+    "Each pomodoro is a mini-batch.",
+    "Your focus has remarkably low variance today.",
+    "Overfitting to procrastination? Not today.",
+    "Backpropagate that worry and move on.",
+    "Peer-reviewed opinion: you are doing great.",
+    "Correlation is not causation, but studying helps.",
+    "I have updated my priors. You have got this.",
+  ];
   const mainLabel = s =>
     s.running ? "Pause" : isPaused(s) ? "Resume" : s.mode === "focus" ? "Start focus" : "Start break";
 
@@ -170,11 +185,7 @@
     }
     else if (act === "pet")
     {
-      say(
-        ["Hehe.", "That tickles.", "Hi!", "You got this.", "I like it here.", "Snack later?"][
-          Math.floor(Math.random() * 6)
-        ],
-      );
+      say(QUIPS[Math.floor(Math.random() * QUIPS.length)], 3200);
       hop();
     }
     else
@@ -241,6 +252,12 @@
     {
       const b = stage.querySelector(".sb-say");
       b.textContent = text;
+      // keep the bubble inside the banner when the buddy is near an edge
+      const w = stage.querySelector(".sb-walker").getBoundingClientRect();
+      const g = stage.getBoundingClientRect();
+      const mid = w.left + w.width / 2 - g.left;
+      b.classList.toggle("is-left", mid < 150);
+      b.classList.toggle("is-right", mid > g.width - 150);
       b.classList.add("is-on");
       clearTimeout(sayT);
       sayT = setTimeout(() => b.classList.remove("is-on"), ms);
@@ -294,7 +311,7 @@
   {
     if (!sr || !state) return;
     const wrap = sr.querySelector(".sb");
-    host.hidden = !settings.study;
+    host.hidden = !settings.study || stageOn;
     if (stage) stage.hidden = !settings.study || !stageOn;
     if (!settings.study)
     {
@@ -302,6 +319,7 @@
       return;
     }
     renderStage(full);
+    if (stageOn) return; // pet, timer, and garden are all in the banner
     wrap.classList.toggle("is-motion", motion());
     wrap.classList.toggle("is-running", !!state.running);
     wrap.classList.toggle("is-garden", stageOn);
@@ -396,16 +414,29 @@
     }
   }
 
-  // ---------------------------------------------------------------- the banner stage: pet walks between the greeting and the clock
+  // ---------------------------------------------------------------- the banner garden: grass along the bottom, a little pomodoro sign, a walking pet
   let laneRO = null,
     laneMO = null,
     lastMood = "",
-    lastKind = "";
+    lastKind = "",
+    plantsKey = "";
+  const GRASS =
+    '<svg class="sb-grass" aria-hidden="true" preserveAspectRatio="none"><defs><pattern id="sb-blades" width="14" height="12" patternUnits="userSpaceOnUse"><path d="M1 12 Q2 6 3.5 3 Q3.5 8 4 12Z M6 12 Q7.5 5 10 1.5 Q8.8 7 9 12Z M10.5 12 Q11.5 7 13.5 5 Q12.5 9 13 12Z" fill="var(--sb-blade)"/></pattern></defs><rect x="0" y="0" width="100%" height="100%" fill="url(#sb-blades)"/></svg>';
   const heroSection = () =>
   {
     const h = document.getElementById("blush-hero");
     return h && h.shadowRoot ? h.shadowRoot.querySelector(".bl-hero") : null;
   };
+  // tiny seeded random so each plant keeps its spot
+  const rnd = n =>
+  {
+    let x = Math.imul(n ^ 0x9e3779b9, 0x85ebca6b);
+    x ^= x >>> 13;
+    x = Math.imul(x, 0xc2b2ae35);
+    x ^= x >>> 16;
+    return (x >>> 0) / 4294967296;
+  };
+
   function findHero()
   {
     if (stage && stage.isConnected) return;
@@ -420,20 +451,26 @@
       sroot.appendChild(st);
     }
     stage = document.createElement("div");
-    stage.className = "sb-stage";
+    stage.className = "sb-ground";
     stage.hidden = true;
     stage.innerHTML = `
-      <div class="sb-tbar" role="group" aria-label="Study timer">
-        <span class="sb-tmode"></span>
-        <span class="sb-ttime"></span>
-        <button class="sb-tbtn is-main" type="button" data-sb="start"></button>
-        <button class="sb-tbtn" type="button" data-sb="skip" aria-label="Skip">${ICONS.skip}</button>
-      </div>
-      <div class="sb-lane">
-        <div class="sb-walker">
-          <div class="sb-say" aria-live="polite"></div>
-          <div class="sb-hop"><div class="sb-flip"><button class="sb-petbtn" type="button" data-sb="pet"></button></div></div>
+      ${GRASS}
+      <div class="sb-plants" aria-hidden="true"></div>
+      <div class="sb-sign">
+        <div class="sb-board" role="group" aria-label="Pomodoro timer">
+          <span class="sb-slabel"></span>
+          <span class="sb-srow">
+            <span class="sb-ttime"></span>
+            <button class="sb-sbtn is-main" type="button" data-sb="start"></button>
+            <button class="sb-sbtn" type="button" data-sb="skip" aria-label="Skip">${ICONS.skip}</button>
+          </span>
+          <i class="sb-sbar"></i>
         </div>
+        <span class="sb-post" aria-hidden="true"></span>
+      </div>
+      <div class="sb-walker">
+        <div class="sb-say" aria-live="polite"></div>
+        <div class="sb-hop"><div class="sb-flip"><button class="sb-petbtn" type="button" data-sb="pet"></button></div></div>
       </div>`;
     hero.appendChild(stage);
     stage.addEventListener("click", e =>
@@ -451,6 +488,7 @@
     });
     lastMood = "";
     lastKind = "";
+    plantsKey = "";
     layoutStage();
   }
 
@@ -458,54 +496,75 @@
   {
     const hero = heroSection();
     const was = stageOn;
-    if (!stage || !hero || !hero.isConnected || hero.getRootNode().host.hidden)
+    if (!stage || !hero || !hero.isConnected || hero.getRootNode().host.hidden || !settings.study)
     {
       stageOn = false;
+      if (hero) hero.classList.remove("has-garden");
     }
     else
     {
       const H = hero.getBoundingClientRect();
-      const greet = hero.querySelector(".bl-hero-greet");
-      const side = [hero.querySelector(".bl-clock"), hero.querySelector(".bl-next")].filter(Boolean);
-      if (!greet || !side.length || !H.width) stageOn = false;
-      else
+      stageOn = H.width >= 320;
+      hero.classList.toggle("has-garden", stageOn);
+      if (stageOn)
       {
-        const rg = document.createRange();
-        rg.selectNodeContents(greet);
-        const G = rg.getBoundingClientRect();
-        const sideLeft = Math.min(...side.map(el => el.getBoundingClientRect().left));
-        const sideBottom = Math.max(...side.slice(0, 1).map(el => el.getBoundingClientRect().bottom));
         const slim = hero.classList.contains("is-slim");
-        const left = G.right - H.left + 22;
-        const right = sideLeft - H.left - 22;
-        const top = slim ? 6 : 12;
-        const bottom = slim ? H.height - 6 : Math.max(G.bottom, sideBottom) - H.top + 8;
-        const width = right - left,
-          height = bottom - top;
-        stageOn = width >= 180 && height >= 44;
-        if (stageOn)
+        stage.dataset.size = slim ? "slim" : "full";
+        // the sign sits in the open space between the greeting and the clock
+        let signX = H.width * 0.5;
+        const greet = hero.querySelector(".bl-hero-greet");
+        const side = hero.querySelector(".bl-clock");
+        if (greet && side)
         {
-          const row = height < 100;
-          stage.dataset.layout = row ? "row" : "col";
-          Object.assign(stage.style, {
-            left: `${left}px`,
-            top: `${top}px`,
-            width: `${width}px`,
-            height: `${height}px`,
-          });
-          const pet = row ? Math.min(50, height - 2) : Math.min(76, height - 36);
-          stage.style.setProperty("--sb-pet", `${pet}px`);
+          const rg = document.createRange();
+          rg.selectNodeContents(greet);
+          const gr = rg.getBoundingClientRect().right - H.left;
+          const sl = side.getBoundingClientRect().left - H.left;
+          if (sl - gr > 120) signX = (gr + sl) / 2;
         }
+        stage.style.setProperty("--sb-sign-x", `${Math.round(signX)}px`);
+        stage.dataset.signX = Math.round(signX);
+        stage.style.setProperty("--sb-lane", `${Math.round(H.width)}px`);
+        renderPlants(true);
       }
     }
     if (stage) stage.hidden = !stageOn || !settings.study;
     if (was !== stageOn) render(true);
-    else if (stageOn)
-      requestAnimationFrame(() =>
-      {
-        const lane = stage.querySelector(".sb-lane");
-        stage.style.setProperty("--sb-lane", `${lane.clientWidth}px`);
-      });
+  }
+
+  // spread the plants along the ground, keeping clear of the sign
+  function renderPlants(force)
+  {
+    if (!stage || !state) return;
+    const box = stage.querySelector(".sb-plants");
+    const W = stage.clientWidth || 600;
+    const slim = stage.dataset.size === "slim";
+    const pw = slim ? 13 : 16;
+    const signX = +stage.dataset.signX || W / 2;
+    const p = progress(state);
+    const growing = state.mode === "focus" && (state.running || p > 0);
+    const stg = p < 0.25 ? 0 : p < 0.6 ? 1 : 2;
+    const max = Math.max(4, Math.floor(W / (pw + 4)) - 6);
+    const list = (state.plants || []).slice(-max);
+    const key = `${W}|${slim}|${signX}|${list.length}|${state.lastDone}|${growing}|${stg}`;
+    if (!force && key === plantsKey) return;
+    plantsKey = key;
+    const clear = slim ? 50 : 58;
+    const usable = W - 24 - clear * 2;
+    box.innerHTML =
+      list
+        .map((pl, i) =>
+        {
+          let x = 12 + rnd((pl.t || 0) + i * 7919) * usable;
+          if (x > signX - clear) x += clear * 2; // hop over the sign
+          const tilt = (rnd(i + 31) - 0.5) * 8;
+          const fresh = state.lastDone && pl.t === state.lastDone;
+          return `<span class="sb-plant${fresh ? " is-new" : ""}" style="left:${x.toFixed(0)}px;--t:${tilt.toFixed(1)}deg">${plantSVG(pl.k, 3, i)}</span>`;
+        })
+        .join("") +
+      (growing
+        ? `<span class="sb-plant is-growing" style="left:${(signX + clear - 6).toFixed(0)}px">${plantSVG(0, stg)}</span>`
+        : "");
   }
 
   function renderStage()
@@ -516,14 +575,21 @@
     stage.classList.toggle("is-break", state.mode !== "focus");
     stage.classList.toggle("is-running", !!state.running);
     stage.classList.toggle("is-motion", motion());
-    stage.dataset.mode = state.mode;
-    stage.querySelector(".sb-tmode").textContent = modeLabel(state);
+    stage.querySelector(".sb-slabel").textContent =
+      state.mode === "focus" ? "pomodoro" : state.mode === "long" ? "long break" : "break";
     stage.querySelector(".sb-ttime").textContent = fmt(leftMs(state));
-    const main = stage.querySelector(".sb-tbtn.is-main");
+    const main = stage.querySelector(".sb-sbtn.is-main");
     main.dataset.sb = state.running ? "pause" : "start";
-    main.innerHTML = `${state.running ? ICONS.pause : ICONS.play}<span>${state.running ? "Pause" : isPaused(state) ? "Resume" : "Start"}</span>`;
+    const icon = state.running ? "pause" : "play";
+    if (main.dataset.icon !== icon)
+    {
+      main.innerHTML = ICONS[icon];
+      main.dataset.icon = icon;
+    }
     main.setAttribute("aria-label", mainLabel(state));
-    stage.querySelector(".sb-tbar").style.setProperty("--sb-p", `${(progress(state) * 100).toFixed(1)}%`);
+    stage.querySelector(".sb-board").title =
+      `${state.petName}: lv ${level(state)} · ${(state.plants || []).length} plants · ${todayCount(state)} today`;
+    stage.querySelector(".sb-sbar").style.width = `${(progress(state) * 100).toFixed(1)}%`;
     const kind = state.petKind || "mochi";
     if (m !== lastMood || kind !== lastKind)
     {
@@ -533,8 +599,7 @@
       lastMood = m;
       lastKind = kind;
     }
-    const lane = stage.querySelector(".sb-lane");
-    stage.style.setProperty("--sb-lane", `${lane.clientWidth}px`);
+    renderPlants(false);
   }
 
   function startTick()
@@ -567,7 +632,7 @@
     {
       hearts();
       hop();
-      say("A new plant! Look at it!", 4000);
+      say("New sprout! A statistically significant result.", 4200);
     }
     else if (prev && (prev.running !== state.running || prev.mode !== state.mode)) say(line(state));
   }

@@ -1,5 +1,11 @@
 # changelog
 
+## 2.7.0
+
+- the garden grows along the bottom of the banner, with a tiny pomodoro sign in the grass that holds the timer
+- your buddy walks through the garden and talks like a very serious ML researcher
+- focus length and restart moved to the popup
+
 ## 2.6.0
 
 - your buddy walks back and forth in the banner between the greeting and the clock, with the timer above it, and stops to read while you focus
