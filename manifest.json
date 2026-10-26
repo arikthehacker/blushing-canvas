@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Blush for Canvas",
-  "version": "2.5.0",
+  "version": "2.6.0",
   "description": "A dusty-pink, fast, accessible Canvas: quick jump, shortcuts, your own colors and fonts, a study timer with a garden and a pet, and a to-do panel that cheers you on.",
   "icons": {
     "16": "icons/icon16.png",
@@ -27,6 +27,7 @@
       "css": ["styles/theme.css"],
       "js": [
         "shared/look.js",
+        "shared/pets.js",
         "content/study.js",
         "content/settings.js",
         "content/canvas.js",
@@ -51,7 +52,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["styles/ui.css", "styles/study.css", "fonts/*"],
+      "resources": ["styles/ui.css", "styles/study.css", "styles/stage.css", "fonts/*"],
       "matches": ["https://*.instructure.com/*"]
     }
   ],

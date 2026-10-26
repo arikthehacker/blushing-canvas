@@ -118,7 +118,10 @@
   <fieldset>
     <legend>Study buddy</legend>
     <div class="row"><label for="study">Study timer<small>Pomodoro with a pet and a garden that grows every 25 minutes</small></label><input class="switch" type="checkbox" id="study"></div>
-    <p class="hint">Press <kbd>P</kbd> on Canvas to start or pause. Tap the pet's name to rename it.</p>
+    <p class="sub">Pick your buddy</p>
+    <div class="pets" id="pets" role="group" aria-label="Pick your study buddy"></div>
+    <div class="field" style="padding-top:10px"><label for="petName">Name</label><input class="text" id="petName" maxlength="20" autocomplete="off"></div>
+    <p class="hint">Your buddy walks around the banner and studies with you. Press <kbd>P</kbd> on Canvas to start or pause.</p>
   </fieldset>
 
   <fieldset>
@@ -132,6 +135,7 @@
   <p class="foot"><kbd>Ctrl</kbd> + <kbd>K</kbd> opens quick jump on any Canvas page.</p>
 </main>
 <script src="../shared/look.js"></script>
+<script src="../shared/pets.js"></script>
 <script src="popup.js"></script>
 </body>
 </html>

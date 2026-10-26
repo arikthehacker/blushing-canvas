@@ -267,6 +267,43 @@ p {
   opacity: 0.6;
 }
 
+/* garden-only card (pet and timer are up in the banner) */
+.sb-card.is-garden {
+  width: 272px;
+  padding-bottom: 10px;
+}
+.sb-card.is-garden .sb-chip {
+  white-space: nowrap;
+  padding: 0 6px;
+}
+.sb-card.is-garden .sb-garden {
+  margin-top: 2px;
+}
+.sb-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+.sb-row .sb-lengths {
+  flex: 1;
+  margin: 0;
+}
+.sb-chip.is-plain {
+  flex: none;
+  padding: 0 10px;
+}
+.sb-pill-plant {
+  display: block;
+  width: 22px;
+  height: 30px;
+  margin-left: 4px;
+}
+.sb-pill-plant svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
 /* ---------- collapsed pill ---------- */
 .sb-pill {
   display: inline-flex;
@@ -310,7 +347,6 @@ p {
 
 /* ---------- little motions (off in calm mode) ---------- */
 .is-motion .sb-blink {
-  transform-origin: 32px 33px;
   animation: sb-blink 5s infinite;
 }
 .is-motion.is-running[data-mode="focus"] .sb-bob {

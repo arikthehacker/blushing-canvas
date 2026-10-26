@@ -1,5 +1,11 @@
 # changelog
 
+## 2.6.0
+
+- your buddy walks back and forth in the banner between the greeting and the clock, with the timer above it, and stops to read while you focus
+- pick from seven buddies: mochi, a bunny, a kitty, a frog, a duckling, a bear cub and a penguin
+- the corner card is just your garden now, unless the banner is off
+
 ## 2.5.0
 
 - colors: six presets, or upload a palette (a picture, a coolors link, .ase, .gpl or anything with hex codes) and tap roles to fill them

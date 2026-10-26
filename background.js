@@ -295,6 +295,7 @@ const STUDY_DEFAULTS = {
   total: 0,
   today: { day: "", n: 0 },
   petName: "Mochi",
+  petKind: "mochi",
   lastDone: 0,
   lastEvent: "",
 };
@@ -429,6 +430,24 @@ async function studyAct(msg)
           .trim()
           .slice(0, 20) || "Mochi";
       break;
+    case "kind": {
+      const NAMES = {
+        mochi: "Mochi",
+        bunny: "Clover",
+        kitty: "Biscuit",
+        frog: "Pickle",
+        duck: "Puddle",
+        bear: "Honey",
+        penguin: "Pebble",
+      };
+      if (NAMES[msg.kind])
+      {
+        // keep a name you picked and only swap the starter name
+        if (!s.petName || s.petName === NAMES[s.petKind || "mochi"]) s.petName = NAMES[msg.kind];
+        s.petKind = msg.kind;
+      }
+      break;
+    }
     case "clearGarden":
       s.plants = [];
       break;

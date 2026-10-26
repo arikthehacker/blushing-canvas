@@ -1,0 +1,312 @@
+/* Blush for Canvas: the pet + timer that live in the banner (injected into the banner's shadow root) */
+.sb-stage {
+  --sb-pet: 58px;
+  --sb-lane: 200px;
+  --bl-sb-pet: color-mix(in srgb, var(--bl-surface) 70%, var(--bl-accent) 30%);
+  --bl-sb-cheek: color-mix(in srgb, var(--bl-accent) 45%, #ffb3c4 55%);
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+  pointer-events: none;
+  color: var(--bl-hero-text, var(--bl-text));
+  font-family: var(--bl-font);
+}
+.sb-stage[hidden] {
+  display: none;
+}
+.sb-stage[data-layout="row"] {
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+/* ---------- timer pill ---------- */
+.sb-tbar {
+  pointer-events: auto;
+  align-self: center;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 4px 4px 12px;
+  border-radius: 999px;
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--bl-accent) 22%, transparent) var(--sb-p, 0%),
+      transparent var(--sb-p, 0%)
+    ),
+    color-mix(in srgb, var(--bl-surface) 66%, transparent);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  backdrop-filter: blur(12px) saturate(1.2);
+  border: 1px solid color-mix(in srgb, var(--bl-surface) 70%, transparent);
+  box-shadow: 0 6px 18px rgba(60, 30, 40, 0.08);
+}
+.sb-stage[data-layout="row"] .sb-tbar {
+  align-self: center;
+}
+.sb-tmode {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--bl-hero-accent, var(--bl-accent));
+}
+.sb-stage.is-break .sb-tmode {
+  color: color-mix(in srgb, #4e8b57 80%, var(--bl-text));
+}
+.sb-ttime {
+  font-size: 18px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+  min-width: 3.1em;
+}
+.sb-tbtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 30px;
+  padding: 0 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  border: 0;
+  background: color-mix(in srgb, var(--bl-surface) 80%, transparent);
+  color: inherit;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+}
+.sb-tbtn svg {
+  width: 14px;
+  height: 14px;
+}
+.sb-tbtn:not(.is-main) {
+  width: 30px;
+  padding: 0;
+  justify-content: center;
+}
+.sb-tbtn.is-main {
+  background: var(--bl-accent);
+  color: var(--bl-on-accent);
+}
+.sb-tbtn:hover {
+  filter: brightness(1.05);
+}
+.sb-tbtn:focus-visible,
+.sb-petbtn:focus-visible {
+  outline: 3px solid var(--bl-focus);
+  outline-offset: 2px;
+}
+
+/* ---------- walking lane ---------- */
+.sb-lane {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  min-height: var(--sb-pet);
+}
+.sb-walker {
+  position: absolute;
+  bottom: 0;
+  left: calc(50% - var(--sb-pet) / 2);
+  width: var(--sb-pet);
+  height: var(--sb-pet);
+  pointer-events: auto;
+}
+.sb-hop,
+.sb-flip {
+  width: 100%;
+  height: 100%;
+}
+.sb-petbtn {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 50%;
+}
+.sb-petbtn svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.sb-eye {
+  fill: none;
+  stroke: #2e2328;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+}
+
+/* back and forth, with a little rest at each end */
+.sb-stage.is-motion .sb-walker {
+  left: 0;
+  animation: sb-walk 20s ease-in-out infinite;
+}
+.sb-stage.is-motion .sb-flip {
+  animation: sb-turn 20s step-end infinite;
+}
+.sb-stage.is-motion.is-break .sb-walker,
+.sb-stage.is-motion.is-break .sb-flip {
+  animation-duration: 11s;
+}
+/* focusing: the pet stops wherever it is and reads */
+.sb-stage.is-motion:not(.is-walk) .sb-walker,
+.sb-stage.is-motion:not(.is-walk) .sb-flip {
+  animation-play-state: paused;
+}
+.sb-stage.is-motion.is-walk .sb-petbtn svg {
+  animation: sb-step 0.42s ease-in-out infinite alternate;
+}
+.sb-stage.is-motion .sb-blink {
+  animation: sb-blink 5s infinite;
+}
+.sb-stage.is-motion:not(.is-walk) .sb-bob {
+  animation: sb-breathe 3.6s ease-in-out infinite;
+  transform-origin: 32px 58px;
+}
+
+@keyframes sb-walk {
+  0%,
+  8% {
+    transform: translateX(0);
+  }
+  46%,
+  54% {
+    transform: translateX(calc(var(--sb-lane) - var(--sb-pet)));
+  }
+  92%,
+  100% {
+    transform: translateX(0);
+  }
+}
+@keyframes sb-turn {
+  0% {
+    transform: scaleX(1);
+  }
+  50% {
+    transform: scaleX(-1);
+  }
+  100% {
+    transform: scaleX(-1);
+  }
+}
+@keyframes sb-step {
+  from {
+    transform: translateY(0) rotate(-2deg);
+  }
+  to {
+    transform: translateY(-2.5px) rotate(2deg);
+  }
+}
+@keyframes sb-blink {
+  0%,
+  94%,
+  100% {
+    transform: scaleY(1);
+  }
+  96% {
+    transform: scaleY(0.1);
+  }
+}
+@keyframes sb-breathe {
+  0%,
+  100% {
+    transform: scale(1, 1);
+  }
+  50% {
+    transform: scale(1.025, 0.975);
+  }
+}
+
+/* ---------- speech bubble + hearts ---------- */
+.sb-say {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translate(-50%, 4px);
+  white-space: nowrap;
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--bl-text);
+  background: color-mix(in srgb, var(--bl-surface) 92%, transparent);
+  border: 1px solid var(--bl-border);
+  box-shadow: 0 4px 14px rgba(60, 30, 40, 0.1);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+.sb-say::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border: 5px solid transparent;
+  border-top-color: color-mix(in srgb, var(--bl-surface) 92%, transparent);
+}
+.sb-say.is-on {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+.sb-stage[data-layout="col"] .sb-say,
+.sb-stage[data-layout="row"] .sb-say {
+  bottom: auto;
+  top: 30%;
+  left: calc(100% + 4px);
+  transform: translateX(-4px);
+}
+.sb-stage .sb-say.is-on {
+  transform: translate(-50%, 0);
+}
+.sb-stage[data-layout] .sb-say.is-on {
+  transform: none;
+}
+.sb-stage[data-layout] .sb-say::after {
+  top: 50%;
+  left: auto;
+  right: 100%;
+  margin: -5px 0 0;
+  border-top-color: transparent;
+  border-right-color: color-mix(in srgb, var(--bl-surface) 92%, transparent);
+}
+.sb-heart {
+  position: absolute;
+  bottom: 60%;
+  font-size: 14px;
+  color: var(--bl-accent);
+  pointer-events: none;
+  opacity: 0;
+  animation: sb-float 1.5s ease-out forwards;
+}
+@keyframes sb-float {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0.6);
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-46px) scale(1.1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sb-stage * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

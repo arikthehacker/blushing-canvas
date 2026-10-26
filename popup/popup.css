@@ -450,3 +450,41 @@ kbd {
   width: 100%;
   accent-color: var(--bl-accent);
 }
+.pets {
+  --bl-sb-pet: color-mix(in srgb, var(--bl-surface) 70%, var(--bl-accent) 30%);
+  --bl-sb-cheek: color-mix(in srgb, var(--bl-accent) 45%, #ffb3c4 55%);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-top: 8px;
+}
+.pet {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  padding: 6px 2px 5px;
+  border-radius: 12px;
+  border: 1px solid var(--bl-border);
+  background: var(--bl-surface);
+  color: var(--bl-text);
+  font: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.pet svg {
+  width: 44px;
+  height: 44px;
+  overflow: visible;
+}
+.pet:hover {
+  border-color: var(--bl-border-ui);
+}
+.pet[aria-pressed="true"] {
+  border-color: var(--bl-accent);
+  background: var(--bl-accent-soft);
+}
+.pet:focus-visible {
+  outline: 3px solid var(--bl-focus);
+  outline-offset: 2px;
+}

@@ -506,3 +506,43 @@ chrome.storage.sync.get("look", ({ look: stored }) =>
   renderPalette();
   sync();
 });
+
+// ---------- study buddy picker ----------
+(() =>
+{
+  const box = document.getElementById("pets");
+  const nameIn = document.getElementById("petName");
+  const studyAct = (act, extra = {}) =>
+    new Promise(r =>
+      chrome.runtime.sendMessage({ type: "bl:study", act, ...extra }, res =>
+      {
+        void chrome.runtime.lastError;
+        r(res);
+      }),
+    );
+  const paint = st =>
+  {
+    const kind = (st && st.petKind) || "mochi";
+    box
+      .querySelectorAll(".pet")
+      .forEach(b => b.setAttribute("aria-pressed", String(b.dataset.kind === kind)));
+    if (document.activeElement !== nameIn) nameIn.value = (st && st.petName) || "Mochi";
+  };
+  self.BlushPets.KINDS.forEach(k =>
+  {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "pet";
+    b.dataset.kind = k.id;
+    b.innerHTML = `${self.BlushPets.svg(k.id, "idle", "pet-svg")}<span>${k.label}</span>`;
+    b.addEventListener("click", async () => paint(await studyAct("kind", { kind: k.id })));
+    box.appendChild(b);
+  });
+  let t = 0;
+  nameIn.addEventListener("input", () =>
+  {
+    clearTimeout(t);
+    t = setTimeout(() => studyAct("name", { name: nameIn.value }), 400);
+  });
+  studyAct("noop").then(paint);
+})();
