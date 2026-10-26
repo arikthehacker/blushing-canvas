@@ -12,6 +12,7 @@ const DEFAULTS = {
   name: "",
   dockOpen: true,
   study: true,
+  stress: false,
 };
 const BOOLS = ["calm", "hideClutter", "prefetch", "shortcuts", "cheers", "hero", "study"];
 const PHOTOS_KEY = "bl:photos";
@@ -49,6 +50,22 @@ chrome.storage.sync.get("settings", ({ settings }) =>
       save();
     });
   });
+
+  const stress = document.getElementById("stress");
+  const paintStress = () =>
+  {
+    stress.setAttribute("aria-pressed", String(!!s.stress));
+    document.getElementById("stressState").textContent = s.stress
+      ? "On. Your dashboard only shows tonight. Tap again to bring it all back."
+      : "Hides everything on your dashboard except what is due tonight.";
+  };
+  stress.addEventListener("click", () =>
+  {
+    s.stress = !s.stress;
+    paintStress();
+    save();
+  });
+  paintStress();
 
   const name = document.getElementById("name");
   name.value = s.name || "";

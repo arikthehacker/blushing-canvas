@@ -15,6 +15,7 @@ const DEFAULTS = {
   name: "",
   dockOpen: true,
   study: true,
+  stress: false,
 };
 const root = document.documentElement;
 const darkMQ = matchMedia("(prefers-color-scheme: dark)");
@@ -46,6 +47,7 @@ function applySettings()
     installSpeculation();
     applyDock();
     renderHero();
+    renderCalm();
   }
 }
 root.classList.toggle("bl-dark", darkMQ.matches);

@@ -1,5 +1,10 @@
 # changelog
 
+## 2.8.0
+
+- AHHH I'M STRESSED. SUPER DECLUTTER: a button on the banner and in the popup that hides your whole dashboard except what's due before midnight tonight, soonest first, with checkboxes
+- it stays on until you tap "I feel better"
+
 ## 2.7.0
 
 - the garden grows along the bottom of the banner, with a tiny pomodoro sign in the grass that holds the timer

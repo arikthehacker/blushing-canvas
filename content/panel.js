@@ -186,4 +186,5 @@ function renderPanels()
   }
   updateRail();
   renderHero();
+  renderCalm();
 }

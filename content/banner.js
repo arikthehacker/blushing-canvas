@@ -101,6 +101,7 @@ function renderHero()
     </div>
     <div class="bl-hero-foot">
       ${credit}
+      ${location.pathname === "/" ? '<button class="bl-stress-btn" type="button" data-act="stress" data-fk="stress">AHHH I\'M STRESSED. SUPER DECLUTTER</button>' : ""}
       <button class="bl-glass-btn" type="button" data-act="shuffle" data-fk="shuffle" aria-label="Show a different picture" ${art.busy ? 'aria-busy="true"' : ""}>${ICON.shuffle}</button>
       <button class="bl-glass-btn" type="button" data-act="size" data-fk="size" aria-label="${full ? "Make banner smaller" : "Make banner bigger"}">${full ? ICON.shrink : ICON.grow}</button>
     </div>`;
@@ -250,6 +251,12 @@ async function buildHero()
       renderHero();
       const input = heroRoot.querySelector('[data-fk="focus-input"]');
       if (input) input.focus();
+    }
+    else if (act === "stress")
+    {
+      settings.stress = true;
+      saveSettings();
+      renderCalm();
     }
     else if (act === "shuffle")
     {
