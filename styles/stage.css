@@ -239,22 +239,30 @@
 
 .sb-ground.is-motion .sb-walker {
   left: 8px;
-  animation: sb-walk 34s ease-in-out infinite;
+  animation: sb-walk var(--sb-walk-dur, 80s) ease-in-out infinite;
 }
 .sb-ground.is-motion .sb-flip {
-  animation: sb-turn 34s step-end infinite;
+  animation: sb-turn var(--sb-walk-dur, 80s) step-end infinite;
 }
 .sb-ground.is-motion.is-break .sb-walker,
 .sb-ground.is-motion.is-break .sb-flip {
-  animation-duration: 18s;
+  animation-duration: calc(var(--sb-walk-dur, 80s) * 0.7);
 }
 /* focusing: stops wherever it is and reads */
 .sb-ground.is-motion:not(.is-walk) .sb-walker,
 .sb-ground.is-motion:not(.is-walk) .sb-flip {
   animation-play-state: paused;
 }
+/* you tapped your buddy: it stays put until you tap it again */
+.sb-ground.is-held .sb-walker,
+.sb-ground.is-held .sb-flip {
+  animation-play-state: paused !important;
+}
+.sb-ground.is-held .sb-petbtn > * {
+  animation: none !important;
+}
 .sb-ground.is-motion.is-walk .sb-petbtn > * {
-  animation: sb-step 0.42s ease-in-out infinite alternate;
+  animation: sb-step 0.55s ease-in-out infinite alternate;
 }
 /* your own pet: two-frame waddle when you upload a walking step */
 .sb-pet-custom {
@@ -340,7 +348,7 @@
     transform: translateY(0) rotate(-2deg);
   }
   to {
-    transform: translateY(-2px) rotate(2deg);
+    transform: translateY(-1.5px) rotate(2deg);
   }
 }
 @keyframes sb-blink {

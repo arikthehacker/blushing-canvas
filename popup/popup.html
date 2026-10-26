@@ -138,7 +138,9 @@
     <div class="pets" id="pets" role="group" aria-label="Pick your study buddy"></div>
     <p class="sub">Or draw your own</p>
     <div class="poses" id="poses"></div>
-    <p class="hint">PNG with a transparent background, 256 × 256 px, facing right, feet on the bottom line. Only Standing is needed. The others make it waddle, study and cheer.
+    <label class="add-photo" style="margin-top:8px">Upload the whole sheet<input type="file" id="sheetFile" accept="image/png"></label>
+    <p class="hint" id="sheetStatus" role="status"></p>
+    <p class="hint">Draw on the sheet template (all four poses), hide the guide layer, export as a transparent PNG, and upload it here. Empty boxes are skipped. Or upload single 256 × 256 PNGs into the slots above. Only Standing is needed. The others make it waddle, study and cheer.
       <a class="link" id="tplLink" href="../templates/pet-template-sheet.png" download="blush-pet-template.png">Download the trace-over template</a></p>
     <div class="row"><label for="petWalk">Walks around<small>Back and forth along the banner grass</small></label><input class="switch" type="checkbox" id="petWalk"></div>
     <div class="field" style="padding-top:10px"><label for="petName">Name</label><input class="text" id="petName" maxlength="20" autocomplete="off"></div>

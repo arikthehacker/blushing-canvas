@@ -185,13 +185,19 @@
     else if (act === "pet")
     {
       // tapping shows how the session is going, or a quip
+      // tap to make your buddy stop and stay put; tap again and it wanders off
+      ui.hold = !ui.hold;
+      chrome.storage.local.set({ [UI_KEY]: ui });
+      if (stage) stage.classList.toggle("is-held", !!ui.hold);
       const r = Math.random();
       say(
-        r < 0.3
-          ? "YOU GOT THIS!!!"
-          : r < 0.55
-            ? line(state)
-            : QUIPS[Math.floor(Math.random() * QUIPS.length)],
+        !ui.hold && r < 0.25
+          ? "Back to exploring the loss landscape."
+          : r < 0.3
+            ? "YOU GOT THIS!!!"
+            : r < 0.55
+              ? line(state)
+              : QUIPS[Math.floor(Math.random() * QUIPS.length)],
         3200,
       );
       hop();
@@ -575,6 +581,8 @@
         stage.style.setProperty("--sb-sign-x", `${Math.round(signX)}px`);
         stage.dataset.signX = Math.round(signX);
         stage.style.setProperty("--sb-lane", `${Math.round(H.width)}px`);
+        // a calm stroll: about 22 px a second whatever the banner width (the walk keyframes rest ~12% of the loop)
+        stage.style.setProperty("--sb-walk-dur", `${Math.max(40, Math.round((H.width * 2) / 22 / 0.88))}s`);
         drawGrass(Math.round(H.width), slim);
         renderPlants(true);
       }
@@ -626,6 +634,7 @@
     stage.classList.toggle("is-break", state.mode !== "focus");
     stage.classList.toggle("is-running", !!state.running);
     stage.classList.toggle("is-motion", motion());
+    stage.classList.toggle("is-held", !!ui.hold);
     stage.querySelector(".sb-slabel").textContent =
       state.mode === "focus" ? "pomodoro" : state.mode === "long" ? "long break" : "break";
     stage.querySelector(".sb-ttime").textContent = fmt(leftMs(state));

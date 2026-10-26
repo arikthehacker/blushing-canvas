@@ -580,6 +580,97 @@ chrome.storage.sync.get("look", ({ look: stored }) =>
       img.onerror = reject;
       img.src = URL.createObjectURL(file);
     });
+  // the sheet template: 1184 x 366, four 256 px boxes starting at x = 32, 320, 608, 896 and y = 92
+  const SHEET = { w: 1184, h: 366, y: 92, xs: [32, 320, 608, 896], size: 256 };
+  const sheetStatus = document.getElementById("sheetStatus");
+  function splitSheet(file)
+  {
+    return new Promise((resolve, reject) =>
+    {
+      const img = new Image();
+      img.onload = () =>
+      {
+        URL.revokeObjectURL(img.src);
+        const k = img.width / SHEET.w;
+        if (Math.abs(img.height / k - SHEET.h) > SHEET.h * 0.06)
+        {
+          reject(new Error("shape"));
+          return;
+        }
+        const out = {};
+        let opaque = 0;
+        POSES.forEach((p, i) =>
+        {
+          const c = document.createElement("canvas");
+          c.width = SHEET.size;
+          c.height = SHEET.size;
+          const ctx = c.getContext("2d", { willReadFrequently: true });
+          ctx.drawImage(
+            img,
+            SHEET.xs[i] * k,
+            SHEET.y * k,
+            SHEET.size * k,
+            SHEET.size * k,
+            0,
+            0,
+            SHEET.size,
+            SHEET.size,
+          );
+          const d = ctx.getImageData(0, 0, SHEET.size, SHEET.size).data;
+          let ink = 0;
+          for (let j = 3; j < d.length; j += 4) if (d[j] > 20) ink++;
+          const share = ink / (SHEET.size * SHEET.size);
+          if (share > 0.97) opaque++;
+          if (ink > 60) out[p.key] = c.toDataURL("image/png"); // empty boxes are skipped
+        });
+        if (opaque)
+        {
+          reject(new Error("opaque"));
+          return;
+        }
+        resolve(out);
+      };
+      img.onerror = () => reject(new Error("read"));
+      img.src = URL.createObjectURL(file);
+    });
+  }
+  document.getElementById("sheetFile").addEventListener("change", async e =>
+  {
+    const f = e.target.files[0];
+    e.target.value = "";
+    if (!f) return;
+    try
+    {
+      const found = await splitSheet(f);
+      const keys = Object.keys(found);
+      if (!keys.length)
+      {
+        sheetStatus.textContent = "All four boxes look empty. Draw at least the Standing pose.";
+        return;
+      }
+      const next = { ...(await getCustom()), ...found };
+      await new Promise(r => chrome.storage.local.set({ [CUSTOM_KEY]: next }, r));
+      if (next.idle) paint(await studyAct("kind", { kind: "custom" }));
+      const names = POSES.filter(p => found[p.key])
+        .map(p => p.label)
+        .join(", ");
+      sheetStatus.textContent =
+        found.idle || next.idle
+          ? `Found ${keys.length} pose${keys.length > 1 ? "s" : ""}: ${names}. Your buddy is ready.`
+          : `Found ${names}, but the Standing box is empty. Your buddy needs that one.`;
+      renderPoses();
+    }
+    catch (err)
+    {
+      sheetStatus.textContent =
+        err.message === "shape"
+          ? "That does not look like the Blush sheet. Export the whole sheet without cropping or resizing it unevenly."
+          : err.message === "opaque"
+            ? "The background is not transparent. Hide the guide layer and any background layer, then export as PNG again."
+            : "That picture would not load. Try exporting it as PNG again.";
+    }
+  });
+
   const poseBox = document.getElementById("poses");
   let customTile = null;
   async function renderPoses()

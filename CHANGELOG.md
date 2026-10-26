@@ -1,5 +1,11 @@
 # changelog
 
+## 3.1.0
+
+- upload the whole pet sheet at once. blush cuts out each pose and skips empty boxes
+- tap your buddy to make it stop and stay put, and tap again to let it wander
+- your buddy strolls slower, about 22 px a second
+
 ## 3.0.3
 
 - the sign's handles are longer and run down behind your buddy, so it looks like it's holding the sign
