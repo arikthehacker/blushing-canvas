@@ -14,7 +14,10 @@
   --sb-pet: 44px;
   --sb-lane: 600px;
   --sb-sign-x: 50%;
-  --sb-blade: color-mix(in srgb, #7daf7f 55%, transparent);
+  --sb-blade-back: #6fa76c;
+  --sb-blade-front: #92c886;
+  --sb-clover: #f2c9d3;
+  --sb-pebble: #c9b8a6;
   --bl-sb-pet: color-mix(in srgb, var(--bl-surface) 70%, var(--bl-accent) 30%);
   --bl-sb-cheek: color-mix(in srgb, var(--bl-accent) 45%, #ffb3c4 55%);
   --bl-sb-soil: transparent;
@@ -36,25 +39,24 @@
   --sb-pet: 30px;
 }
 
-/* grass: a soft fade into a row of tiny blades */
-.sb-ground::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 60%;
-  background: linear-gradient(to top, color-mix(in srgb, #9ccb9a 34%, transparent), transparent);
+:host-context(html.bl-dark) .sb-ground {
+  --sb-blade-back: #3f6e45;
+  --sb-blade-front: #5f9461;
+  --sb-clover: #b98a99;
+  --sb-pebble: #6b5d55;
 }
+
+/* grass: two layers of blades along the very bottom, no background behind it */
 .sb-grass {
   position: absolute;
   left: 0;
   bottom: 0;
   width: 100%;
-  height: 12px;
+  height: 16px;
+  display: block;
 }
 .sb-ground[data-size="slim"] .sb-grass {
-  height: 9px;
+  height: 12px;
 }
 
 /* ---------- plants ---------- */
@@ -64,7 +66,7 @@
 }
 .sb-plant {
   position: absolute;
-  bottom: 1px;
+  bottom: 3px;
   width: 16px;
   height: 22px;
   transform: rotate(var(--t, 0deg));

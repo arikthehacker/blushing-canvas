@@ -420,8 +420,49 @@
     lastMood = "",
     lastKind = "",
     plantsKey = "";
-  const GRASS =
-    '<svg class="sb-grass" aria-hidden="true" preserveAspectRatio="none"><defs><pattern id="sb-blades" width="14" height="12" patternUnits="userSpaceOnUse"><path d="M1 12 Q2 6 3.5 3 Q3.5 8 4 12Z M6 12 Q7.5 5 10 1.5 Q8.8 7 9 12Z M10.5 12 Q11.5 7 13.5 5 Q12.5 9 13 12Z" fill="var(--sb-blade)"/></pattern></defs><rect x="0" y="0" width="100%" height="100%" fill="url(#sb-blades)"/></svg>';
+  const GRASS = '<svg class="sb-grass" aria-hidden="true" preserveAspectRatio="none"></svg>';
+  let grassKey = "";
+  // grass that looks drawn by hand: two layers of blades with different heights and a little lean
+  function drawGrass(W, slim)
+  {
+    const svg = stage && stage.querySelector(".sb-grass");
+    if (!svg) return;
+    const H = slim ? 12 : 16;
+    const key = `${W}|${slim}`;
+    if (key === grassKey) return;
+    grassKey = key;
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    const blade = (x, h, lean, w) =>
+      `M${(x - w).toFixed(1)} ${H} Q${(x + lean * 0.4).toFixed(1)} ${(H - h * 0.6).toFixed(1)} ${(x + lean).toFixed(1)} ${(H - h).toFixed(1)} Q${(x + lean * 0.3 + w * 0.3).toFixed(1)} ${(H - h * 0.5).toFixed(1)} ${(x + w).toFixed(1)} ${H}Z`;
+    let back = "",
+      front = "",
+      bits = "";
+    for (let x = 0, i = 0; x < W + 6; i++)
+    {
+      back += blade(x, (slim ? 6 : 8) + rnd(i * 3 + 1) * (slim ? 5 : 8), (rnd(i * 5 + 2) - 0.5) * 5, 1.6);
+      x += 3 + rnd(i * 7 + 3) * 3;
+    }
+    for (let x = 2, i = 0; x < W + 6; i++)
+    {
+      front += blade(
+        x,
+        (slim ? 3.5 : 4.5) + rnd(i * 11 + 4) * (slim ? 3.5 : 5),
+        (rnd(i * 13 + 5) - 0.5) * 4,
+        1.4,
+      );
+      x += 4 + rnd(i * 17 + 6) * 4;
+    }
+    // a few tiny clover dots and pebbles
+    for (let i = 0; i < W / 60; i++)
+    {
+      const x = rnd(i * 19 + 7) * W;
+      bits +=
+        rnd(i * 23 + 8) > 0.5
+          ? `<circle cx="${x.toFixed(1)}" cy="${H - 2.4}" r="1.3" fill="var(--sb-clover)"/>`
+          : `<ellipse cx="${x.toFixed(1)}" cy="${H - 1.2}" rx="2" ry="1.1" fill="var(--sb-pebble)"/>`;
+    }
+    svg.innerHTML = `<path d="${back}" fill="var(--sb-blade-back)"/><rect x="0" y="${H - 2}" width="${W}" height="2" fill="var(--sb-blade-back)"/><path d="${front}" fill="var(--sb-blade-front)"/>${bits}`;
+  }
   const heroSection = () =>
   {
     const h = document.getElementById("blush-hero");
@@ -489,6 +530,7 @@
     lastMood = "";
     lastKind = "";
     plantsKey = "";
+    grassKey = "";
     layoutStage();
   }
 
@@ -525,6 +567,7 @@
         stage.style.setProperty("--sb-sign-x", `${Math.round(signX)}px`);
         stage.dataset.signX = Math.round(signX);
         stage.style.setProperty("--sb-lane", `${Math.round(H.width)}px`);
+        drawGrass(Math.round(H.width), slim);
         renderPlants(true);
       }
     }

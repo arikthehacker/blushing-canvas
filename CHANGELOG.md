@@ -1,5 +1,9 @@
 # changelog
 
+## 2.8.1
+
+- the grass is two layers of blades with little clover dots and pebbles, and the pale band behind it is gone
+
 ## 2.8.0
 
 - AHHH I'M STRESSED. SUPER DECLUTTER: a button on the banner and in the popup that hides your whole dashboard except what's due before midnight tonight, soonest first, with checkboxes
