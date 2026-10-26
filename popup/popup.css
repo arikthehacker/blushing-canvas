@@ -149,7 +149,7 @@ kbd {
   color: var(--bl-text);
 }
 .seg.two {
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
 }
 .photos {
   display: grid;

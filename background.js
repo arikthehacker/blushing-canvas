@@ -101,6 +101,7 @@ async function pick({ shuffle = false } = {})
 {
   const settings = (await new Promise(r => chrome.storage.sync.get("settings", v => r(v.settings)))) || {};
   const source = settings.artSource || "both";
+  if (source === "stars") return null; // the banner draws its own sky
   const photos = (await get(PHOTOS_KEY)) || [];
   const day = dayKey();
   const seed = shuffle ? Math.floor(Math.random() * 1e9) : hash(day);

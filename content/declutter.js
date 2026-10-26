@@ -58,6 +58,7 @@ function renderCalm()
     el.setAttribute("aria-modal", "true");
     el.setAttribute("aria-labelledby", "bl-calm-h");
     uiRoot.appendChild(el);
+    el.innerHTML = `<div class="bl-stars bl-calm-sky" aria-hidden="true">${starsHTML(70)}</div><div class="bl-calm-wrap"></div>`;
     el.addEventListener("change", e =>
     {
       const key = e.target.dataset.calm;
@@ -88,14 +89,14 @@ function renderCalm()
   else if (!open.length) sub = "All of tonight is done. You did it.";
   else
     sub = `${open.length === 1 ? "Just one thing is" : `${open.length} things are`} due before midnight. That is it. Everything else can wait.`;
-  el.innerHTML = `
+  el.querySelector(".bl-calm-wrap").innerHTML = `
     <div class="bl-calm-inner">
       <p class="bl-eyebrow"><b>//</b> super declutter</p>
       <h2 class="bl-calm-h" id="bl-calm-h" tabindex="-1">${list && list.length && !open.length ? "Tonight is handled." : "Just tonight."}</h2>
       <p class="bl-calm-sub">${esc(sub)}</p>
       ${list && list.length ? `<ol class="bl-calm-list">${list.map(calmItemHTML).join("")}</ol>` : ""}
       ${next ? `<p class="bl-calm-next">Next thing on the horizon: <a href="${esc(next.url || "#")}">${esc(next.title)}</a> · ${esc(fmtDue(next.due))}</p>` : ""}
-      <div class="bl-calm-breathe" aria-hidden="true"><span class="bl-calm-dot"></span><span>Breathe in for 4, out for 6. One thing at a time.</span></div>
+      <p class="bl-calm-cheer"><span class="bl-cheer-star" aria-hidden="true">✦</span>YOU GOT THIS!!!<span class="bl-cheer-star is-b" aria-hidden="true">✦</span><span class="bl-cheer-star is-c" aria-hidden="true">✧</span></p>
       <button class="bl-calm-exit" type="button" data-calm-exit>I feel better. Bring my dashboard back.</button>
     </div>`;
   if (wasHidden)

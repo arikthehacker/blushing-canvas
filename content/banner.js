@@ -65,6 +65,8 @@ function renderHero()
   const hero = heroRoot.querySelector(".bl-hero");
   hero.classList.toggle("is-full", full);
   hero.classList.toggle("is-slim", !full);
+  const stars = settings.artSource === "stars";
+  hero.classList.toggle("is-stars", stars);
   const content = heroRoot.querySelector(".bl-hero-content");
 
   const active = heroRoot.activeElement;
@@ -73,7 +75,7 @@ function renderHero()
   const draft = draftEl ? draftEl.value : "";
 
   const nu = nextUp();
-  const a = art.current;
+  const a = settings.artSource === "stars" ? null : art.current;
   const credit =
     a && a.kind === "art"
       ? `<a class="bl-credit" href="${esc(a.link)}" target="_blank" rel="noopener" data-fk="credit">${esc(a.artist ? `${a.artist}, ` : "")}${esc(a.title)}</a>`
@@ -174,8 +176,7 @@ async function buildHero()
   const section = document.createElement("section");
   section.className = "bl-hero";
   section.setAttribute("aria-label", "Today");
-  section.innerHTML =
-    '<div class="bl-hero-img" aria-hidden="true"></div><div class="bl-hero-wash" aria-hidden="true"></div><div class="bl-hero-content"></div>';
+  section.innerHTML = `<div class="bl-hero-img" aria-hidden="true"></div><div class="bl-hero-wash" aria-hidden="true"></div><div class="bl-stars bl-hero-stars" aria-hidden="true">${starsHTML(90)}</div><div class="bl-hero-content"></div>`;
   heroRoot.appendChild(section);
 
   // drop a picture on the banner to add it to your photos and show it right away
@@ -196,7 +197,7 @@ async function buildHero()
     e.preventDefault();
     try
     {
-      const dataUrl = await self.BlushLook.resizeImage(file);
+      const dataUrl = await self.BlushLook.resizeImage(file, 2560);
       const photos = (await store.get("local", "bl:photos")) || [];
       const id = Math.random().toString(36).slice(2, 10);
       photos.push({ id, dataUrl });
@@ -257,6 +258,10 @@ async function buildHero()
       settings.stress = true;
       saveSettings();
       renderCalm();
+    }
+    else if (act === "shuffle" && settings.artSource === "stars")
+    {
+      heroRoot.querySelector(".bl-hero-stars").innerHTML = starsHTML(90); // a fresh sky
     }
     else if (act === "shuffle")
     {

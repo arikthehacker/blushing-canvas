@@ -1,5 +1,10 @@
 # changelog
 
+## 2.9.0
+
+- super declutter cheers "YOU GOT THIS!!!" over a sky of twinkly stars
+- a new banner picture option, stars, with a fresh sky every time you shuffle
+
 ## 2.8.1
 
 - the grass is two layers of blades with little clover dots and pebbles, and the pale band behind it is gone

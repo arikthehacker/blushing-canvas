@@ -130,7 +130,7 @@ function resize(file)
     const img = new Image();
     img.onload = () =>
     {
-      const scale = Math.min(1, 1800 / img.width);
+      const scale = Math.min(1, 2560 / img.width);
       const c = document.createElement("canvas");
       c.width = Math.round(img.width * scale);
       c.height = Math.round(img.height * scale);
