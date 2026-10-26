@@ -1,5 +1,9 @@
 # changelog
 
+## 3.0.3
+
+- the sign's handles are longer and run down behind your buddy, so it looks like it's holding the sign
+
 ## 3.0.1
 
 - real twinkling stars over soft gradients made from your current colors, on the stars banner and the calm screen

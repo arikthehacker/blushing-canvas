@@ -41,6 +41,7 @@ chrome.storage.onChanged.addListener((ch, area) =>
     if (changed && calmOn()) renderCalm();
   }
 });
+// YOU GOT THIS!!! comes up often, mixed in with the ML wisdom
 const pickQuote = () =>
 {
   let q = calmQuote;
@@ -52,14 +53,17 @@ function calmBuddyHTML()
   const pet = self.BlushPets ? self.BlushPets.svg(calmPet.kind, "happy", "bl-calm-pet-art") : "";
   return `<div class="bl-calm-buddy">
       <span class="bl-calm-spark is-a" aria-hidden="true">✦</span><span class="bl-calm-spark is-b" aria-hidden="true">✧</span><span class="bl-calm-spark is-c" aria-hidden="true">✦</span>
-      <button class="bl-calm-sign" type="button" data-calm-quote aria-label="YOU GOT THIS! Tap for another quote from ${esc(calmPet.name)}">
+      <button class="bl-calm-sign" type="button" data-calm-quote aria-label="YOU GOT THIS! Tap for a secret quote from ${esc(calmPet.name)}">
         <span class="bl-calm-sign-board">YOU GOT THIS!!!</span>
-        <span class="bl-calm-stick is-l" aria-hidden="true"></span><span class="bl-calm-stick is-r" aria-hidden="true"></span>
       </button>
-      <button class="bl-calm-pet" type="button" data-calm-quote aria-label="Tap ${esc(calmPet.name)} for a secret quote">${pet}</button>
+      <div class="bl-calm-holder">
+        <span class="bl-calm-stick is-l" aria-hidden="true"></span><span class="bl-calm-stick is-r" aria-hidden="true"></span>
+        <button class="bl-calm-pet" type="button" data-calm-quote aria-label="Tap ${esc(calmPet.name)} for a secret quote">${pet}</button>
+      </div>
     </div>
     <p class="bl-calm-quote" aria-live="polite"${calmQuote ? "" : " hidden"}>${esc(calmQuote)}</p>`;
 }
+
 // On the dashboard, hides everything except what is due before midnight tonight.
 const calmOn = () => !!settings.stress && location.pathname === "/";
 function tonightItems()
@@ -160,7 +164,7 @@ function renderCalm()
     });
   }
   const wasHidden = el.hidden;
-  if (wasHidden) calmQuote = ""; // quotes only show once you tap your buddy
+  if (wasHidden) calmQuote = ""; // your buddy only talks once you tap it
   el.hidden = false;
   const list = tonightItems();
   const open = list ? list.filter(i => !isDone(i)) : [];

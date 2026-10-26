@@ -185,7 +185,15 @@
     else if (act === "pet")
     {
       // tapping shows how the session is going, or a quip
-      say(Math.random() < 0.45 ? line(state) : QUIPS[Math.floor(Math.random() * QUIPS.length)], 3200);
+      const r = Math.random();
+      say(
+        r < 0.3
+          ? "YOU GOT THIS!!!"
+          : r < 0.55
+            ? line(state)
+            : QUIPS[Math.floor(Math.random() * QUIPS.length)],
+        3200,
+      );
       hop();
     }
     else
