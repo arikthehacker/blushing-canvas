@@ -12,13 +12,13 @@
 git clone https://github.com/arikthehacker/blushing-canvas.git
 ```
 
-no git? click the green **code** button on github, pick **download zip**, and unzip it somewhere you'll keep it.
+no git? download `blush-for-canvas-<version>.zip` from the [latest release](https://github.com/arikthehacker/blushing-canvas/releases/latest) and unzip it somewhere you'll keep it. every version back to 1.0 is on the [releases page](https://github.com/arikthehacker/blushing-canvas/releases).
 
 **1.** open `chrome://extensions` in chrome and turn on **developer mode** in the top right corner.
 
 ![the developer mode switch on chrome://extensions, circled](docs/images/install-1-developer-mode.png)
 
-**2.** click **load unpacked** and pick the `blushing-canvas` folder, the one with `manifest.json` in it.
+**2.** click **load unpacked** and pick the folder with `manifest.json` in it (`blushing-canvas` if you cloned, `blush-for-canvas` if you unzipped a release).
 
 ![the load unpacked button, circled](docs/images/install-2-load-unpacked.png)
 
