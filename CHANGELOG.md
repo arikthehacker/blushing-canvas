@@ -1,5 +1,10 @@
 # changelog
 
+## 3.2.0
+
+- write your own greeting for morning, afternoon, evening and late night. {name} turns into your name
+- add your own motivational quotes, one per line. your buddy says them when you tap it, mixed in with its ML ones, or only yours if you switch that on
+
 ## 3.1.0
 
 - upload the whole pet sheet at once. blush cuts out each pose and skips empty boxes

@@ -68,6 +68,20 @@ chrome.storage.sync.get("settings", ({ settings }) =>
   });
   paintStress();
 
+  // greetings for each time of day
+  s.greet = s.greet || {};
+  let gt = 0;
+  document.querySelectorAll(".greets input").forEach(inp =>
+  {
+    inp.value = s.greet[inp.dataset.slot] || "";
+    inp.addEventListener("input", () =>
+    {
+      s.greet[inp.dataset.slot] = inp.value.trim();
+      clearTimeout(gt);
+      gt = setTimeout(save, 400);
+    });
+  });
+
   const name = document.getElementById("name");
   name.value = s.name || "";
   let t = 0;
@@ -758,4 +772,44 @@ chrome.storage.sync.get("look", ({ look: stored }) =>
     t = setTimeout(() => studyAct("name", { name: nameIn.value }), 400);
   });
   renderPoses();
+})();
+
+// ---------- your own quotes ----------
+(() =>
+{
+  const ta = document.getElementById("myQuotes");
+  const only = document.getElementById("quotesOnly");
+  const count = document.getElementById("quotesCount");
+  const KEY = "bl:quotes";
+  const show = n =>
+  {
+    count.textContent = n
+      ? `${n} quote${n === 1 ? "" : "s"} saved. Your buddy says these when you tap it, on the banner and on the super declutter page.`
+      : "Your buddy says these when you tap it, on the banner and on the super declutter page.";
+  };
+  chrome.storage.local.get(KEY, v =>
+  {
+    const q = v[KEY] || { list: [], only: false };
+    ta.value = (q.list || []).join("\n");
+    only.checked = !!q.only;
+    show((q.list || []).length);
+  });
+  let t = 0;
+  const save = () =>
+  {
+    const list = ta.value
+      .split(/\r?\n/)
+      .map(l => l.trim())
+      .filter(Boolean)
+      .map(l => l.slice(0, 200))
+      .slice(0, 100);
+    chrome.storage.local.set({ [KEY]: { list, only: only.checked } });
+    show(list.length);
+  };
+  ta.addEventListener("input", () =>
+  {
+    clearTimeout(t);
+    t = setTimeout(save, 400);
+  });
+  only.addEventListener("change", save);
 })();

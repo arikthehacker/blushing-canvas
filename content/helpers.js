@@ -66,14 +66,24 @@ function fmtDue(iso)
   if (diff > 1 && diff < 7) return `${d.toLocaleDateString([], { weekday: "short" })} ${time}`;
   return `${d.toLocaleDateString([], { month: "short", day: "numeric" })} ${time}`;
 }
+// your own greeting for each time of day, where {name} becomes your name
 function greeting()
 {
   const h = new Date().getHours();
-  const part = h < 5 ? "Up late" : h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : "Good evening";
+  const slot = h < 5 ? "night" : h < 12 ? "morning" : h < 17 ? "afternoon" : "evening";
+  const part = {
+    night: "Up late",
+    morning: "Good morning",
+    afternoon: "Good afternoon",
+    evening: "Good evening",
+  }[slot];
   const name =
     (settings.name || "").trim() || (state.user && state.user.name ? state.user.name.split(" ")[0] : "");
+  const mine = ((settings.greet || {})[slot] || "").trim();
+  if (mine) return mine.replace(/\{name\}/gi, name || "friend").replace(/\s+([,.!?])/g, "$1");
   return name ? `${part}, ${name}` : part;
 }
+const withStop = t => (/[.!?~♡♥*)]$/.test(t) ? t : `${t}.`);
 function weekBounds()
 {
   const now = new Date();

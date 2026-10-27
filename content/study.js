@@ -147,6 +147,26 @@
     if (isPaused(s)) return "Checkpoint saved. Resume when ready.";
     return n ? `${n} epochs today. Shall we run another?` : "Ready to minimize some loss?";
   }
+  let myQuotes = { list: [], only: false };
+  chrome.storage.local.get("bl:quotes", v =>
+  {
+    const q = v["bl:quotes"];
+    if (q) myQuotes = { list: q.list || [], only: !!q.only };
+  });
+  chrome.storage.onChanged.addListener((ch, area) =>
+  {
+    if (area === "local" && ch["bl:quotes"])
+    {
+      const q = ch["bl:quotes"].newValue || {};
+      myQuotes = { list: q.list || [], only: !!q.only };
+    }
+  });
+  const pickQuip = () =>
+  {
+    const pool =
+      myQuotes.only && myQuotes.list.length ? myQuotes.list : QUIPS.concat(myQuotes.list, myQuotes.list);
+    return pool[Math.floor(Math.random() * pool.length)];
+  };
   const QUIPS = [
     "Attention is all you need. Also snacks.",
     "My posterior says you will ace this.",
@@ -190,15 +210,18 @@
       chrome.storage.local.set({ [UI_KEY]: ui });
       if (stage) stage.classList.toggle("is-held", !!ui.hold);
       const r = Math.random();
+      const yoursOnly = myQuotes.only && myQuotes.list.length;
       say(
-        !ui.hold && r < 0.25
-          ? "Back to exploring the loss landscape."
-          : r < 0.3
-            ? "YOU GOT THIS!!!"
-            : r < 0.55
-              ? line(state)
-              : QUIPS[Math.floor(Math.random() * QUIPS.length)],
-        3200,
+        yoursOnly
+          ? pickQuip()
+          : !ui.hold && r < 0.2
+              ? "Back to exploring the loss landscape."
+              : r < 0.3
+                ? "YOU GOT THIS!!!"
+                : r < 0.5
+                  ? line(state)
+                  : pickQuip(),
+        3600,
       );
       hop();
     }

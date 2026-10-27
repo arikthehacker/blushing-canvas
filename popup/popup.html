@@ -89,6 +89,19 @@
   <fieldset>
     <legend>You</legend>
     <div class="field"><label for="name">Name in the greeting</label><input class="text" id="name" placeholder="Uses your Canvas name if empty" maxlength="30" autocomplete="off"></div>
+    <p class="sub">Your greeting</p>
+    <div class="greets">
+      <label for="g-morning">Morning</label><input class="text" id="g-morning" data-slot="morning" placeholder="Good morning, {name}" maxlength="60" autocomplete="off">
+      <label for="g-afternoon">Afternoon</label><input class="text" id="g-afternoon" data-slot="afternoon" placeholder="Good afternoon, {name}" maxlength="60" autocomplete="off">
+      <label for="g-evening">Evening</label><input class="text" id="g-evening" data-slot="evening" placeholder="Good evening, {name}" maxlength="60" autocomplete="off">
+      <label for="g-night">Late night</label><input class="text" id="g-night" data-slot="night" placeholder="Up late, {name}" maxlength="60" autocomplete="off">
+    </div>
+    <p class="hint">Write anything, like "Hi genius {name}" or "Lock in, {name}!". {name} turns into your name. Leave one empty to keep the default.</p>
+
+    <p class="sub">Your own quotes</p>
+    <textarea class="text quotes" id="myQuotes" rows="5" placeholder="One per line, for example:&#10;Future me is going to be so proud.&#10;I have done hard things before."></textarea>
+    <div class="row"><label for="quotesOnly">Only my quotes<small>Your buddy says just yours instead of mixing them with its ML ones</small></label><input class="switch" type="checkbox" id="quotesOnly"></div>
+    <p class="hint" id="quotesCount">Your buddy says these when you tap it, on the banner and on the super declutter page.</p>
   </fieldset>
 
   <fieldset>

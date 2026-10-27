@@ -86,7 +86,7 @@ function renderHero()
   content.innerHTML = `
     <div class="bl-hero-main">
       <p class="bl-hero-date">${esc(longDate())}</p>
-      <p class="bl-hero-greet" data-greet>${esc(greeting())}.</p>
+      <p class="bl-hero-greet" data-greet>${esc(withStop(greeting()))}</p>
       ${focusHTML(full)}
     </div>
     <div class="bl-hero-side">

@@ -450,6 +450,29 @@ kbd {
   width: 100%;
   accent-color: var(--bl-accent);
 }
+.greets {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 10px;
+  align-items: center;
+}
+.greets label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--bl-muted);
+}
+.greets .text {
+  padding: 7px 10px;
+  font-size: 13px;
+  min-width: 0;
+}
+.quotes {
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+  font-size: 13px;
+  line-height: 1.45;
+}
 .pets {
   --bl-sb-pet: color-mix(in srgb, var(--bl-surface) 70%, var(--bl-accent) 30%);
   --bl-sb-cheek: color-mix(in srgb, var(--bl-accent) 45%, #ffb3c4 55%);

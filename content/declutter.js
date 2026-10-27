@@ -21,6 +21,19 @@ const CALM_QUOTES = [
   "Nobody remembers the failed runs. They remember what you shipped.",
 ];
 let calmQuote = "";
+let myQuotes = { list: [], only: false };
+store.get("local", "bl:quotes").then(v =>
+{
+  if (v) myQuotes = { list: v.list || [], only: !!v.only };
+});
+chrome.storage.onChanged.addListener((ch, area) =>
+{
+  if (area === "local" && ch["bl:quotes"])
+  {
+    const v = ch["bl:quotes"].newValue || {};
+    myQuotes = { list: v.list || [], only: !!v.only };
+  }
+});
 let calmPet = { kind: "mochi", name: "Mochi" };
 store.get("local", "bl:study").then(st =>
 {
@@ -45,7 +58,14 @@ chrome.storage.onChanged.addListener((ch, area) =>
 const pickQuote = () =>
 {
   let q = calmQuote;
-  while (q === calmQuote) q = CALM_QUOTES[Math.floor(Math.random() * CALM_QUOTES.length)];
+  const pool =
+    myQuotes.only && myQuotes.list.length ? myQuotes.list : CALM_QUOTES.concat(myQuotes.list, myQuotes.list); // yours come up twice as often
+  if (pool.length < 2)
+  {
+    calmQuote = pool[0] || "";
+    return;
+  }
+  while (q === calmQuote) q = pool[Math.floor(Math.random() * pool.length)];
   calmQuote = q;
 };
 function calmBuddyHTML()
