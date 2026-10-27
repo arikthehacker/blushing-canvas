@@ -234,6 +234,13 @@ chrome.storage.sync.get("look", ({ look: stored }) =>
       look.colorsOn = true;
       sync();
       save();
+      // some presets come with a banner picture, picked the same way as tapping it under Banner
+      const pic = p.banner && document.getElementById(`s-${p.banner}`);
+      if (pic && !pic.checked)
+      {
+        pic.checked = true;
+        pic.dispatchEvent(new Event("change"));
+      }
     });
     presetBox.appendChild(b);
   });

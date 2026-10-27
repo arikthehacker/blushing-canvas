@@ -1408,7 +1408,7 @@ button.bl-calm-pet:focus-visible {
   height: 140%;
   left: -10%;
   top: -30%;
-  background: var(--bl-accent);
+  background: var(--bl-sky-glow, var(--bl-accent));
   animation: bl-drift-a 26s ease-in-out infinite alternate;
 }
 .bl-blob.is-b {
@@ -1416,7 +1416,7 @@ button.bl-calm-pet:focus-visible {
   height: 120%;
   right: -8%;
   top: -10%;
-  background: color-mix(in srgb, var(--bl-accent) 45%, #7c6cf0);
+  background: color-mix(in srgb, var(--bl-sky-glow, var(--bl-accent)) 45%, #7c6cf0);
   animation: bl-drift-b 32s ease-in-out infinite alternate;
 }
 .bl-blob.is-c {

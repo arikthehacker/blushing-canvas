@@ -239,6 +239,14 @@ kbd {
   font-weight: 600;
   cursor: pointer;
 }
+.preset {
+  white-space: nowrap;
+}
+/* an odd one out at the end gets the whole row instead of sitting alone */
+.preset:last-child:nth-child(3n + 1) {
+  grid-column: 1 / -1;
+  justify-content: center;
+}
 .preset:hover {
   border-color: var(--bl-border-ui);
 }

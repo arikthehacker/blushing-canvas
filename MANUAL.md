@@ -151,10 +151,12 @@ auto follows your computer's light or dark setting. light and dark stay put. the
 
 turn on **use my colors** to swap dusty pink for your own palette.
 
-- start from a preset: blush, sage, lavender, ocean, cocoa or night.
+- start from a preset: blush, sage, lavender, ocean, cocoa, night or night sky. night sky also switches the banner to the stars.
 - or upload a palette. it takes a palette picture, a coolors link, `.ase` and `.gpl` files, or any file with hex codes in it. you can also paste hex codes or a coolors link.
 - tap a role (accent, background, cards, text, sidebar), then a swatch to fill it. **auto-pick light** and **auto-pick dark** build a full theme from the palette for you.
 - blush warns you when text gets hard to read on your background.
+
+![canvas with the night sky preset: an indigo page, gold accents and a starry banner](docs/images/night-sky.png)
 
 ### fonts
 

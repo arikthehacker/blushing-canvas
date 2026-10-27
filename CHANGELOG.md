@@ -1,5 +1,9 @@
 # changelog
 
+## 3.4.0
+
+- a night sky color preset: indigo background, gold accents and lavender text, from the github night sky theme and differend. picking it also switches the banner to the stars, with a soft mauve glow behind them
+
 ## 3.3.0
 
 - blush works on any *.instructure.com school by itself. if your school uses its own address, open the popup on your canvas page and tap turn on blush, and chrome asks you to allow that one site

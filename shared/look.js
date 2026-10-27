@@ -40,6 +40,19 @@
       name: "Night",
       colors: { accent: "#E3A5B4", bg: "#14151B", surface: "#1F2029", text: "#E8E6EE", nav: "#0C0D11" },
     },
+    {
+      // indigo sky, gold stars and lavender text, and the banner turns into the twinkling stars
+      name: "Night sky",
+      colors: {
+        accent: "#F3D9A4",
+        bg: "#1C1937",
+        surface: "#2A2650",
+        text: "#ECE8F6",
+        nav: "#16152B",
+        glow: "#966E8C",
+      },
+      banner: "stars",
+    },
   ];
 
   // ---------------------------------------------------------------- color math
@@ -143,6 +156,7 @@
       "--bl-c-hero-accent": readableOn(accent, c.bg, 4.5),
       "--bl-c-hero-bg": c.bg,
       "--bl-c-hero-tint": accent,
+      "--bl-sky-glow": c.glow || accent, // the soft color blobs behind the stars
       "color-scheme": dark ? "dark" : "light",
     };
   }
