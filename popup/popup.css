@@ -247,6 +247,54 @@ kbd {
   grid-column: 1 / -1;
   justify-content: center;
 }
+.plants {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+.plant {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  padding: 6px 2px 5px;
+  border-radius: 10px;
+  border: 1px solid var(--bl-border);
+  background: var(--bl-surface);
+  color: var(--bl-text);
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+.plant svg,
+.plant-any {
+  width: 24px;
+  height: 32px;
+}
+.plant-any {
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--bl-accent);
+}
+.plant[aria-pressed="true"] {
+  border-color: var(--bl-accent);
+  background: var(--bl-accent-soft);
+}
+.plant:focus-visible {
+  outline: 3px solid var(--bl-focus);
+  outline-offset: 2px;
+}
+.range {
+  width: 100%;
+  accent-color: var(--bl-accent);
+}
+label output {
+  float: right;
+  font-weight: 600;
+  color: var(--bl-muted);
+}
+
 .preset:hover {
   border-color: var(--bl-border-ui);
 }

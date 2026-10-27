@@ -90,6 +90,8 @@
       <p class="font-preview" id="fontHeadingPreview" style="font-weight:700">Good morning</p>
     </div>
     <p class="hint">Find one on <a class="link" href="https://fonts.google.com" target="_blank" rel="noopener">Google Fonts</a>, copy the page link or the embed link, and paste it here. Clear the box to go back to the default.</p>
+    <div class="field" style="padding-top:8px"><label for="textSize">Text size <output id="textSizeOut" for="textSize">100%</output></label><input class="range" type="range" id="textSize" min="85" max="130" step="5"></div>
+    <p class="hint">Makes everything on your Canvas pages bigger or smaller.</p>
   </fieldset>
 
   <fieldset>
@@ -126,6 +128,14 @@
     </div>
     <div class="photos" id="photos" aria-label="Your photos"></div>
     <label class="add-photo">Add your own photos<input type="file" id="file" accept="image/*" multiple></label>
+      <div class="row"><label for="stressSign">Stressed sign in the grass<small>Moves AHHH I'M STRESSED onto a little sign next to the pomodoro sign</small></label><input class="switch" type="checkbox" id="stressSign"></div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Dashboard</legend>
+    <div class="row"><label for="hideDashHeader">Hide the dashboard header<small>The Dashboard title, the new dashboard view button and its menu</small></label><input class="switch" type="checkbox" id="hideDashHeader"></div>
+    <div class="row"><label for="hideCardImages">Hide course images<small>Cards show their plain color instead of the course picture</small></label><input class="switch" type="checkbox" id="hideCardImages"></div>
+    <div class="row"><label for="hideCardIcons">Hide card icons<small>The announcements, discussions and assignments icons under each card</small></label><input class="switch" type="checkbox" id="hideCardIcons"></div>
   </fieldset>
 
   <fieldset>
@@ -155,6 +165,9 @@
     <div class="btns"><button class="btn" type="button" id="studyReset">Restart the timer</button></div>
     <p class="sub">Pick your buddy</p>
     <div class="pets" id="pets" role="group" aria-label="Pick your study buddy"></div>
+    <p class="sub">Next plant</p>
+    <div class="plants" id="nextPlant" role="group" aria-label="Pick the next plant to grow"></div>
+    <p class="hint">Your pick grows at the end of your next focus session, then the garden goes back to surprises.</p>
     <p class="sub">Or draw your own</p>
     <div class="poses" id="poses"></div>
     <label class="add-photo" style="margin-top:8px">Upload the whole sheet<input type="file" id="sheetFile" accept="image/png"></label>

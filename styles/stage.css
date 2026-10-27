@@ -177,6 +177,52 @@
   border-radius: 0 0 2px 2px;
   background: #b98b5e;
 }
+/* the stressed sign: same wood as the pomodoro sign, planted to its right */
+.sb-stress {
+  position: absolute;
+  bottom: 2px;
+  left: var(--sb-stress-x);
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  pointer-events: auto;
+  font: inherit;
+}
+.sb-stress[hidden] {
+  display: none;
+}
+.sb-stress-board {
+  display: block;
+  padding: 3px 7px;
+  border-radius: 6px;
+  background: linear-gradient(#f3ddbe, #e6c59c);
+  border: 1px solid #c99c6d;
+  box-shadow:
+    0 2px 0 #c99c6d,
+    0 3px 8px rgba(70, 40, 20, 0.14);
+  transform: rotate(2deg);
+  font-size: 8.5px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: 0.06em;
+  text-align: center;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: #9b3f58;
+}
+.sb-stress:hover .sb-stress-board {
+  background: linear-gradient(#f7e6cc, #ecd0aa);
+}
+.sb-stress:focus-visible .sb-stress-board {
+  outline: 2px solid var(--bl-focus, #a3526a);
+  outline-offset: 2px;
+}
+
 .sb-ground[data-size="slim"] .sb-board {
   padding: 1px 4px 2px 6px;
 }

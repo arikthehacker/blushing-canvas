@@ -6,6 +6,7 @@ most settings live in the popup. click the blush icon in chrome's toolbar to ope
 
 - [the banner](#the-banner)
 - [the to-do column](#the-to-do-column)
+- [your dashboard](#your-dashboard)
 - [quick jump and shortcuts](#quick-jump-and-shortcuts)
 - [super declutter](#super-declutter)
 - [the study buddy](#the-study-buddy)
@@ -59,6 +60,16 @@ the column on the right shows your week. canvas shrinks to make room for it, and
 
 the column loads from a saved copy first, so it shows up right away and then refreshes from canvas.
 
+## your dashboard
+
+![the dashboard with the header, course images and card icons hidden](docs/images/dashboard-tidy.png)
+
+under **dashboard** in the popup, three switches tidy up canvas's own dashboard:
+
+- **hide the dashboard header** hides the dashboard title, the switch to new dashboard view button and its menu.
+- **hide course images** shows every card with its plain color instead of the course picture. photos you added to a card yourself still show.
+- **hide card icons** hides the row of announcements, discussions and assignments icons under each card.
+
 ## quick jump and shortcuts
 
 ![quick jump open with the search bio](docs/images/quick-jump.png)
@@ -110,7 +121,7 @@ for nights when the whole dashboard is too much. tap **AHHH I'M STRESSED. SUPER 
 - your buddy holds a YOU GOT THIS!!! sign. tap the sign or your buddy for a secret quote.
 - it stays on, even after a refresh, until you tap **I feel better. Bring my dashboard back.** clicking an assignment still opens it normally.
 
-the button on the banner shows on the dashboard and hides when the window is narrower than 900 px. the one in the popup works from any page, and the calm screen shows up once you're back on the dashboard.
+the button on the banner shows on the dashboard and hides when the window is narrower than 900 px. turn on **stressed sign in the grass** under **banner** to move it onto a little wooden sign next to the pomodoro sign instead. the one in the popup works from any page, and the calm screen shows up once you're back on the dashboard.
 
 ## the study buddy
 
@@ -126,6 +137,8 @@ a pomodoro timer with a little pet and a garden along the bottom of the banner.
 ![the study buddy section of the popup with the seven buddies](docs/images/popup-study.png)
 
 under **study buddy** in the popup you can pick from seven buddies (mochi, a bunny, a kitty, a frog, a duckling, a bear cub and a penguin), rename yours, turn walking off with **walks around**, change the focus length, or restart the timer.
+
+**next plant** picks what grows at the end of your next focus session: tulip, daisy, round bloom, lavender, mushroom or cactus. after that one grows, the garden goes back to surprising you. **surprise me** clears your pick.
 
 ### drawing your own buddy
 
@@ -161,6 +174,8 @@ turn on **use my colors** to swap dusty pink for your own palette.
 ### fonts
 
 paste a google fonts link, or just the font's name, for body text and headings. the popup links to google fonts so you can browse.
+
+the **text size** slider, from 85% to 130%, makes everything on your canvas pages bigger or smaller, blush included. it works like chrome's zoom, but only on canvas.
 
 ### handwriting
 
@@ -213,7 +228,7 @@ chrome treats an unpacked extension in a different folder as a different extensi
 ## when something looks off
 
 - **parts of a page stay light in dark mode.** pages built with canvas's newer components, and tools embedded from other sites, can stay partly light. the text editor you type assignments into also stays light, because it runs in a separate frame.
-- **the stressed button is missing.** it only shows on the dashboard banner, and it hides when the window is narrower than 900 px. the button at the top of the popup always works.
+- **the stressed button is missing.** it only shows on the dashboard banner, and it hides when the window is narrower than 900 px. if **stressed sign in the grass** is on, look for the sign next to the pomodoro sign. the button at the top of the popup always works.
 - **your buddy stands still.** check that **walks around** is on under **study buddy**.
 - **a font won't load.** the box under the font field says why. check the spelling against google fonts.
 - **nothing changed after an update.** click the reload arrow on the blush card, then refresh canvas.

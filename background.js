@@ -293,6 +293,7 @@ const STUDY_DEFAULTS = {
   focusMin: 25,
   cycle: 0,
   plants: [],
+  nextPlant: null, // the plant you picked for next time, or null for a surprise
   total: 0,
   today: { day: "", n: 0 },
   petName: "Mochi",
@@ -339,7 +340,12 @@ async function finishPhase(s, { credit = true } = {})
     if (credit)
     {
       const grow = Math.max(1, Math.round(s.focusMin / 25)); // one plant for every 25 minutes
-      for (let i = 0; i < grow; i++) s.plants.push({ k: Math.floor(Math.random() * PLANT_KINDS), t: now });
+      for (let i = 0; i < grow; i++)
+      {
+        const picked = i === 0 && Number.isInteger(s.nextPlant) ? s.nextPlant : null;
+        s.plants.push({ k: picked ?? Math.floor(Math.random() * PLANT_KINDS), t: now });
+      }
+      s.nextPlant = null;
       if (s.plants.length > 200) s.plants = s.plants.slice(-200);
       s.total += 1;
       const day = dayKey();
@@ -450,6 +456,9 @@ async function studyAct(msg)
       }
       break;
     }
+    case "nextPlant":
+      s.nextPlant = Number.isInteger(msg.kind) && msg.kind >= 0 && msg.kind < PLANT_KINDS ? msg.kind : null;
+      break;
     case "clearGarden":
       s.plants = [];
       break;

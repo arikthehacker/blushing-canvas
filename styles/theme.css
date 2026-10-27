@@ -665,6 +665,19 @@ html.bl-has-bgimg body {
   background-attachment: fixed !important;
 }
 
+/* ---------- dashboard switches from the popup ---------- */
+html.bl-hide-dash-header .ic-Dashboard-header,
+html.bl-hide-dash-header #dashboard_header_container {
+  display: none !important;
+}
+html.bl-hide-card-icons .ic-DashboardCard__action-container {
+  display: none !important;
+}
+/* only canvas's course images, so your own card photos still show */
+html.bl-hide-card-images .ic-DashboardCard:not(.bl-photo-card) .ic-DashboardCard__header_image {
+  background-image: none !important;
+}
+
 /* ---------- your course card photos ---------- */
 .ic-DashboardCard__header {
   position: relative;

@@ -16,6 +16,11 @@ const DEFAULTS = {
   dockOpen: true,
   study: true,
   stress: false,
+  hideDashHeader: false,
+  hideCardImages: false,
+  hideCardIcons: false,
+  stressSign: false,
+  textSize: 100,
 };
 const root = document.documentElement;
 const darkMQ = matchMedia("(prefers-color-scheme: dark)");
@@ -41,6 +46,12 @@ function applySettings()
   root.classList.toggle("bl-dark", lookDark === null ? isDark() : lookDark);
   root.classList.toggle("bl-motion", !settings.calm);
   root.classList.toggle("bl-show-clutter", !settings.hideClutter);
+  root.classList.toggle("bl-hide-dash-header", !!settings.hideDashHeader);
+  root.classList.toggle("bl-hide-card-images", !!settings.hideCardImages);
+  root.classList.toggle("bl-hide-card-icons", !!settings.hideCardIcons);
+  root.classList.toggle("bl-stress-sign", !!settings.stressSign);
+  // the size slider zooms canvas and blush together, like the browser zoom but only here
+  root.style.zoom = settings.textSize && settings.textSize !== 100 ? String(settings.textSize / 100) : "";
   if (ready)
   {
     updateThemeButtons();

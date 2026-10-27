@@ -1529,6 +1529,10 @@ button.bl-calm-pet:focus-visible {
 .bl-hero.is-stars .bl-focus-input {
   border-bottom-color: rgba(246, 198, 211, 0.45);
 }
+/* the stressed button moves onto its own sign in the grass */
+:host-context(html.bl-stress-sign) .bl-hero.has-garden:not(.is-slim) .bl-stress-btn {
+  display: none;
+}
 .bl-hero.is-stars .bl-stress-btn {
   background: rgba(255, 255, 255, 0.08);
   color: var(--bl-hero-accent);

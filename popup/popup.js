@@ -14,8 +14,26 @@ const DEFAULTS = {
   study: true,
   stress: false,
   petWalk: true,
+  hideDashHeader: false,
+  hideCardImages: false,
+  hideCardIcons: false,
+  stressSign: false,
+  textSize: 100,
 };
-const BOOLS = ["calm", "hideClutter", "prefetch", "shortcuts", "cheers", "hero", "study", "petWalk"];
+const BOOLS = [
+  "calm",
+  "hideClutter",
+  "prefetch",
+  "shortcuts",
+  "cheers",
+  "hero",
+  "study",
+  "petWalk",
+  "hideDashHeader",
+  "hideCardImages",
+  "hideCardIcons",
+  "stressSign",
+];
 const PHOTOS_KEY = "bl:photos";
 
 chrome.storage.sync.get("settings", ({ settings }) =>
@@ -50,6 +68,17 @@ chrome.storage.sync.get("settings", ({ settings }) =>
       s[k] = el.checked;
       save();
     });
+  });
+
+  const size = document.getElementById("textSize");
+  const sizeOut = document.getElementById("textSizeOut");
+  size.value = s.textSize || 100;
+  sizeOut.textContent = `${size.value}%`;
+  size.addEventListener("input", () => (sizeOut.textContent = `${size.value}%`));
+  size.addEventListener("change", () =>
+  {
+    s.textSize = +size.value;
+    save();
   });
 
   const stress = document.getElementById("stress");
@@ -551,6 +580,7 @@ chrome.storage.sync.get("look", ({ look: stored }) =>
 {
   const box = document.getElementById("pets");
   const nameIn = document.getElementById("petName");
+  const plantBox = document.getElementById("nextPlant");
   const studyAct = (act, extra = {}) =>
     new Promise(r =>
       chrome.runtime.sendMessage({ type: "bl:study", act, ...extra }, res =>
@@ -568,6 +598,10 @@ chrome.storage.sync.get("look", ({ look: stored }) =>
     if (document.activeElement !== nameIn) nameIn.value = (st && st.petName) || "Mochi";
     const len = document.getElementById(`l-${(st && st.focusMin) || 25}`);
     if (len) len.checked = true;
+    const next = st && Number.isInteger(st.nextPlant) ? String(st.nextPlant) : "";
+    plantBox
+      .querySelectorAll(".plant")
+      .forEach(b => b.setAttribute("aria-pressed", String(b.dataset.kind === next)));
   };
   document
     .querySelectorAll('input[name="focusLen"]')
@@ -772,6 +806,23 @@ chrome.storage.sync.get("look", ({ look: stored }) =>
     b.addEventListener("click", async () => paint(await studyAct("kind", { kind: k.id })));
     box.appendChild(b);
   });
+  // the next plant: tap one to grow it next, or "surprise me" to leave it random
+  [
+    { kind: "", label: "Surprise me" },
+    ...self.BlushPets.PLANTS.map((label, kind) => ({ kind: String(kind), label })),
+  ].forEach(p =>
+  {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "plant";
+    b.dataset.kind = p.kind;
+    b.innerHTML = `${p.kind === "" ? '<span class="plant-any" aria-hidden="true">?</span>' : self.BlushPets.plantSVG(+p.kind, 3)}<span>${p.label}</span>`;
+    b.addEventListener("click", async () =>
+      paint(await studyAct("nextPlant", { kind: p.kind === "" ? null : +p.kind })),
+    );
+    plantBox.appendChild(b);
+  });
+
   let t = 0;
   nameIn.addEventListener("input", () =>
   {

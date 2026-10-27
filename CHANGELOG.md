@@ -1,5 +1,12 @@
 # changelog
 
+## 3.5.0
+
+- dashboard switches: hide the dashboard header, the course images on cards, or the icon row under each card
+- a text size slider that makes everything on canvas bigger or smaller
+- the stressed button can live on a little wooden sign in the grass, next to the pomodoro sign
+- pick the next plant to grow, and the garden goes back to surprises after it
+
 ## 3.4.0
 
 - a night sky color preset: indigo background, gold accents and lavender text, from the github night sky theme and differend. picking it also switches the banner to the stars, with a soft mauve glow behind them

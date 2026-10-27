@@ -129,9 +129,68 @@
     </svg>`;
   }
 
+  // ---------------------------------------------------------------- garden plants
+  // the six plants, in the order the garden numbers them
+  const PLANTS = ["Tulip", "Daisy", "Round bloom", "Lavender", "Mushroom", "Cactus"];
+  const PETAL = ["var(--bl-accent)", "#EBA2B6", "#F2C46D", "#B9A6E3", "#F4A6A0", "#8FCBB0"];
+  const LEAF = "#7DAF7F",
+    STEM = "#6A9C6E";
+
+  function plantSVG(kind, stage, i = 0)
+  {
+    // stage: 0 seed, 1 sprout, 2 bud, 3 bloom
+    const c = PETAL[(kind + i) % PETAL.length];
+    const soil = '<ellipse cx="12" cy="30" rx="7" ry="2" fill="var(--bl-sb-soil)"/>';
+    if (stage === 0)
+      return `<svg viewBox="0 0 24 32" aria-hidden="true">${soil}<ellipse cx="12" cy="28.6" rx="2.6" ry="1.8" fill="#A07A5C"/></svg>`;
+    const leaves = `<path d="M12 26 C8 25 6.5 22.5 7 21 C9.5 21 11.5 23 12 26Z" fill="${LEAF}"/><path d="M12 24 C16 23 17.5 20.5 17 19 C14.5 19 12.5 21 12 24Z" fill="${LEAF}"/>`;
+    if (stage === 1)
+      return `<svg viewBox="0 0 24 32" aria-hidden="true">${soil}<path d="M12 30 V22" stroke="${STEM}" stroke-width="1.6" stroke-linecap="round"/><path d="M12 23 C9 22.5 8 20.5 8.4 19.4 C10.6 19.4 11.8 21 12 23Z" fill="${LEAF}"/><path d="M12 23 C15 22.5 16 20.5 15.6 19.4 C13.4 19.4 12.2 21 12 23Z" fill="${LEAF}"/></svg>`;
+    const stem = `<path d="M12 30 V${stage === 2 ? 14 : 12}" stroke="${STEM}" stroke-width="1.6" stroke-linecap="round"/>`;
+    if (stage === 2)
+      return `<svg viewBox="0 0 24 32" aria-hidden="true">${soil}${stem}${leaves}<ellipse cx="12" cy="12.5" rx="2.8" ry="3.6" fill="${c}"/><path d="M9.6 14 Q12 17 14.4 14" fill="${LEAF}"/></svg>`;
+    let bloom = "";
+    switch (kind % 6)
+    {
+      case 0: // tulip
+        bloom = `<path d="M7.5 8 L9.5 11 L12 7 L14.5 11 L16.5 8 C17 13.5 15 15 12 15 C9 15 7 13.5 7.5 8Z" fill="${c}"/>`;
+        break;
+      case 1: // daisy
+        bloom =
+          [0, 45, 90, 135, 180, 225, 270, 315]
+            .map(
+              a =>
+                `<ellipse cx="12" cy="7.2" rx="1.6" ry="3" fill="#FFFFFF" stroke="${c}" stroke-width=".6" transform="rotate(${a} 12 11)"/>`,
+            )
+            .join("") + '<circle cx="12" cy="11" r="2.2" fill="#F2C46D"/>';
+        break;
+      case 2: // round bloom
+        bloom =
+          [0, 60, 120, 180, 240, 300]
+            .map(a => `<circle cx="12" cy="7.6" r="2.8" fill="${c}" transform="rotate(${a} 12 11)"/>`)
+            .join("") + '<circle cx="12" cy="11" r="2.4" fill="#FFF3D6"/>';
+        break;
+      case 3: // lavender sprig
+        bloom =
+          [4, 6.5, 9, 11.5]
+            .map(
+              (y, n) => `<ellipse cx="${n % 2 ? 13.3 : 10.7}" cy="${y}" rx="1.7" ry="2" fill="${PETAL[3]}"/>`,
+            )
+            .join("") + `<ellipse cx="12" cy="2.6" rx="1.4" ry="1.8" fill="${PETAL[3]}"/>`;
+        break;
+      case 4: // mushroom
+        return `<svg viewBox="0 0 24 32" aria-hidden="true">${soil}<path d="M9.5 29.5 C9.8 25 10 22 12 22 C14 22 14.2 25 14.5 29.5Z" fill="#FFF6EC"/><path d="M4.5 22.5 C4.5 16 8 13 12 13 C16 13 19.5 16 19.5 22.5Z" fill="${c}"/><circle cx="9" cy="18" r="1.3" fill="#FFFFFF"/><circle cx="14.5" cy="16.6" r="1.1" fill="#FFFFFF"/><circle cx="15.6" cy="20.2" r=".9" fill="#FFFFFF"/></svg>`;
+      default: // little cactus with a flower
+        return `<svg viewBox="0 0 24 32" aria-hidden="true">${soil}<rect x="9.5" y="13" width="5" height="17" rx="2.5" fill="#7DB08A"/><path d="M9.5 21 H7.5 A1.5 1.5 0 0 1 6 19.5 V17" stroke="#7DB08A" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M14.5 19 H16.5 A1.5 1.5 0 0 0 18 17.5 V15.5" stroke="#7DB08A" stroke-width="2.4" fill="none" stroke-linecap="round"/><circle cx="12" cy="12.4" r="2" fill="${c}"/></svg>`;
+    }
+    return `<svg viewBox="0 0 24 32" aria-hidden="true">${soil}${stem}${leaves}${bloom}</svg>`;
+  }
+
   self.BlushPets = {
     KINDS,
     svg,
+    PLANTS,
+    plantSVG,
     defaultName: kind => (kind === "custom" ? "Buddy" : (KINDS.find(k => k.id === kind) || KINDS[0]).name),
     setCustom: c =>
     {
