@@ -579,3 +579,8 @@ kbd {
   line-height: 1;
   cursor: pointer;
 }
+
+.school .btn {
+  width: 100%;
+  margin-top: 8px;
+}

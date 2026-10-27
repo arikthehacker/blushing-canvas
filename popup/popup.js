@@ -813,3 +813,33 @@ chrome.storage.sync.get("look", ({ look: stored }) =>
   });
   only.addEventListener("change", save);
 })();
+
+// ---------- your school's own Canvas address ----------
+(async () =>
+{
+  const box = document.getElementById("school");
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  if (!box || !tab || !/^https:\/\//.test(tab.url || "")) return;
+  const { origin, hostname } = new URL(tab.url);
+  if (/\.instructure\.com$/.test(hostname)) return;
+  if (await chrome.permissions.contains({ origins: [`${origin}/*`] })) return;
+
+  // only offer it on pages that look like Canvas
+  const probe = await chrome.scripting
+    .executeScript({
+      target: { tabId: tab.id },
+      func: () => !!document.querySelector("#application.ic-app, .ic-app-header"),
+    })
+    .catch(() => []);
+  if (!probe[0] || !probe[0].result) return;
+
+  document.getElementById("schoolHost").textContent = hostname;
+  box.hidden = false;
+  document.getElementById("schoolOn").addEventListener("click", async () =>
+  {
+    if (!(await chrome.permissions.request({ origins: [`${origin}/*`] }))) return;
+    await chrome.runtime.sendMessage({ type: "bl:schools" });
+    chrome.tabs.reload(tab.id);
+    window.close();
+  });
+})();

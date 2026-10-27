@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Blush for Canvas",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "description": "A dusty-pink, fast, accessible Canvas: quick jump, shortcuts, your own colors and fonts, a study timer with a garden and a pet, and a to-do panel that cheers you on.",
   "icons": {
     "16": "icons/icon16.png",
@@ -9,7 +9,7 @@
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   },
-  "permissions": ["storage", "unlimitedStorage", "alarms", "notifications"],
+  "permissions": ["storage", "unlimitedStorage", "alarms", "notifications", "scripting", "activeTab"],
   "host_permissions": [
     "https://*.instructure.com/*",
     "https://api.artic.edu/*",
@@ -17,6 +17,7 @@
     "https://fonts.googleapis.com/*",
     "https://fonts.gstatic.com/*"
   ],
+  "optional_host_permissions": ["https://*/*"],
   "action": {
     "default_popup": "popup/popup.html",
     "default_title": "Blush for Canvas"
@@ -56,7 +57,7 @@
   "web_accessible_resources": [
     {
       "resources": ["styles/ui.css", "styles/study.css", "styles/stage.css", "fonts/*"],
-      "matches": ["https://*.instructure.com/*"]
+      "matches": ["https://*/*"]
     }
   ],
   "background": {

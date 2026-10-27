@@ -465,3 +465,40 @@ chrome.runtime.onMessage.addListener((msg, _sender, reply) =>
   studyAct(msg).then(reply, () => reply(null));
   return true;
 });
+
+// ---------- your school's own Canvas address ----------
+// *.instructure.com is in the manifest. A school with its own address gets the same
+// content scripts once you allow it from the popup.
+const SCHOOL_SCRIPTS = "blush-schools";
+const BUILT_IN = /\.instructure\.com$|artic\.edu$|fonts\.(googleapis|gstatic)\.com$/;
+
+async function syncSchools()
+{
+  const { origins = [] } = await chrome.permissions.getAll();
+  const matches = origins.filter(
+    o => /^https:\/\/[^*]+\/\*$/.test(o) && !BUILT_IN.test(new URL(o.slice(0, -1)).hostname),
+  );
+  const cs = chrome.runtime.getManifest().content_scripts[0];
+  await chrome.scripting.unregisterContentScripts({ ids: [SCHOOL_SCRIPTS] }).catch(() =>
+  {});
+  if (!matches.length) return;
+  await chrome.scripting.registerContentScripts([
+    { id: SCHOOL_SCRIPTS, matches, css: cs.css, js: cs.js, runAt: cs.run_at, allFrames: false },
+  ]);
+}
+
+chrome.runtime.onInstalled.addListener(syncSchools);
+chrome.runtime.onStartup.addListener(syncSchools);
+chrome.permissions.onAdded.addListener(syncSchools);
+chrome.permissions.onRemoved.addListener(syncSchools);
+chrome.runtime.onMessage.addListener((msg, _sender, reply) =>
+{
+  if (msg && msg.type === "bl:schools")
+  {
+    syncSchools().then(
+      () => reply(true),
+      () => reply(false),
+    );
+    return true;
+  }
+});

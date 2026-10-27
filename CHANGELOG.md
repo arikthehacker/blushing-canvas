@@ -1,5 +1,9 @@
 # changelog
 
+## 3.3.0
+
+- blush works on any *.instructure.com school by itself. if your school uses its own address, open the popup on your canvas page and tap turn on blush, and chrome asks you to allow that one site
+
 ## 3.2.0
 
 - write your own greeting for morning, afternoon, evening and late night. {name} turns into your name
