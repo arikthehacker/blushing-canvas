@@ -29,6 +29,7 @@ const DF_SKIP_SEL =
   "#blush-root, #blush-hero, #blush-study, .bl-card-tools, .ic-DashboardCard__header_hero, .ic-DashboardCard__header_image, .mce-tinymce, .tox";
 const dfApplied = new WeakMap();
 const dfQueue = [];
+const dfQueued = new Set(); // elements already waiting, so a re-mounted subtree isn't checked twice
 let dfScheduled = false;
 
 function parseRGB(str)
@@ -164,25 +165,38 @@ function dfCollect(rootEl, list)
 {
   if (!rootEl || rootEl.nodeType !== 1) return;
   if (DF_SKIP_TAGS.has(rootEl.tagName) || rootEl.matches(DF_SKIP_SEL)) return;
-  list.push(rootEl);
+  if (!dfQueued.has(rootEl))
+  {
+    dfQueued.add(rootEl);
+    list.push(rootEl);
+  }
   for (let c = rootEl.firstElementChild; c; c = c.nextElementSibling) dfCollect(c, list);
 }
 function dfEnqueue(node)
 {
   if (node.nodeType !== 1 || (node.closest && node.closest(DF_SKIP_SEL))) return;
   dfCollect(node, dfQueue);
-  if (!dfScheduled)
-  {
-    dfScheduled = true;
-    requestAnimationFrame(dfFlush);
-  }
+  dfSchedule();
+}
+function dfSchedule()
+{
+  if (dfScheduled) return;
+  dfScheduled = true;
+  requestAnimationFrame(dfFlush);
 }
 function dfFlush()
 {
   dfScheduled = false;
-  const batch = dfQueue.splice(0, 1500);
-  // read everything first, then write, so the browser recalculates styles once per batch
   dfReadTokens();
+  // small batches until about 8 ms of this frame is used, so a big page never stalls
+  const until = performance.now() + 8;
+  while (dfQueue.length && performance.now() < until) dfApply(dfQueue.splice(0, 300));
+  if (dfQueue.length) dfSchedule();
+}
+function dfApply(batch)
+{
+  batch.forEach(el => dfQueued.delete(el));
+  // read everything first, then write, so the browser recalculates styles once per batch
   const decisions = batch.map(el => (el.isConnected ? dfDecide(el) : null));
   batch.forEach((el, i) =>
   {
@@ -197,11 +211,6 @@ function dfFlush()
     }
     if (d.vars) for (const k in d.vars) el.style.setProperty(k, d.vars[k]);
   });
-  if (dfQueue.length)
-  {
-    dfScheduled = true;
-    requestAnimationFrame(dfFlush);
-  }
 }
 function cleanCardTitles(scope)
 {
@@ -242,9 +251,16 @@ function startColorFixer()
         });
       else if (r.type === "attributes")
       {
-        // React re-renders can wipe our classes, so put them back
+        // when Canvas rewrites an element's classes it may have changed state (a selected tab, a new alert type),
+        // so look at its real colors again instead of forcing the old answer back on
         const want = dfApplied.get(r.target);
-        if (want && want.some(c => !r.target.classList.contains(c))) r.target.classList.add(...want);
+        if (want && want.some(c => !r.target.classList.contains(c)) && !dfQueued.has(r.target))
+        {
+          dfApplied.delete(r.target);
+          dfQueued.add(r.target);
+          dfQueue.push(r.target);
+          dfSchedule();
+        }
       }
     }
   }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["class"] });

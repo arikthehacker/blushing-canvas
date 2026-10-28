@@ -1,4 +1,4 @@
-// Instant navigation: speculation rules that prerender safe Canvas links on hover.
+// Instant navigation: speculation rules that start loading a Canvas link as you press it.
 "use strict";
 
 const UNSAFE = [
@@ -11,7 +11,7 @@ const UNSAFE = [
   { href_matches: "/*/take*" },
   { selector_matches: '[data-method], [download], [target="_blank"], [href^="#"]' },
 ];
-// these pages mark things as read or start something when they open, so fetch their HTML but never run it early
+// these pages mark things as read or start something when they open, so they're never loaded early
 const NO_PRERENDER = [
   { href_matches: "/*/discussion_topics/*" },
   { href_matches: "/*/announcements/*" },
@@ -24,7 +24,8 @@ function isSafeUrl(url)
   {
     const u = new URL(url, location.href);
     if (u.origin !== location.origin) return false;
-    return !/\/(logout|login)|download|external_tools|\/lti\/|modules\/items|\/take|discussion_topics\/|announcements\/|conversations|quizzes\//.test(
+    // a single assignment, page or file counts as a view on Canvas's side, so only course-level pages qualify
+    return !/\/(logout|login)|download|external_tools|\/lti\/|modules\/items|\/take|discussion_topics\/|announcements\/|conversations|quizzes\/|\/assignments\/\d|\/pages\/.|\/files\/\d/.test(
       u.pathname,
     );
   }
@@ -35,8 +36,12 @@ function isSafeUrl(url)
 }
 const specSupported = () => HTMLScriptElement.supports && HTMLScriptElement.supports("speculationrules");
 
+// reinstalling the rules cancels what Chrome already started, so only redo them when the setting changes
+let specFor = null;
 function installSpeculation()
 {
+  if (specFor === settings.prefetch) return;
+  specFor = settings.prefetch;
   const old = document.getElementById("bl-spec");
   if (old) old.remove();
   if (!settings.prefetch || !specSupported()) return;
@@ -48,14 +53,15 @@ function installSpeculation()
       {
         source: "document",
         where: { and: [{ href_matches: "/*" }, { not: { or: UNSAFE.concat(NO_PRERENDER) } }] },
-        eagerness: "moderate",
+        // on press, not on hover: Canvas logs a view (and can tick off "view this" in a module) when a page loads
+        eagerness: "conservative",
       },
     ],
     prefetch: [
       {
         source: "document",
-        where: { and: [{ href_matches: "/*" }, { not: { or: UNSAFE } }] },
-        eagerness: "moderate",
+        where: { and: [{ href_matches: "/*" }, { not: { or: UNSAFE.concat(NO_PRERENDER) } }] },
+        eagerness: "conservative",
       },
     ],
   });

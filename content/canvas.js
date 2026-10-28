@@ -6,7 +6,24 @@ function csrfToken()
   const m = document.cookie.match(/(?:^|;\s*)_csrf_token=([^;]+)/);
   return m ? decodeURIComponent(m[1]) : "";
 }
-async function api(path, { method = "GET", body } = {})
+async function api(path, opts = {})
+{
+  return (await apiPage(path, opts)).data;
+}
+// every page of a list: Canvas returns 100 at most per request and links the next page in the Link header
+async function apiAll(path, maxPages = 10)
+{
+  let out = [];
+  let next = path;
+  for (let i = 0; next && i < maxPages; i++)
+  {
+    const page = await apiPage(next);
+    out = out.concat(page.data || []);
+    next = page.next;
+  }
+  return out;
+}
+async function apiPage(path, { method = "GET", body } = {})
 {
   const res = await fetch(path, {
     method,
@@ -21,7 +38,8 @@ async function api(path, { method = "GET", body } = {})
   });
   if (!res.ok) throw new Error(`Canvas API ${res.status}`);
   const text = await res.text();
-  return text ? JSON.parse(text.replace(/^while\(1\);/, "")) : null;
+  const link = (res.headers.get("Link") || "").match(/<([^>]+)>;\s*rel="next"/);
+  return { data: text ? JSON.parse(text.replace(/^while\(1\);/, "")) : null, next: link ? link[1] : null };
 }
 
 // show the cached copy right away, then refresh it in the background (stale-while-revalidate)
@@ -68,8 +86,8 @@ const loadUser = async () =>
 };
 const loadCourses = async () =>
 {
-  let list = await api("/api/v1/users/self/favorites/courses?per_page=100");
-  if (!list || !list.length) list = await api("/api/v1/courses?enrollment_state=active&per_page=100");
+  let list = await apiAll("/api/v1/users/self/favorites/courses?per_page=100");
+  if (!list || !list.length) list = await apiAll("/api/v1/courses?enrollment_state=active&per_page=100");
   let colors = {};
   try
   {
@@ -93,7 +111,7 @@ const loadItems = async () =>
   start.setHours(0, 0, 0, 0);
   const end = new Date();
   end.setDate(end.getDate() + 28);
-  const raw = await api(
+  const raw = await apiAll(
     `/api/v1/planner/items?per_page=100&start_date=${encodeURIComponent(start.toISOString())}&end_date=${encodeURIComponent(end.toISOString())}`,
   );
   return (raw || [])

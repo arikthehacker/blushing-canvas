@@ -1,41 +1,50 @@
 // What happens when you check something off: the Canvas planner sync, cheers and toasts.
 "use strict";
 
+// one Canvas request at a time per item, in click order, so a quick check and uncheck can't race
+const itemSync = new Map();
 async function setItemDone(key, done)
 {
   const it = state.items && state.items.find(i => i.key === key);
   if (!it || it.submitted) return;
-  const prev = it.marked;
   it.marked = done;
-  if (done) recordWin(1);
-  else recordWin(-1);
+  recordWin(done ? 1 : -1);
   renderPanels();
   if (done) cheer();
+  const run = (itemSync.get(key) || Promise.resolve()).then(() => syncItem(it, done));
+  itemSync.set(
+    key,
+    run.catch(() =>
+    {}),
+  );
   try
   {
-    if (it.overrideId)
-    {
-      await api(`/api/v1/planner/overrides/${it.overrideId}`, {
-        method: "PUT",
-        body: { marked_complete: done },
-      });
-    }
-    else
-    {
-      const o = await api("/api/v1/planner/overrides", {
-        method: "POST",
-        body: { plannable_type: it.type, plannable_id: it.id, marked_complete: done },
-      });
-      if (o && o.id) it.overrideId = o.id;
-    }
+    await run;
     store.set("local", lk("items"), { t: Date.now(), v: state.items });
   }
   catch (e)
   {
-    it.marked = prev;
+    it.marked = !done;
+    recordWin(done ? -1 : 1);
     renderPanels();
     toast("Could not sync that with Canvas. Try again in a moment.", false);
   }
+}
+async function syncItem(it, done)
+{
+  if (it.overrideId)
+  {
+    await api(`/api/v1/planner/overrides/${it.overrideId}`, {
+      method: "PUT",
+      body: { marked_complete: done },
+    });
+    return;
+  }
+  const o = await api("/api/v1/planner/overrides", {
+    method: "POST",
+    body: { plannable_type: it.type, plannable_id: it.id, marked_complete: done },
+  });
+  if (o && o.id) it.overrideId = o.id;
 }
 
 function saveTodos()

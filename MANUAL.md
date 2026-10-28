@@ -197,11 +197,11 @@ one button switches all of canvas to **arik hand**, a handwriting font that come
 | --- | --- |
 | calm mode | turns off canvas's own animations |
 | declutter | hides the footer, card images and the duplicate to-do list |
-| instant navigation | preloads links you hover so they open right away |
+| instant navigation | starts loading a link the moment you press it, so pages open faster |
 | single-key shortcuts | the one-letter shortcuts above. `ctrl+k` always works |
 | cheers | the little notes when you finish something |
 
-instant navigation skips module items, since opening one can tick off a "view this page" requirement. discussions, announcements, quizzes and the inbox are downloaded ahead but never opened early, because opening them marks things as read. if canvas ever counts a view you didn't make, turn instant navigation off.
+instant navigation waits for you to press a link, not just hover it, because canvas counts a page as viewed when it loads. module items, discussions, announcements, quizzes and the inbox are never loaded early, since opening them can tick off a "view this page" requirement or mark things as read.
 
 ## your school's own address
 

@@ -36,6 +36,34 @@ const BOOLS = [
 ];
 const PHOTOS_KEY = "bl:photos";
 
+// typed edits wait a moment before saving, and the popup can close first,
+// so whatever is still waiting also saves the moment the popup hides
+const pendingSaves = new Map();
+function saveSoon(key, fn, ms)
+{
+  if (pendingSaves.has(key)) clearTimeout(pendingSaves.get(key).t);
+  const t = setTimeout(() =>
+  {
+    pendingSaves.delete(key);
+    fn();
+  }, ms);
+  pendingSaves.set(key, { t, fn });
+}
+function saveNow()
+{
+  for (const { t, fn } of pendingSaves.values())
+  {
+    clearTimeout(t);
+    fn();
+  }
+  pendingSaves.clear();
+}
+addEventListener("pagehide", saveNow);
+document.addEventListener("visibilitychange", () =>
+{
+  if (document.hidden) saveNow();
+});
+
 chrome.storage.sync.get("settings", ({ settings }) =>
 {
   const s = { ...DEFAULTS, ...(settings || {}) };
@@ -48,6 +76,12 @@ chrome.storage.sync.get("settings", ({ settings }) =>
   window.popupTheme = () => s.theme;
   paint();
   const save = () => chrome.storage.sync.set({ settings: s });
+  // Canvas tabs change settings too (the theme button, T, super declutter), so keep this copy current
+  chrome.storage.onChanged.addListener((changes, area) =>
+  {
+    if (area === "sync" && changes.settings && changes.settings.newValue)
+      Object.assign(s, changes.settings.newValue);
+  });
 
   document.getElementById(`t-${s.theme}`).checked = true;
   document.querySelectorAll('input[name="theme"]').forEach(r =>
@@ -99,30 +133,29 @@ chrome.storage.sync.get("settings", ({ settings }) =>
 
   // greetings for each time of day
   s.greet = s.greet || {};
-  let gt = 0;
   document.querySelectorAll(".greets input").forEach(inp =>
   {
     inp.value = s.greet[inp.dataset.slot] || "";
     inp.addEventListener("input", () =>
     {
       s.greet[inp.dataset.slot] = inp.value.trim();
-      clearTimeout(gt);
-      gt = setTimeout(save, 400);
+      saveSoon("greet", save, 400);
     });
   });
 
   const name = document.getElementById("name");
   name.value = s.name || "";
-  let t = 0;
   name.addEventListener("input", () =>
-  {
-    clearTimeout(t);
-    t = setTimeout(() =>
-    {
-      s.name = name.value.trim();
-      save();
-    }, 300);
-  });
+    saveSoon(
+      "name",
+      () =>
+      {
+        s.name = name.value.trim();
+        save();
+      },
+      300,
+    ),
+  );
 
   document.getElementById(`s-${s.artSource}`).checked = true;
   document.querySelectorAll('input[name="src"]').forEach(r =>
@@ -137,12 +170,21 @@ chrome.storage.sync.get("settings", ({ settings }) =>
 });
 
 // ---------- your photos ----------
+// the list holds ids only and each picture lives under bl:photo:<id>
+const PHOTO_PREFIX = "bl:photo:";
 const getPhotos = () => new Promise(r => chrome.storage.local.get(PHOTOS_KEY, v => r(v[PHOTOS_KEY] || [])));
-const setPhotos = p => new Promise(r => chrome.storage.local.set({ [PHOTOS_KEY]: p }, r));
+const getPictures = ids =>
+  new Promise(r =>
+    chrome.storage.local.get(
+      ids.map(id => PHOTO_PREFIX + id),
+      v => r(v),
+    ),
+  );
 
 async function renderPhotos()
 {
   const photos = await getPhotos();
+  const pics = await getPictures(photos.map(p => p.id));
   const box = document.getElementById("photos");
   box.innerHTML = "";
   photos.forEach((p, i) =>
@@ -150,7 +192,7 @@ async function renderPhotos()
     const div = document.createElement("div");
     div.className = "photo";
     const img = document.createElement("img");
-    img.src = p.dataUrl;
+    img.src = pics[PHOTO_PREFIX + p.id] || p.dataUrl || "";
     img.alt = `Your photo ${i + 1}`;
     const del = document.createElement("button");
     del.type = "button";
@@ -158,51 +200,40 @@ async function renderPhotos()
     del.setAttribute("aria-label", `Remove photo ${i + 1}`);
     del.addEventListener("click", async () =>
     {
-      await setPhotos((await getPhotos()).filter(x => x.id !== p.id));
+      const rest = (await getPhotos()).filter(x => x.id !== p.id);
+      await new Promise(r => chrome.storage.local.set({ [PHOTOS_KEY]: rest }, r));
+      chrome.storage.local.remove(PHOTO_PREFIX + p.id);
       renderPhotos();
+      // if today's banner was this photo, pick another one now
+      chrome.storage.local.get("bl:art:current", v =>
+      {
+        if (v["bl:art:current"] && v["bl:art:current"].id === p.id)
+          chrome.runtime.sendMessage({ type: "bl:art", force: true });
+      });
     });
     div.append(img, del);
     box.appendChild(div);
   });
 }
 
-// shrink big images so storage stays light and the banner loads instantly
-function resize(file)
-{
-  return new Promise((resolve, reject) =>
-  {
-    const img = new Image();
-    img.onload = () =>
-    {
-      const scale = Math.min(1, 2560 / img.width);
-      const c = document.createElement("canvas");
-      c.width = Math.round(img.width * scale);
-      c.height = Math.round(img.height * scale);
-      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
-      URL.revokeObjectURL(img.src);
-      resolve(c.toDataURL("image/jpeg", 0.86));
-    };
-    img.onerror = reject;
-    img.src = URL.createObjectURL(file);
-  });
-}
-
 document.getElementById("file").addEventListener("change", async e =>
 {
-  const files = [...e.target.files];
   const photos = await getPhotos();
-  for (const f of files)
+  for (const f of [...e.target.files])
   {
     try
     {
-      photos.push({ id: Math.random().toString(36).slice(2, 10), dataUrl: await resize(f) });
+      const id = Math.random().toString(36).slice(2, 10);
+      const dataUrl = await self.BlushLook.resizeImage(f, 2560);
+      await new Promise(r => chrome.storage.local.set({ [PHOTO_PREFIX + id]: dataUrl }, r));
+      photos.push({ id });
     }
     catch (err)
     {
       /* skip unreadable */
     }
   }
-  await setPhotos(photos);
+  await new Promise(r => chrome.storage.local.set({ [PHOTOS_KEY]: photos }, r));
   e.target.value = "";
   renderPhotos();
   chrome.runtime.sendMessage({ type: "bl:art", force: true });
@@ -226,12 +257,7 @@ chrome.storage.sync.get("look", ({ look: stored }) =>
   const look = { ...BL.LOOK_DEFAULTS, ...(stored || {}) };
   look.colors = { ...BL.LOOK_DEFAULTS.colors, ...(look.colors || {}) };
   let role = "accent";
-  let saveT = 0;
-  const save = () =>
-  {
-    clearTimeout(saveT);
-    saveT = setTimeout(() => chrome.storage.sync.set({ look }), 250);
-  };
+  const save = () => saveSoon("look", () => chrome.storage.sync.set({ look }), 250);
 
   const popupDark = () =>
   {
@@ -459,7 +485,6 @@ chrome.storage.sync.get("look", ({ look: stored }) =>
     };
     show(look[key]);
     if (look[key]) status.textContent = `Using ${look[key]}`;
-    let t = 0;
     const commit = async () =>
     {
       const raw = input.value.trim();
@@ -496,18 +521,11 @@ chrome.storage.sync.get("look", ({ look: stored }) =>
       save();
       window.repaintLook();
     };
-    input.addEventListener("input", () =>
-    {
-      clearTimeout(t);
-      t = setTimeout(commit, 700);
-    });
+    // commit on Enter or when you leave the box, so a half-typed name is never fetched and cached
+    input.addEventListener("change", commit);
     input.addEventListener("keydown", e =>
     {
-      if (e.key === "Enter")
-      {
-        clearTimeout(t);
-        commit();
-      }
+      if (e.key === "Enter") commit();
     });
   }
   fontField("fontBody", "fontBody");
@@ -823,12 +841,9 @@ chrome.storage.sync.get("look", ({ look: stored }) =>
     plantBox.appendChild(b);
   });
 
-  let t = 0;
   nameIn.addEventListener("input", () =>
-  {
-    clearTimeout(t);
-    t = setTimeout(() => studyAct("name", { name: nameIn.value }), 400);
-  });
+    saveSoon("petName", () => studyAct("name", { name: nameIn.value }), 400),
+  );
   renderPoses();
 })();
 
@@ -852,7 +867,6 @@ chrome.storage.sync.get("look", ({ look: stored }) =>
     only.checked = !!q.only;
     show((q.list || []).length);
   });
-  let t = 0;
   const save = () =>
   {
     const list = ta.value
@@ -860,15 +874,12 @@ chrome.storage.sync.get("look", ({ look: stored }) =>
       .map(l => l.trim())
       .filter(Boolean)
       .map(l => l.slice(0, 200))
+      .filter((l, i, all) => all.indexOf(l) === i)
       .slice(0, 100);
     chrome.storage.local.set({ [KEY]: { list, only: only.checked } });
     show(list.length);
   };
-  ta.addEventListener("input", () =>
-  {
-    clearTimeout(t);
-    t = setTimeout(save, 400);
-  });
+  ta.addEventListener("input", () => saveSoon("quotes", save, 400));
   only.addEventListener("change", save);
 })();
 

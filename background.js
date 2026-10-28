@@ -4,7 +4,25 @@
 
 const POOL_KEY = "bl:artpool";
 const CURRENT_KEY = "bl:art:current";
-const PHOTOS_KEY = "bl:photos";
+const PHOTOS_KEY = "bl:photos"; // [{ id }] in the order you added them
+const PHOTO_PREFIX = "bl:photo:"; // each picture under its own key, so one change never rewrites the rest
+
+// 3.5 and earlier kept every picture inside the list itself. move them to their own keys once.
+async function movePhotosToKeys()
+{
+  const list = (await get(PHOTOS_KEY)) || [];
+  if (!list.some(p => p.dataUrl)) return;
+  const each = {};
+  for (const p of list) if (p.dataUrl) each[PHOTO_PREFIX + p.id] = p.dataUrl;
+  await new Promise(r =>
+    chrome.storage.local.set({ ...each, [PHOTOS_KEY]: list.map(p => ({ id: p.id })) }, r),
+  );
+  // today's banner used to carry its own copy of the photo too
+  const cur = await get("bl:art:current");
+  if (cur && cur.kind === "photo" && cur.dataUrl) await set("bl:art:current", { ...cur, dataUrl: undefined });
+}
+chrome.runtime.onInstalled.addListener(movePhotosToKeys);
+chrome.runtime.onStartup.addListener(movePhotosToKeys);
 const POOL_MAX_AGE = 14 * 86400000;
 
 // soft, light, figurative painters that fit the dreamy pink look
@@ -102,6 +120,7 @@ async function pick({ shuffle = false } = {})
   const settings = (await new Promise(r => chrome.storage.sync.get("settings", v => r(v.settings)))) || {};
   const source = settings.artSource || "both";
   if (source === "stars") return null; // the banner draws its own sky
+  await movePhotosToKeys();
   const photos = (await get(PHOTOS_KEY)) || [];
   const day = dayKey();
   const seed = shuffle ? Math.floor(Math.random() * 1e9) : hash(day);
@@ -129,15 +148,17 @@ async function pick({ shuffle = false } = {})
   if (!pool.length) return null;
 
   const current = await get(CURRENT_KEY);
-  let choice = pool[seed % pool.length];
+  // the low bit already chose photo or painting, so index with the rest of the seed
+  const pickSeed = Math.floor(seed / 2);
+  let choice = pool[pickSeed % pool.length];
   if (shuffle && current && pool.length > 1 && choice.id === current.id)
-    choice = pool[(seed + 1) % pool.length];
+    choice = pool[(pickSeed + 1) % pool.length];
 
   let result;
   if (choice.kind === "photo")
   {
-    const p = photos.find(x => x.id === choice.id);
-    result = { day, id: p.id, kind: "photo", dataUrl: p.dataUrl, title: "Your photo", artist: "", link: "" };
+    // the banner reads the picture from its own key, so it isn't stored twice
+    result = { day, id: choice.id, kind: "photo", title: "Your photo", artist: "", link: "" };
   }
   else
   {
@@ -218,7 +239,13 @@ async function fetchFontCss(family)
 async function getFont(family)
 {
   const key = FONT_PREFIX + family.toLowerCase();
-  const cached = await get(key);
+  let cached = await get(key);
+  if (cached && cached.faces && cached.faces.length && !cached.files)
+  {
+    // 3.5 and earlier kept a copy of the file in every face. keep each file once.
+    cached = shareFontFiles(cached);
+    await set(key, cached);
+  }
   if (cached && cached.faces && cached.faces.length) return { ok: true, ...cached };
 
   const { css, offline } = await fetchFontCss(family);
@@ -259,7 +286,7 @@ async function getFont(family)
         if (!res.ok) continue;
         files.set(url, bufToB64(await res.arrayBuffer()));
       }
-      faces.push({ weight, style, unicodeRange: range, data: files.get(url) });
+      faces.push({ weight, style, unicodeRange: range, file: url });
     }
     catch (e)
     {
@@ -267,9 +294,43 @@ async function getFont(family)
     }
   }
   if (!faces.length) return { ok: false, error: "Could not download that font" };
-  const entry = { family: realName, faces, t: Date.now() };
+  // each file once (a variable font uses one file for every weight), and the faces point at it
+  const entry = { family: realName, files: Object.fromEntries(files), faces, t: Date.now() };
   await set(key, entry);
+  await dropUnusedFonts(key);
   return { ok: true, ...entry };
+}
+
+function shareFontFiles(old)
+{
+  const files = {};
+  const byData = new Map();
+  const faces = old.faces.map(f =>
+  {
+    if (!byData.has(f.data))
+    {
+      const id = String(byData.size);
+      byData.set(f.data, id);
+      files[id] = f.data;
+    }
+    const { data, ...face } = f;
+    return { ...face, file: byData.get(f.data) };
+  });
+  return { ...old, files, faces };
+}
+
+// keep only the fonts your look uses now, plus the one just fetched
+async function dropUnusedFonts(keep)
+{
+  const look = (await new Promise(r => chrome.storage.sync.get("look", v => r(v.look)))) || {};
+  const used = new Set(
+    [keep, look.fontBody, look.fontHeading]
+      .filter(Boolean)
+      .map(f => (f.startsWith(FONT_PREFIX) ? f : FONT_PREFIX + f.toLowerCase())),
+  );
+  const all = await new Promise(r => chrome.storage.local.get(null, r));
+  const stale = Object.keys(all).filter(k => k.startsWith(FONT_PREFIX) && !used.has(k));
+  if (stale.length) await new Promise(r => chrome.storage.local.remove(stale, r));
 }
 
 chrome.runtime.onMessage.addListener((msg, _sender, reply) =>
@@ -373,10 +434,23 @@ async function finishPhase(s, { credit = true } = {})
   return s;
 }
 
-async function catchUp()
+// one timer change at a time: open tabs, the alarm and a P press can all arrive together
+let studyQueue = Promise.resolve();
+function queueStudy(fn)
 {
-  const s = await getStudy();
-  if (s.running && s.endAt && s.endAt <= Date.now()) await putStudy(await finishPhase(s));
+  const run = studyQueue.then(fn);
+  studyQueue = run.catch(() =>
+  {});
+  return run;
+}
+
+function catchUp()
+{
+  return queueStudy(async () =>
+  {
+    const s = await getStudy();
+    if (s.running && s.endAt && s.endAt <= Date.now()) await putStudy(await finishPhase(s));
+  });
 }
 chrome.alarms.onAlarm.addListener(a =>
 {
@@ -389,7 +463,9 @@ async function studyAct(msg)
   let s = await getStudy();
   const now = Date.now();
   if (s.running && s.endAt <= now) s = await finishPhase(s);
-  switch (msg.act)
+  // toggle works on the state that was just caught up, so a finished phase is never finished twice
+  const act = msg.act === "toggle" ? (s.running ? "pause" : "start") : msg.act;
+  switch (act)
   {
     case "start":
       if (!s.running)
@@ -399,8 +475,6 @@ async function studyAct(msg)
         s.lastEvent = "start";
       }
       break;
-    case "toggle":
-      return studyAct({ act: s.running ? "pause" : "start" });
     case "pause":
       if (s.running)
       {
@@ -427,8 +501,10 @@ async function studyAct(msg)
     case "length":
       if ([15, 25, 50].includes(msg.min))
       {
+        // a running focus keeps its length, so its plants and progress ring stay honest
+        if (s.mode === "focus" && s.running) break;
         s.focusMin = msg.min;
-        if (s.mode === "focus" && !s.running) s.left = phaseMs(s);
+        if (s.mode === "focus") s.left = phaseMs(s);
       }
       break;
     case "name":
@@ -471,7 +547,7 @@ async function studyAct(msg)
 chrome.runtime.onMessage.addListener((msg, _sender, reply) =>
 {
   if (!msg || msg.type !== "bl:study") return false;
-  studyAct(msg).then(reply, () => reply(null));
+  queueStudy(() => studyAct(msg)).then(reply, () => reply(null));
   return true;
 });
 

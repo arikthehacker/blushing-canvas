@@ -125,15 +125,17 @@ function tickClock()
     const c = heroRoot.querySelector("[data-clock]");
     if (c) c.textContent = clockText();
     const g = heroRoot.querySelector("[data-greet]");
-    if (g) g.textContent = `${greeting()}.`;
+    if (g) g.textContent = withStop(greeting());
   }
   const now = new Date();
   clockTimer = setTimeout(tickClock, 60000 - now.getSeconds() * 1000 - now.getMilliseconds() + 50);
 }
 
-function setArt(a)
+async function setArt(a)
 {
-  if (!heroRoot || !a || !a.dataUrl) return;
+  if (!heroRoot || !a) return;
+  if (!a.dataUrl && a.kind === "photo") a = { ...a, dataUrl: await store.get("local", `bl:photo:${a.id}`) };
+  if (!a.dataUrl) return;
   art.current = a;
   const img = heroRoot.querySelector(".bl-hero-img");
   img.style.backgroundImage = `url("${a.dataUrl}")`;
@@ -201,17 +203,11 @@ async function buildHero()
       const dataUrl = await self.BlushLook.resizeImage(file, 2560);
       const photos = (await store.get("local", "bl:photos")) || [];
       const id = Math.random().toString(36).slice(2, 10);
-      photos.push({ id, dataUrl });
-      await store.set("local", "bl:photos", photos);
-      await store.set("local", "bl:art:current", {
-        day: dayKey(new Date()),
-        id,
-        kind: "photo",
-        dataUrl,
-        title: "Your photo",
-        artist: "",
-        link: "",
-      });
+      await store.set("local", `bl:photo:${id}`, dataUrl);
+      await store.set("local", "bl:photos", photos.concat({ id }));
+      const shown = { day: dayKey(new Date()), id, kind: "photo", title: "Your photo", artist: "", link: "" };
+      setArt({ ...shown, dataUrl });
+      await store.set("local", "bl:art:current", shown);
       toast("Added to your banner photos.", true);
     }
     catch (err)

@@ -57,16 +57,11 @@ chrome.storage.onChanged.addListener((ch, area) =>
 // YOU GOT THIS!!! comes up often, mixed in with the ML wisdom
 const pickQuote = () =>
 {
-  let q = calmQuote;
   const pool =
     myQuotes.only && myQuotes.list.length ? myQuotes.list : CALM_QUOTES.concat(myQuotes.list, myQuotes.list); // yours come up twice as often
-  if (pool.length < 2)
-  {
-    calmQuote = pool[0] || "";
-    return;
-  }
-  while (q === calmQuote) q = pool[Math.floor(Math.random() * pool.length)];
-  calmQuote = q;
+  // pick from the lines that differ from the one showing, so duplicates can't trap the loop
+  const others = pool.filter(q => q !== calmQuote);
+  calmQuote = others.length ? others[Math.floor(Math.random() * others.length)] : pool[0] || "";
 };
 function calmBuddyHTML()
 {

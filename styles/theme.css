@@ -653,16 +653,23 @@ html.bl-dark .item_name a {
 }
 
 /* ---------- your page background photo ---------- */
+/* its own fixed layer behind the page, so scrolling never has to repaint it */
 html.bl-has-bgimg body {
+  background: transparent !important;
+}
+#bl-page-img {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
   background-image:
     linear-gradient(
       color-mix(in srgb, var(--bl-bg) var(--bl-bg-fade, 70%), transparent),
       color-mix(in srgb, var(--bl-bg) var(--bl-bg-fade, 70%), transparent)
     ),
-    var(--bl-page-img) !important;
-  background-size: cover !important;
-  background-position: center !important;
-  background-attachment: fixed !important;
+    var(--bl-page-img);
+  background-size: cover;
+  background-position: center;
 }
 
 /* ---------- dashboard switches from the popup ---------- */

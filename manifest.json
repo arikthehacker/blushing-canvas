@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Blush for Canvas",
-  "version": "3.5.2",
+  "version": "3.6.0",
   "description": "A dusty-pink, fast, accessible Canvas: quick jump, shortcuts, your own colors and fonts, a study timer with a garden and a pet, and a to-do panel that cheers you on.",
   "icons": {
     "16": "icons/icon16.png",

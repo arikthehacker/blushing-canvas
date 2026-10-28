@@ -8,11 +8,28 @@ const hasImageDrag = e =>
 const imageFromDrop = e =>
   [...((e.dataTransfer && e.dataTransfer.files) || [])].find(f => f.type.startsWith("image/")) || null;
 
+// the photo lives on its own fixed layer behind the page, not on <html>'s style,
+// which the theme rewrites often and which would otherwise carry megabytes of image text
+let pageImgLayer = null;
 function applyPageImage(dataUrl)
 {
-  if (dataUrl) root.style.setProperty("--bl-page-img", `url("${dataUrl}")`);
-  else root.style.removeProperty("--bl-page-img");
   root.classList.toggle("bl-has-bgimg", !!dataUrl);
+  if (!dataUrl)
+  {
+    if (pageImgLayer) pageImgLayer.remove();
+    pageImgLayer = null;
+    return;
+  }
+  if (!pageImgLayer)
+  {
+    pageImgLayer = document.createElement("div");
+    pageImgLayer.id = "bl-page-img";
+    pageImgLayer.setAttribute("aria-hidden", "true");
+  }
+  pageImgLayer.style.setProperty("--bl-page-img", `url("${dataUrl}")`);
+  const attach = () => document.body && !pageImgLayer.isConnected && document.body.prepend(pageImgLayer);
+  if (document.body) attach();
+  else document.addEventListener("DOMContentLoaded", attach, { once: true });
 }
 store.get("local", "bl:bgimg").then(applyPageImage);
 
@@ -101,6 +118,10 @@ function decorateCards(scope)
           paintCard(card, null);
         });
         header.appendChild(tools);
+        paintCard(card, saved[cardKey(cardId(card))] || null);
+        // the tools can be re-added after Canvas re-renders a header, but the drop listeners only once per card
+        if (card.dataset.blDnd) return;
+        card.dataset.blDnd = "1";
         card.addEventListener("dragover", e =>
         {
           if (hasImageDrag(e))
@@ -121,7 +142,6 @@ function decorateCards(scope)
           e.preventDefault();
           saveCardPhoto(card, f);
         });
-        paintCard(card, saved[cardKey(cardId(card))] || null);
       });
     },
   );

@@ -30,9 +30,33 @@ let look = null; // custom colors + fonts from the popup
 let lookDark = null; // a custom palette used for both modes decides light or dark itself
 let ready = false;
 
+// after Blush is updated, tabs opened before it can't reach storage anymore, so reads come back empty
+// and writes are skipped instead of throwing
 const store = {
-  get: (area, key) => new Promise(res => chrome.storage[area].get(key, v => res(v ? v[key] : undefined))),
-  set: (area, key, val) => new Promise(res => chrome.storage[area].set({ [key]: val }, res)),
+  get: (area, key) =>
+    new Promise(res =>
+    {
+      try
+      {
+        chrome.storage[area].get(key, v => res(v ? v[key] : undefined));
+      }
+      catch (e)
+      {
+        res(undefined);
+      }
+    }),
+  set: (area, key, val) =>
+    new Promise(res =>
+    {
+      try
+      {
+        chrome.storage[area].set({ [key]: val }, res);
+      }
+      catch (e)
+      {
+        res();
+      }
+    }),
 };
 const lk = name => `${HOST}:${name}`;
 
@@ -57,17 +81,17 @@ function applySettings()
     updateThemeButtons();
     installSpeculation();
     applyDock();
-    renderHero();
-    renderCalm();
     skies.forEach(k => k.refresh()); // stars pick up new palette colors
   }
 }
 root.classList.toggle("bl-dark", darkMQ.matches);
 darkMQ.addEventListener("change", applySettings);
 
+let settingsLoaded = false;
 Promise.all([store.get("sync", "settings"), store.get("sync", "look")]).then(([s, l]) =>
 {
   settings = { ...DEFAULTS, ...(s || {}) };
+  settingsLoaded = true;
   look = l || null;
   applySettings();
 });
@@ -85,4 +109,5 @@ chrome.storage.onChanged.addListener((changes, area) =>
     if (ready) setArt(changes["bl:art:current"].newValue);
   }
 });
-const saveSettings = () => store.set("sync", "settings", settings);
+// nothing is saved until the stored settings have loaded, so the defaults never overwrite them
+const saveSettings = () => settingsLoaded && store.set("sync", "settings", settings);

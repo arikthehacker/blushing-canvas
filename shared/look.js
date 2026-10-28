@@ -364,11 +364,15 @@
           resolve(res || { ok: false, error: "Could not reach Google Fonts" });
           return;
         }
+        // each file is decoded once, even when several weights share it
+        const decoded = {};
+        const dataFor = f =>
+          f.file !== undefined ? (decoded[f.file] ||= b64ToBuf(res.files[f.file])) : b64ToBuf(f.data);
         res.faces.forEach(f =>
         {
           try
           {
-            const face = new FontFace(res.family, b64ToBuf(f.data), {
+            const face = new FontFace(res.family, dataFor(f), {
               weight: f.weight,
               style: f.style,
               unicodeRange: f.unicodeRange || "U+0-10FFFF",
@@ -419,7 +423,8 @@
       const img = new Image();
       img.onload = () =>
       {
-        const scale = Math.min(1, max / img.width);
+        // wide pictures are limited by width, tall ones by height (three quarters of max)
+        const scale = Math.min(1, max / img.width, (max * 0.75) / img.height);
         const c = document.createElement("canvas");
         c.width = Math.round(img.width * scale);
         c.height = Math.round(img.height * scale);

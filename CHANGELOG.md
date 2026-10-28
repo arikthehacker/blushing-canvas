@@ -1,5 +1,32 @@
 # changelog
 
+## 3.6.0
+
+fixes
+
+- super declutter froze the tab when your own quotes had the same line twice
+- with pictures set to "both", half of your photos and paintings could never be picked as the banner
+- instant navigation loaded links on hover, which canvas could count as a page view or a finished "view this" module step. it now loads a link when you press it, and quick jump only preloads course-level pages
+- blush ran inside pages chrome loaded ahead of a click, so they showed up in quick jump's recent pages without being opened
+- the color fixer kept an element's first colors forever, even after canvas changed it on purpose (a selected tab, a new alert type)
+- a to-do that failed to sync with canvas still counted toward your streak, and a quick check and uncheck could leave canvas and blush disagreeing
+- typing in the popup and closing it right away lost the last edit
+- the popup and canvas tabs could save an old copy of your settings over a newer one
+- pressing P right as a focus session ended could finish it twice, and changing the focus length mid-session changed its plants
+- a custom greeting gained an extra period every minute
+- deleting a photo that was today's banner kept showing it until tomorrow
+- course lists and the planner stopped at 100 items, and blush ran on the login page and raw API pages
+- tabs left open across a blush update kept calling the old extension every second
+
+faster
+
+- photos are stored one per key, so adding or removing one no longer rewrites every photo and sends them to every canvas tab. today's banner points at your photo instead of keeping a copy. pictures are now capped in height too
+- each google fonts file is stored and sent once (it used to be copied into every weight), and fonts you no longer use are removed
+- the page background photo is its own fixed layer, so scrolling no longer repaints the whole window
+- the star sky draws at 30 frames a second from a glow image made once per color
+- the color fixer works in small batches within each frame and skips elements it already queued
+- changing a setting redraws the banner once instead of twice, and keeps chrome's preloads instead of restarting them
+
 ## 3.5.2
 
 - fixed a "Duplicate script ID 'blush-schools'" error after turning blush on for your school's own address. allowing the site started two syncs at once, and the second tried to register the same scripts again. syncs now run one at a time and update the registration in place

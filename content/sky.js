@@ -57,6 +57,23 @@
         return (s - 1) / 2147483646;
       };
     };
+    let glows = {};
+    function makeGlows()
+    {
+      glows = {};
+      for (const [key, c] of Object.entries(palette))
+      {
+        const g = document.createElement("canvas");
+        g.width = g.height = 64;
+        const x = g.getContext("2d");
+        const grad = x.createRadialGradient(32, 32, 0, 32, 32, 32);
+        grad.addColorStop(0, `rgba(${c[0]},${c[1]},${c[2]},1)`);
+        grad.addColorStop(1, `rgba(${c[0]},${c[1]},${c[2]},0)`);
+        x.fillStyle = grad;
+        x.fillRect(0, 0, 64, 64);
+        glows[key] = g;
+      }
+    }
     function readPalette()
     {
       const cs = getComputedStyle(el);
@@ -112,6 +129,7 @@
       cv.style.height = `${h}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       readPalette();
+      makeGlows();
       build();
       draw(performance.now());
     }
@@ -132,14 +150,10 @@
         if (!still) s.x = (s.x + s.drift * w * 0.001 + w) % w;
         const c = palette[s.hue];
         const rad = s.size * (0.75 + k * 0.5);
-        // soft glow
-        const g = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, rad * 4);
-        g.addColorStop(0, `rgba(${c[0]},${c[1]},${c[2]},${(a * 0.55).toFixed(3)})`);
-        g.addColorStop(1, `rgba(${c[0]},${c[1]},${c[2]},0)`);
-        ctx.fillStyle = g;
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, rad * 4, 0, Math.PI * 2);
-        ctx.fill();
+        // soft glow, drawn from a glow image made once per color
+        ctx.globalAlpha = a * 0.55;
+        ctx.drawImage(glows[s.hue], s.x - rad * 4, s.y - rad * 4, rad * 8, rad * 8);
+        ctx.globalAlpha = 1;
         // core
         ctx.fillStyle = `rgba(${c[0]},${c[1]},${c[2]},${a.toFixed(3)})`;
         ctx.beginPath();
@@ -162,11 +176,17 @@
         }
       }
     }
+    // 30 frames a second is plenty for a slow twinkle and halves the work
+    let lastFrame = 0;
     function loop(t)
     {
       raf = 0;
       if (!visible || document.hidden || !el.isConnected) return;
-      draw(t);
+      if (t - lastFrame >= 32)
+      {
+        lastFrame = t;
+        draw(t);
+      }
       if (!reduceMQ.matches) raf = requestAnimationFrame(loop);
     }
     const start = () =>
@@ -196,6 +216,7 @@
       refresh()
       {
         readPalette();
+        makeGlows();
         start();
       },
     };

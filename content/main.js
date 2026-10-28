@@ -52,5 +52,13 @@ async function init()
   });
 }
 
-if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init, { once: true });
-else init();
+// only Canvas's app pages get Blush (not the login screen or raw API responses),
+// and a page Chrome loaded ahead of a click waits until it's actually shown
+function start()
+{
+  if (!document.getElementById("application") && !document.querySelector(".ic-app")) return;
+  if (document.prerendering) document.addEventListener("prerenderingchange", init, { once: true });
+  else init();
+}
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start, { once: true });
+else start();

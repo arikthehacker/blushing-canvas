@@ -100,14 +100,14 @@ async function swr(name, maxAgeMs, loader, onData)
 }
 ```
 
-**instant navigation uses speculation rules.** chrome prerenders canvas links when you hover them. module items are skipped, since opening one can tick off a module requirement. discussions, announcements, quizzes and the inbox mark things as read when they open, so those are only prefetched and never run early.
+**instant navigation uses speculation rules.** chrome starts loading a canvas link the moment you press it, before you let go, which saves a beat on every click. it waits for the press instead of the hover because canvas counts a page as viewed when it loads, and a hover alone could tick off a module's "view this" requirement. module items, discussions, announcements, quizzes and the inbox are never loaded early.
 
 ```js
 prerender: [
   {
     source: "document",
     where: { and: [{ href_matches: "/*" }, { not: { or: UNSAFE.concat(NO_PRERENDER) } }] },
-    eagerness: "moderate",
+    eagerness: "conservative",
   },
 ],
 ```

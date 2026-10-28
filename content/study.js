@@ -20,14 +20,30 @@
     stageCss = "",
     sayT = 0;
 
+  // false once Blush is updated or reloaded while this tab stays open
+  const alive = () => !!(chrome.runtime && chrome.runtime.id);
   const send = (act, extra = {}) =>
     new Promise(r =>
-      chrome.runtime.sendMessage({ type: "bl:study", act, ...extra }, res =>
+    {
+      if (!alive())
       {
-        void chrome.runtime.lastError;
-        r(res);
-      }),
-    );
+        stopTick();
+        r(null);
+        return;
+      }
+      try
+      {
+        chrome.runtime.sendMessage({ type: "bl:study", act, ...extra }, res =>
+        {
+          void chrome.runtime.lastError;
+          r(res);
+        });
+      }
+      catch (e)
+      {
+        r(null);
+      }
+    });
   // your buddy walks unless you switch walking off in the popup
   const motion = () => settings.petWalk !== false;
 
@@ -312,7 +328,6 @@
     if (stageOn) return; // pet, timer, and garden are all in the banner
     wrap.classList.toggle("is-motion", motion());
     wrap.classList.toggle("is-running", !!state.running);
-    wrap.classList.toggle("is-garden", stageOn);
     wrap.dataset.mode = state.mode;
     const p = progress(state);
 
@@ -321,18 +336,13 @@
       if (full || !wrap.querySelector(".sb-pill"))
       {
         wrap.classList.remove("is-open");
-        wrap.innerHTML = stageOn
-          ? `<button class="sb-pill" type="button" data-sb="expand" aria-label="Open your garden">
-              <span class="sb-pill-plant">${plantSVG(((state.plants || []).slice(-1)[0] || { k: 2 }).k, 3)}</span>
-              <span class="sb-pill-time">${(state.plants || []).length}</span>
-            </button>`
-          : `<button class="sb-pill" type="button" data-sb="expand" aria-label="Open study timer, ${esc(modeLabel(state))} ${fmt(leftMs(state))} left">
+        wrap.innerHTML = `<button class="sb-pill" type="button" data-sb="expand" aria-label="Open study timer, ${esc(modeLabel(state))} ${fmt(leftMs(state))} left">
               <span class="sb-pill-pet">${petSVG(mood(state))}</span>
               <span class="sb-pill-time">${fmt(leftMs(state))}</span>
               <span class="sb-pill-bar"><i style="width:${(p * 100).toFixed(1)}%"></i></span>
             </button>`;
       }
-      else if (!stageOn)
+      else
       {
         wrap.querySelector(".sb-pill-time").textContent = fmt(leftMs(state));
         wrap.querySelector(".sb-pill-bar i").style.width = `${(p * 100).toFixed(1)}%`;
@@ -345,20 +355,6 @@
     if (full || !wrap.querySelector(".sb-card"))
     {
       wrap.classList.add("is-open");
-      if (stageOn)
-      {
-        // the pet and timer live in the banner, so this card is just the garden
-        wrap.innerHTML = `
-          <section class="sb-card is-garden" aria-label="Your garden">
-            <header class="sb-head">
-              <p class="sb-eyebrow"><b>//</b> garden</p>
-              <button class="sb-icon" type="button" data-sb="collapse" aria-label="Shrink garden">${ICONS.down}</button>
-            </header>
-            ${gardenHTML()}
-            <div class="sb-row">${lengthsHTML()}<button class="sb-chip is-plain" type="button" data-sb="reset" aria-label="Restart this timer">Restart</button></div>
-          </section>`;
-        return;
-      }
       wrap.innerHTML = `
         <section class="sb-card" aria-label="Study timer">
           <header class="sb-head">
@@ -768,7 +764,12 @@
     });
   }
 
-  if (window.top !== window) return;
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init, { once: true });
-  else init();
+  function start()
+  {
+    if (!document.getElementById("application") && !document.querySelector(".ic-app")) return;
+    if (document.prerendering) document.addEventListener("prerenderingchange", init, { once: true });
+    else init();
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start, { once: true });
+  else start();
 })();
