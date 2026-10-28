@@ -164,6 +164,9 @@ p {
   gap: 6px;
   margin-top: 10px;
 }
+.sb-controls.no-skip {
+  grid-template-columns: 1.4fr 1fr;
+}
 .sb-btn {
   min-height: 36px;
   border-radius: 12px;
