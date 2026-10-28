@@ -96,7 +96,6 @@
 }
 .sb-board {
   position: relative;
-  overflow: hidden;
   display: grid;
   justify-items: center;
   gap: 0;
@@ -133,6 +132,7 @@
   text-align: center;
 }
 .sb-sbtn {
+  position: relative;
   width: 16px;
   height: 16px;
   display: inline-grid;
@@ -144,6 +144,22 @@
   background: rgba(255, 255, 255, 0.55);
   color: #6b4730;
 }
+.sb-sbtn[hidden] {
+  display: none;
+}
+/* the drawing stays small, but each button takes taps across 24px. the extra reaches outward so the two never overlap */
+.sb-sbtn::before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  bottom: -4px;
+  left: -6.5px;
+  right: -1.5px;
+}
+.sb-sbtn + .sb-sbtn::before {
+  left: -1.5px;
+  right: -6.5px;
+}
 .sb-sbtn.is-main {
   background: var(--bl-accent);
   color: var(--bl-on-accent);
@@ -154,6 +170,14 @@
 }
 .sb-sbtn:hover {
   filter: brightness(1.06);
+}
+/* keeps the progress bar inside the rounded board without clipping the buttons' tap areas */
+.sb-strack {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 5px;
+  pointer-events: none;
 }
 .sb-sbar {
   position: absolute;
@@ -235,6 +259,15 @@
 .sb-ground[data-size="slim"] .sb-sbtn {
   width: 14px;
   height: 14px;
+}
+.sb-ground[data-size="slim"] .sb-sbtn::before {
+  top: -5px;
+  bottom: -5px;
+  left: -8.5px;
+}
+.sb-ground[data-size="slim"] .sb-sbtn + .sb-sbtn::before {
+  left: -1.5px;
+  right: -8.5px;
 }
 .sb-ground[data-size="slim"] .sb-post {
   height: 4px;

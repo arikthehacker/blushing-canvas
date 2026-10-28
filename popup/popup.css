@@ -30,6 +30,7 @@ fieldset {
   border-radius: 14px;
   padding: 10px 12px 12px;
   margin: 0 0 12px;
+  min-width: 0;
   background: var(--bl-surface);
 }
 legend {
@@ -124,6 +125,58 @@ p.foot {
   font-size: 12px;
   color: var(--bl-muted);
 }
+p.foot + p.foot {
+  margin-top: 8px;
+}
+/* folded away settings: the summary reads like a .sub label with a small chevron */
+details.more {
+  margin-top: 10px;
+  border-top: 1px solid var(--bl-border);
+}
+details.more > summary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 -4px;
+  padding: 10px 4px 2px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--bl-text);
+  cursor: pointer;
+  list-style: none;
+}
+details.more > summary::-webkit-details-marker {
+  display: none;
+}
+details.more > summary::before {
+  content: "";
+  flex: none;
+  width: 6px;
+  height: 6px;
+  margin: 0 2px 0 1px;
+  border-right: 2px solid var(--bl-muted);
+  border-bottom: 2px solid var(--bl-muted);
+  transform: rotate(-45deg);
+}
+details.more[open] > summary::before {
+  transform: translateY(-2px) rotate(45deg);
+}
+details.more > summary:hover::before {
+  border-color: var(--bl-accent);
+}
+details.more > summary:focus-visible {
+  outline: 3px solid var(--bl-focus);
+  outline-offset: 2px;
+}
+details.more[open] > summary {
+  margin-bottom: 8px;
+}
+/* an open fold in the middle of a section gets a line under it so what follows reads as outside it */
+details.more[open]:not(:last-child) {
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--bl-border);
+}
 kbd {
   font-size: 11px;
   font-weight: 600;
@@ -149,7 +202,7 @@ kbd {
   color: var(--bl-text);
 }
 .seg.two {
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
 }
 .photos {
   display: grid;
@@ -220,9 +273,10 @@ kbd {
   font-weight: 700;
   color: var(--bl-text);
 }
+/* two across: three of the longer names don't fit in the popup and pushed Colors wider than the rest */
 .presets {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 6px;
 }
 .preset {
@@ -243,7 +297,7 @@ kbd {
   white-space: nowrap;
 }
 /* an odd one out at the end gets the whole row instead of sitting alone */
-.preset:last-child:nth-child(3n + 1) {
+.preset:last-child:nth-child(2n + 1) {
   grid-column: 1 / -1;
   justify-content: center;
 }

@@ -8,7 +8,7 @@
   const KEY = "bl:study";
   const UI_KEY = "bl:study:ui";
   let state = null;
-  let settings = { study: true, calm: true, petWalk: true, stressSign: false };
+  let settings = { study: true, calm: true, stressSign: false };
   let ui = { open: true };
   let host = null,
     sr = null,
@@ -44,8 +44,10 @@
         r(null);
       }
     });
-  // your buddy walks unless you switch walking off in the popup
-  const motion = () => settings.petWalk !== false;
+  // your buddy walks unless you switch walking off in the popup. until you flip that switch
+  // (petWalk is only stored then) it stays put when the computer asks for less motion
+  const reduceMQ = matchMedia("(prefers-reduced-motion: reduce)");
+  const motion = () => (settings.petWalk === undefined ? !reduceMQ.matches : !!settings.petWalk);
 
   const plantSVG = (kind, stage, i) => self.BlushPets.plantSVG(kind, stage, i);
 
@@ -144,6 +146,10 @@
   ];
   const mainLabel = s =>
     s.running ? "Pause" : isPaused(s) ? "Resume" : s.mode === "focus" ? "Start focus" : "Start break";
+  const mainTitle = s => (s.running ? "Pause (P)" : "Start (P)");
+  // skipping a running focus ends it with no plant, so skip only shows while paused and during breaks
+  const canSkip = s => s.mode !== "focus" || isPaused(s);
+  const skipLabel = s => (s.mode === "focus" ? "Skip to break" : "Skip break");
 
   async function onAction(b)
   {
@@ -240,7 +246,7 @@
   function hop()
   {
     const pet = (stageOn && stage && stage.querySelector(".sb-hop")) || sr.querySelector(".sb-pet");
-    if (!pet || !motion() || !pet.animate) return;
+    if (!pet || !pet.animate) return;
     pet.animate(
       [
         { transform: "translateY(0)" },
@@ -375,10 +381,10 @@
               <p class="sb-line" aria-live="polite"></p>
             </div>
           </div>
-          <div class="sb-controls">
-            <button class="sb-btn is-main" type="button" data-sb="${state.running ? "pause" : "start"}">${mainLabel(state)}</button>
+          <div class="sb-controls${canSkip(state) ? "" : " no-skip"}">
+            <button class="sb-btn is-main" type="button" data-sb="${state.running ? "pause" : "start"}" title="${mainTitle(state)}">${mainLabel(state)}</button>
             <button class="sb-btn" type="button" data-sb="reset" aria-label="Restart this timer">Restart</button>
-            <button class="sb-btn" type="button" data-sb="skip" aria-label="${state.mode === "focus" ? "Skip to break" : "Skip break"}">Skip</button>
+            ${canSkip(state) ? `<button class="sb-btn" type="button" data-sb="skip" aria-label="${skipLabel(state)}" title="${skipLabel(state)}">Skip</button>` : ""}
           </div>
           ${lengthsHTML()}
           ${gardenHTML()}
@@ -492,9 +498,9 @@
           <span class="sb-srow">
             <span class="sb-ttime"></span>
             <button class="sb-sbtn is-main" type="button" data-sb="start"></button>
-            <button class="sb-sbtn" type="button" data-sb="skip" aria-label="Skip">${ICONS.skip}</button>
+            <button class="sb-sbtn" type="button" data-sb="skip" hidden>${ICONS.skip}</button>
           </span>
-          <i class="sb-sbar"></i>
+          <span class="sb-strack" aria-hidden="true"><i class="sb-sbar"></i></span>
         </div>
         <span class="sb-post" aria-hidden="true"></span>
       </div>
@@ -658,6 +664,11 @@
       main.dataset.icon = icon;
     }
     main.setAttribute("aria-label", mainLabel(state));
+    main.title = mainTitle(state);
+    const skip = stage.querySelector('.sb-sbtn[data-sb="skip"]');
+    skip.hidden = !canSkip(state);
+    skip.setAttribute("aria-label", skipLabel(state));
+    skip.title = skipLabel(state);
     stage.querySelector(".sb-board").title =
       `${state.petName}: lv ${level(state)} · ${(state.plants || []).length} plants · ${todayCount(state)} today`;
     stage.querySelector(".sb-sbar").style.width = `${(progress(state) * 100).toFixed(1)}%`;
@@ -701,7 +712,7 @@
     if (prevDone && seenDone > prevDone && Date.now() - seenDone < 10000)
     {
       hearts();
-      hop();
+      if (motion()) hop();
     }
   }
 
@@ -739,6 +750,7 @@
       layoutStage();
     }, 1500);
     window.addEventListener("resize", layoutStage);
+    reduceMQ.addEventListener("change", () => render(true));
 
     chrome.storage.onChanged.addListener((changes, area) =>
     {

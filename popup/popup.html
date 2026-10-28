@@ -19,7 +19,7 @@
 
   <button class="hand-btn" type="button" id="stress" aria-pressed="false" style="margin-bottom:12px">
     <b style="font-family:var(--bl-font);font-size:15px;font-weight:800">AHHH I'M STRESSED. SUPER DECLUTTER</b>
-    <small id="stressState">Hides everything on your dashboard except what is due tonight.</small>
+    <small id="stressState">Takes you to your dashboard and hides everything but tonight.</small>
   </button>
 
   <fieldset>
@@ -32,39 +32,114 @@
   </fieldset>
 
   <fieldset>
+    <legend>Study buddy</legend>
+    <div class="row"><label for="study">Study timer<small>Pomodoro with a pet and a garden that grows every 25 minutes</small></label><input class="switch" type="checkbox" id="study"></div>
+    <div class="field" style="padding-top:8px">
+      <span id="len-label" style="font-weight:600">Focus length</span>
+      <div class="seg" role="radiogroup" aria-labelledby="len-label">
+        <input type="radio" name="focusLen" id="l-15" value="15"><label for="l-15">15 min</label>
+        <input type="radio" name="focusLen" id="l-25" value="25"><label for="l-25">25 min</label>
+        <input type="radio" name="focusLen" id="l-50" value="50"><label for="l-50">50 min</label>
+      </div>
+    </div>
+    <div class="btns"><button class="btn" type="button" id="studyReset">Restart the timer</button></div>
+    <p class="hint">Your buddy walks through a little garden along the bottom of the banner. Every 25 focused minutes a new plant grows. Press <kbd>P</kbd> on Canvas to start or pause.</p>
+    <p class="sub">Pick your buddy</p>
+    <div class="pets" id="pets" role="group" aria-label="Pick your study buddy"></div>
+    <div class="field" style="padding-top:10px"><label for="petName">Name</label><input class="text" id="petName" maxlength="20" autocomplete="off"></div>
+    <div class="row"><label for="petWalk">Walks around<small>Back and forth along the banner grass. Stays put when your computer asks for less motion.</small></label><input class="switch" type="checkbox" id="petWalk"></div>
+    <p class="sub">Next plant</p>
+    <div class="plants" id="nextPlant" role="group" aria-label="Pick the next plant to grow"></div>
+    <p class="hint">Your pick grows at the end of your next focus session, then the garden goes back to surprises.</p>
+    <details class="more">
+      <summary>Draw your own buddy</summary>
+      <div class="poses" id="poses"></div>
+      <label class="add-photo" style="margin-top:8px">Upload the whole sheet<input type="file" id="sheetFile" accept="image/png"></label>
+      <p class="hint" id="sheetStatus" role="status"></p>
+      <p class="hint">Draw on the sheet template (all four poses), hide the guide layer, export as a transparent PNG, and upload it here. Empty boxes are skipped. Or upload single 256 × 256 PNGs into the slots above. Only Standing is needed. The others make it waddle, study and cheer.
+        <a class="link" id="tplLink" href="../templates/pet-template-sheet.png" download="blush-pet-template.png">Download the trace-over template</a></p>
+    </details>
+  </fieldset>
+
+  <fieldset>
+    <legend>Banner</legend>
+    <div class="row"><label for="hero">Greeting banner<small>Clock, focus, and next due on every page</small></label><input class="switch" type="checkbox" id="hero"></div>
+    <div class="field">
+      <span id="src-label" style="font-weight:600">Pictures</span>
+      <div class="seg two" role="radiogroup" aria-labelledby="src-label">
+        <input type="radio" name="src" id="s-both" value="both"><label for="s-both">Paintings + mine</label>
+        <input type="radio" name="src" id="s-art" value="art"><label for="s-art">Paintings</label>
+        <input type="radio" name="src" id="s-mine" value="mine"><label for="s-mine">Mine</label>
+        <input type="radio" name="src" id="s-stars" value="stars"><label for="s-stars">Stars</label>
+      </div>
+      <p class="hint">Paintings are public-domain works from the Art Institute of Chicago, a new one each day. Stars is a twinkly night sky (shuffle gives you a new one).</p>
+      <p class="hint">Making your own banner art? Use 2560 × 640 px (4:1) and keep the important part in the middle.</p>
+    </div>
+    <div class="photos" id="photos" aria-label="Your photos"></div>
+    <label class="add-photo">Add your own photos<input type="file" id="file" accept="image/*" multiple></label>
+    <div class="row"><label for="stressSign">Stressed sign in the grass<small>Moves AHHH I'M STRESSED onto a little sign next to the pomodoro sign</small></label><input class="switch" type="checkbox" id="stressSign"></div>
+  </fieldset>
+
+  <fieldset>
+    <legend>You</legend>
+    <div class="field"><label for="name">Name in the greeting</label><input class="text" id="name" placeholder="Uses your Canvas name if empty" maxlength="30" autocomplete="off"></div>
+    <p class="sub">Your greeting</p>
+    <div class="greets">
+      <label for="g-morning">Morning</label><input class="text" id="g-morning" data-slot="morning" placeholder="Good morning, {name}" maxlength="60" autocomplete="off">
+      <label for="g-afternoon">Afternoon</label><input class="text" id="g-afternoon" data-slot="afternoon" placeholder="Good afternoon, {name}" maxlength="60" autocomplete="off">
+      <label for="g-evening">Evening</label><input class="text" id="g-evening" data-slot="evening" placeholder="Good evening, {name}" maxlength="60" autocomplete="off">
+      <label for="g-night">Late night</label><input class="text" id="g-night" data-slot="night" placeholder="Up late, {name}" maxlength="60" autocomplete="off">
+    </div>
+    <p class="hint">Write anything, like "Hi genius {name}" or "Lock in, {name}!". {name} turns into your name. Leave one empty to keep the default.</p>
+
+    <p class="sub">Your own quotes</p>
+    <textarea class="text quotes" id="myQuotes" rows="5" placeholder="One per line, for example:&#10;Future me is going to be so proud.&#10;I have done hard things before."></textarea>
+    <div class="row"><label for="quotesOnly">Only my quotes<small>Your buddy says just yours instead of mixing them with its ML ones</small></label><input class="switch" type="checkbox" id="quotesOnly"></div>
+    <p class="hint" id="quotesCount">Your buddy says these when you tap it, on the banner and on the super declutter page.</p>
+  </fieldset>
+
+  <fieldset>
     <legend>Colors</legend>
     <div class="row"><label for="colorsOn">Use my colors<small>Your palette instead of dusty pink</small></label><input class="switch" type="checkbox" id="colorsOn"></div>
 
     <p class="sub">Start from a preset</p>
     <div class="presets" id="presets"></div>
 
-    <p class="sub">Or bring your own palette</p>
-    <label class="add-photo">Upload a palette<input type="file" id="palFile" accept="image/*,.json,.txt,.css,.scss,.gpl,.ase,.hex,.csv"></label>
-    <div class="paste">
-      <input class="text" id="palPaste" placeholder="Paste hex codes or a Coolors link" autocomplete="off" aria-label="Paste hex codes or a Coolors link">
-      <button class="btn" type="button" id="palUse">Use</button>
-    </div>
-    <p class="hint">Works with a palette picture, Coolors links, .ase, .gpl, or any file with hex codes.</p>
-    <div class="swatches" id="palette" aria-label="Your palette"></div>
-    <p class="hint" id="palHint" hidden>Pick a role below, then tap a swatch to use it there.</p>
-
-    <p class="sub">Roles</p>
-    <div class="roles" id="roles"></div>
-    <p class="warn" id="contrastWarn" role="status"></p>
-
-    <div class="field" style="padding-top:10px">
-      <span id="apply-label" style="font-weight:600">Use these colors in</span>
-      <div class="seg" role="radiogroup" aria-labelledby="apply-label">
-        <input type="radio" name="applyTo" id="a-both" value="both"><label for="a-both">Both</label>
-        <input type="radio" name="applyTo" id="a-light" value="light"><label for="a-light">Light</label>
-        <input type="radio" name="applyTo" id="a-dark" value="dark"><label for="a-dark">Dark</label>
+    <details class="more">
+      <summary>Make your own palette</summary>
+      <label class="add-photo">Upload a palette<input type="file" id="palFile" accept="image/*,.json,.txt,.css,.scss,.gpl,.ase,.hex,.csv"></label>
+      <div class="paste">
+        <input class="text" id="palPaste" placeholder="Paste hex codes or a Coolors link" autocomplete="off" aria-label="Paste hex codes or a Coolors link">
+        <button class="btn" type="button" id="palUse">Use</button>
       </div>
-    </div>
-    <div class="btns">
-      <button class="btn" type="button" id="autoLight">Auto-pick light</button>
-      <button class="btn" type="button" id="autoDark">Auto-pick dark</button>
-    </div>
+      <p class="hint">Works with a palette picture, Coolors links, .ase, .gpl, or any file with hex codes.</p>
+      <div class="swatches" id="palette" aria-label="Your palette"></div>
+      <p class="hint" id="palHint" hidden>Pick a role below, then tap a swatch to use it there.</p>
+
+      <p class="sub">Roles</p>
+      <div class="roles" id="roles"></div>
+
+      <div class="field" style="padding-top:10px">
+        <span id="apply-label" style="font-weight:600">Use these colors in</span>
+        <div class="seg" role="radiogroup" aria-labelledby="apply-label">
+          <input type="radio" name="applyTo" id="a-both" value="both"><label for="a-both">Both</label>
+          <input type="radio" name="applyTo" id="a-light" value="light"><label for="a-light">Light</label>
+          <input type="radio" name="applyTo" id="a-dark" value="dark"><label for="a-dark">Dark</label>
+        </div>
+      </div>
+      <div class="btns">
+        <button class="btn" type="button" id="autoLight">Auto-pick light</button>
+        <button class="btn" type="button" id="autoDark">Auto-pick dark</button>
+      </div>
+    </details>
+    <p class="warn" id="contrastWarn" role="status"></p>
     <div class="btns"><button class="btn" type="button" id="resetColors">Back to Blush pink</button></div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Text size</legend>
+    <div class="field"><label for="textSize">Size <output id="textSizeOut" for="textSize">100%</output></label><input class="range" type="range" id="textSize" min="85" max="130" step="5"></div>
+    <p class="hint">Makes everything on your Canvas pages bigger or smaller.</p>
   </fieldset>
 
   <fieldset>
@@ -90,52 +165,6 @@
       <p class="font-preview" id="fontHeadingPreview" style="font-weight:700">Good morning</p>
     </div>
     <p class="hint">Find one on <a class="link" href="https://fonts.google.com" target="_blank" rel="noopener">Google Fonts</a>, copy the page link or the embed link, and paste it here. Clear the box to go back to the default.</p>
-    <div class="field" style="padding-top:8px"><label for="textSize">Text size <output id="textSizeOut" for="textSize">100%</output></label><input class="range" type="range" id="textSize" min="85" max="130" step="5"></div>
-    <p class="hint">Makes everything on your Canvas pages bigger or smaller.</p>
-  </fieldset>
-
-  <fieldset>
-    <legend>You</legend>
-    <div class="field"><label for="name">Name in the greeting</label><input class="text" id="name" placeholder="Uses your Canvas name if empty" maxlength="30" autocomplete="off"></div>
-    <p class="sub">Your greeting</p>
-    <div class="greets">
-      <label for="g-morning">Morning</label><input class="text" id="g-morning" data-slot="morning" placeholder="Good morning, {name}" maxlength="60" autocomplete="off">
-      <label for="g-afternoon">Afternoon</label><input class="text" id="g-afternoon" data-slot="afternoon" placeholder="Good afternoon, {name}" maxlength="60" autocomplete="off">
-      <label for="g-evening">Evening</label><input class="text" id="g-evening" data-slot="evening" placeholder="Good evening, {name}" maxlength="60" autocomplete="off">
-      <label for="g-night">Late night</label><input class="text" id="g-night" data-slot="night" placeholder="Up late, {name}" maxlength="60" autocomplete="off">
-    </div>
-    <p class="hint">Write anything, like "Hi genius {name}" or "Lock in, {name}!". {name} turns into your name. Leave one empty to keep the default.</p>
-
-    <p class="sub">Your own quotes</p>
-    <textarea class="text quotes" id="myQuotes" rows="5" placeholder="One per line, for example:&#10;Future me is going to be so proud.&#10;I have done hard things before."></textarea>
-    <div class="row"><label for="quotesOnly">Only my quotes<small>Your buddy says just yours instead of mixing them with its ML ones</small></label><input class="switch" type="checkbox" id="quotesOnly"></div>
-    <p class="hint" id="quotesCount">Your buddy says these when you tap it, on the banner and on the super declutter page.</p>
-  </fieldset>
-
-  <fieldset>
-    <legend>Banner</legend>
-    <div class="row"><label for="hero">Greeting banner<small>Clock, focus, and next due on every page</small></label><input class="switch" type="checkbox" id="hero"></div>
-    <div class="field">
-      <span id="src-label" style="font-weight:600">Pictures</span>
-      <div class="seg two" role="radiogroup" aria-labelledby="src-label">
-        <input type="radio" name="src" id="s-both" value="both"><label for="s-both">Both</label>
-        <input type="radio" name="src" id="s-art" value="art"><label for="s-art">Paintings</label>
-        <input type="radio" name="src" id="s-mine" value="mine"><label for="s-mine">Mine</label>
-        <input type="radio" name="src" id="s-stars" value="stars"><label for="s-stars">Stars</label>
-      </div>
-      <p class="hint">Paintings are public-domain works from the Art Institute of Chicago, a new one each day. Stars is a twinkly night sky (shuffle gives you a new one).</p>
-      <p class="hint">Making your own banner art? Use 2560 × 640 px (4:1) and keep the important part in the middle. See the README for exact sizes.</p>
-    </div>
-    <div class="photos" id="photos" aria-label="Your photos"></div>
-    <label class="add-photo">Add your own photos<input type="file" id="file" accept="image/*" multiple></label>
-      <div class="row"><label for="stressSign">Stressed sign in the grass<small>Moves AHHH I'M STRESSED onto a little sign next to the pomodoro sign</small></label><input class="switch" type="checkbox" id="stressSign"></div>
-  </fieldset>
-
-  <fieldset>
-    <legend>Dashboard</legend>
-    <div class="row"><label for="hideDashHeader">Hide the dashboard header<small>The Dashboard title, the new dashboard view button and its menu</small></label><input class="switch" type="checkbox" id="hideDashHeader"></div>
-    <div class="row"><label for="hideCardImages">Hide course images<small>Cards show their plain color instead of the course picture</small></label><input class="switch" type="checkbox" id="hideCardImages"></div>
-    <div class="row"><label for="hideCardIcons">Hide card icons<small>The announcements, discussions and assignments icons under each card</small></label><input class="switch" type="checkbox" id="hideCardIcons"></div>
   </fieldset>
 
   <fieldset>
@@ -152,42 +181,22 @@
   </fieldset>
 
   <fieldset>
-    <legend>Study buddy</legend>
-    <div class="row"><label for="study">Study timer<small>Pomodoro with a pet and a garden that grows every 25 minutes</small></label><input class="switch" type="checkbox" id="study"></div>
-    <div class="field" style="padding-top:8px">
-      <span id="len-label" style="font-weight:600">Focus length</span>
-      <div class="seg" role="radiogroup" aria-labelledby="len-label">
-        <input type="radio" name="focusLen" id="l-15" value="15"><label for="l-15">15 min</label>
-        <input type="radio" name="focusLen" id="l-25" value="25"><label for="l-25">25 min</label>
-        <input type="radio" name="focusLen" id="l-50" value="50"><label for="l-50">50 min</label>
-      </div>
-    </div>
-    <div class="btns"><button class="btn" type="button" id="studyReset">Restart the timer</button></div>
-    <p class="sub">Pick your buddy</p>
-    <div class="pets" id="pets" role="group" aria-label="Pick your study buddy"></div>
-    <p class="sub">Next plant</p>
-    <div class="plants" id="nextPlant" role="group" aria-label="Pick the next plant to grow"></div>
-    <p class="hint">Your pick grows at the end of your next focus session, then the garden goes back to surprises.</p>
-    <p class="sub">Or draw your own</p>
-    <div class="poses" id="poses"></div>
-    <label class="add-photo" style="margin-top:8px">Upload the whole sheet<input type="file" id="sheetFile" accept="image/png"></label>
-    <p class="hint" id="sheetStatus" role="status"></p>
-    <p class="hint">Draw on the sheet template (all four poses), hide the guide layer, export as a transparent PNG, and upload it here. Empty boxes are skipped. Or upload single 256 × 256 PNGs into the slots above. Only Standing is needed. The others make it waddle, study and cheer.
-      <a class="link" id="tplLink" href="../templates/pet-template-sheet.png" download="blush-pet-template.png">Download the trace-over template</a></p>
-    <div class="row"><label for="petWalk">Walks around<small>Back and forth along the banner grass</small></label><input class="switch" type="checkbox" id="petWalk"></div>
-    <div class="field" style="padding-top:10px"><label for="petName">Name</label><input class="text" id="petName" maxlength="20" autocomplete="off"></div>
-    <p class="hint">Your buddy walks through a little garden along the bottom of the banner. Every 25 focused minutes a new plant grows. Press <kbd>P</kbd> on Canvas to start or pause.</p>
+    <legend>Clean up Canvas</legend>
+    <div class="row"><label for="hideClutter">Hide Canvas extras<small>The footer, the Canvas logo, and Canvas's own to-do list</small></label><input class="switch" type="checkbox" id="hideClutter"></div>
+    <div class="row"><label for="hideDashHeader">Hide the dashboard header<small>The Dashboard title, the new dashboard view button and its menu</small></label><input class="switch" type="checkbox" id="hideDashHeader"></div>
+    <div class="row"><label for="hideCardImages">Hide course images<small>Cards show their plain color instead of the course picture</small></label><input class="switch" type="checkbox" id="hideCardImages"></div>
+    <div class="row"><label for="hideCardIcons">Hide card icons<small>The announcements, discussions and assignments icons under each card</small></label><input class="switch" type="checkbox" id="hideCardIcons"></div>
   </fieldset>
 
   <fieldset>
-    <legend>Speed and focus</legend>
-    <div class="row"><label for="calm">Calm mode<small>Turns off Canvas animations</small></label><input class="switch" type="checkbox" id="calm"></div>
-    <div class="row"><label for="hideClutter">Declutter<small>Hides footer, card images, duplicate to-do</small></label><input class="switch" type="checkbox" id="hideClutter"></div>
+    <legend>Speed</legend>
+    <div class="row"><label for="calm">Turn off Canvas animations<small>Menus and trays open right away without sliding or fading</small></label><input class="switch" type="checkbox" id="calm"></div>
     <div class="row"><label for="prefetch">Instant navigation<small>Preloads links you hover</small></label><input class="switch" type="checkbox" id="prefetch"></div>
     <div class="row"><label for="shortcuts">Single-key shortcuts<small>Press <kbd>?</kbd> on Canvas for the list</small></label><input class="switch" type="checkbox" id="shortcuts"></div>
     <div class="row"><label for="cheers">Cheers<small>Little notes when you finish things</small></label><input class="switch" type="checkbox" id="cheers"></div>
   </fieldset>
   <p class="foot"><kbd>Ctrl</kbd> + <kbd>K</kbd> opens quick jump on any Canvas page.</p>
+  <p class="foot"><a class="link" href="https://github.com/arikthehacker/blushing-canvas/blob/main/MANUAL.md" target="_blank" rel="noopener">Manual</a> · <span id="version">v3.6.0</span></p>
 </main>
 <script src="../shared/look.js"></script>
 <script src="../shared/pets.js"></script>

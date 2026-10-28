@@ -13,7 +13,6 @@ const DEFAULTS = {
   dockOpen: true,
   study: true,
   stress: false,
-  petWalk: true,
   hideDashHeader: false,
   hideCardImages: false,
   hideCardIcons: false,
@@ -28,13 +27,29 @@ const BOOLS = [
   "cheers",
   "hero",
   "study",
-  "petWalk",
   "hideDashHeader",
   "hideCardImages",
   "hideCardIcons",
   "stressSign",
 ];
 const PHOTOS_KEY = "bl:photos";
+const reduceMQ = matchMedia("(prefers-reduced-motion: reduce)");
+
+document.getElementById("version").textContent = `v${chrome.runtime.getManifest().version}`;
+
+// the active tab when it's a Canvas page: an instructure.com address or a school Blush has your OK for
+async function canvasTab()
+{
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  if (!tab || !/^https:\/\//.test(tab.url || "")) return null;
+  const { origin, hostname, pathname } = new URL(tab.url);
+  // the art and font hosts Blush always has are not schools
+  const fixed = chrome.runtime.getManifest().host_permissions;
+  const ok =
+    /\.instructure\.com$/.test(hostname) ||
+    (!fixed.includes(`${origin}/*`) && (await chrome.permissions.contains({ origins: [`${origin}/*`] })));
+  return ok ? { tab, origin, onDash: pathname === "/" } : null;
+}
 
 // typed edits wait a moment before saving, and the popup can close first,
 // so whatever is still waiting also saves the moment the popup hides
@@ -104,6 +119,15 @@ chrome.storage.sync.get("settings", ({ settings }) =>
     });
   });
 
+  // petWalk is only stored once you flip the switch, so until then it follows your computer's motion setting
+  const walk = document.getElementById("petWalk");
+  walk.checked = s.petWalk === undefined ? !reduceMQ.matches : !!s.petWalk;
+  walk.addEventListener("change", () =>
+  {
+    s.petWalk = walk.checked;
+    save();
+  });
+
   const size = document.getElementById("textSize");
   const sizeOut = document.getElementById("textSizeOut");
   size.value = s.textSize || 100;
@@ -116,18 +140,37 @@ chrome.storage.sync.get("settings", ({ settings }) =>
   });
 
   const stress = document.getElementById("stress");
-  const paintStress = () =>
+  const here = canvasTab().catch(() => null);
+  const paintStress = note =>
   {
     stress.setAttribute("aria-pressed", String(!!s.stress));
     document.getElementById("stressState").textContent = s.stress
-      ? "On. Your dashboard only shows tonight. Tap again to bring it all back."
-      : "Hides everything on your dashboard except what is due tonight.";
+      ? note || "On. Your dashboard only shows tonight. Tap again to bring it all back."
+      : "Takes you to your dashboard and hides everything but tonight.";
   };
-  stress.addEventListener("click", () =>
+  // the calm screen only shows on the dashboard, so turning it on from another Canvas page goes there
+  stress.addEventListener("click", async () =>
   {
     s.stress = !s.stress;
     paintStress();
-    save();
+    await save();
+    if (!s.stress) return;
+    const c = await here;
+    if (!c)
+    {
+      paintStress("Opens the next time you visit your Canvas dashboard.");
+      return;
+    }
+    if (c.onDash) return;
+    try
+    {
+      await chrome.tabs.update(c.tab.id, { url: `${c.origin}/` });
+      window.close();
+    }
+    catch (err)
+    {
+      paintStress("Opens the next time you visit your Canvas dashboard.");
+    }
   });
   paintStress();
 
