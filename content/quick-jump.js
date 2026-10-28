@@ -64,11 +64,13 @@ function paletteEntries(q)
     for (const [name, path] of SECTIONS.slice(1))
     {
       cands.push({
-        kind: name,
-        label: `${name}`,
+        kind: "Section",
+        label: name,
         sub: c.name,
         url: `/courses/${c.id}${path}`,
         hay: `${c.code} ${c.name} ${name}`,
+        course: c.id,
+        named: tokens.some(t => name.toLowerCase().startsWith(t)),
         w: 2,
       });
     }
@@ -76,13 +78,17 @@ function paletteEntries(q)
   for (const it of state.items || [])
   {
     if (!it.url) continue;
+    const done = isDone(it);
+    const course = state.courses.find(c => String(c.id) === String(it.courseId));
+    const until = !done && untilShort(it.due);
     cands.push({
-      kind: isDone(it) ? "Done" : "Due",
+      kind: done ? "Done" : "Due",
       label: it.title,
-      sub: `${it.course} · ${fmtDue(it.due)}`,
+      sub: `${it.course} · ${until || fmtDue(it.due)}`,
       url: it.url,
-      hay: `${it.title} ${it.course}`,
-      w: isDone(it) ? 0 : 2,
+      hay: `${course ? course.code : ""} ${it.course} ${it.title}`.trim(),
+      // laid out like a section so open work lands right under its course and above its sections
+      w: done ? 0 : 3,
     });
   }
   for (const r of state.recents)
@@ -106,7 +112,16 @@ function paletteEntries(q)
     if (ok) scored.push([score, c]);
   }
   scored.sort((a, b) => b[0] - a[0]);
-  return dedupe(scored.map(s => s[1])).slice(0, 40);
+  // a course name alone shows a few of its sections, and naming one ("deep grades") shows it
+  const perCourse = new Map();
+  const kept = scored.filter(([, c]) =>
+  {
+    if (c.kind !== "Section" || c.named) return true;
+    const n = (perCourse.get(c.course) || 0) + 1;
+    perCourse.set(c.course, n);
+    return n <= 4;
+  });
+  return dedupe(kept.map(s => s[1])).slice(0, 40);
 }
 function dedupe(list)
 {

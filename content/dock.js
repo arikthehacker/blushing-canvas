@@ -9,11 +9,12 @@ function updateRail()
   const c = uiRoot.querySelector(".bl-rail-count");
   c.textContent = n;
   c.toggleAttribute("data-zero", n === 0);
-  uiRoot
-    .querySelector('[data-act="rail-open"]')
-    .setAttribute("aria-label", `Open to-do panel, ${n} due in the next 7 days`);
+  const ob = uiRoot.querySelector('[data-act="rail-open"]');
+  ob.setAttribute("aria-label", `Open to-do column, ${n} due in the next 7 days`);
+  ob.title = "Open column (T)";
   const tb = uiRoot.querySelector('[data-act="rail-theme"]');
   tb.setAttribute("aria-label", `Switch to ${isDark() ? "light" : "dark"} theme`);
+  tb.title = isDark() ? "Light theme" : "Dark theme";
   tb.innerHTML = isDark() ? ICON.sun : ICON.moon;
 }
 function applyDock()
@@ -42,6 +43,23 @@ function setDock(open, moveFocus = true)
   {
     uiRoot.querySelector('[data-act="rail-open"]').focus();
   }
+}
+// the "+1 overdue" line in the banner opens the column at its overdue group
+function openOverdue()
+{
+  if (!dockMount) return;
+  dockMount.tab = "due";
+  if (settings.dockOpen) renderPanels();
+  else setDock(true, false);
+  const title = [...dockMount.el.querySelectorAll(".bl-group-title")].find(
+    h => h.textContent.trim() === "Overdue",
+  );
+  const group =
+    dockMount.el.querySelector('[aria-label="Overdue"]') || (title && (title.closest("section") || title));
+  if (!group) return;
+  group.scrollIntoView({ block: "start", behavior: reduceMQ.matches ? "auto" : "smooth" });
+  const first = group.querySelector("a, input, button");
+  if (first) first.focus({ preventScroll: true });
 }
 const closeDrawer = () => setDock(false);
 const toggleDrawer = () => setDock(!settings.dockOpen);
