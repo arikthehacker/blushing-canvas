@@ -19,13 +19,13 @@ async function buildUI()
 
   const shell = document.createElement("div");
   shell.innerHTML = `
-    <aside class="bl-dock" aria-label="Blush to-do panel">
+    <aside class="bl-dock" aria-label="Blush to-do column">
       <div class="bl-rail">
-        <button class="bl-rail-btn is-main" type="button" data-act="rail-open" aria-expanded="false" aria-controls="bl-dock-panel" aria-keyshortcuts="t">
+        <button class="bl-rail-btn is-main" type="button" data-act="rail-open" aria-expanded="false" aria-controls="bl-dock-panel" aria-keyshortcuts="t" title="Open column (T)">
           <span class="bl-fab-spark" aria-hidden="true">✦</span>
           <span class="bl-rail-count" aria-hidden="true">·</span>
         </button>
-        <button class="bl-rail-btn" type="button" data-act="rail-search" aria-label="Quick jump" aria-keyshortcuts="Control+K">${ICON.search}</button>
+        <button class="bl-rail-btn" type="button" data-act="rail-search" aria-label="Quick jump" aria-keyshortcuts="Control+K" title="Quick jump (Ctrl+K)">${ICON.search}</button>
         <button class="bl-rail-btn" type="button" data-act="rail-theme" aria-label="Switch theme"></button>
       </div>
       <div class="bl-dock-panel" id="bl-dock-panel"></div>
@@ -56,12 +56,12 @@ async function buildUI()
         <div class="bl-help">
           <div class="bl-head">
             <div><p class="bl-eyebrow"><b>//</b> Blush</p><h2 id="bl-help-title">Keyboard shortcuts</h2></div>
-            <button class="bl-icon-btn" type="button" data-act="help-close" aria-label="Close shortcuts">${ICON.close}</button>
+            <button class="bl-icon-btn" type="button" data-act="help-close" aria-label="Close shortcuts" title="Close (Esc)">${ICON.close}</button>
           </div>
           <table>
             <tr><th colspan="2" scope="colgroup">Anywhere</th></tr>
             <tr><td><kbd>Ctrl</kbd> + <kbd>K</kbd> or <kbd>/</kbd></td><td>Quick jump</td></tr>
-            <tr><td><kbd>T</kbd></td><td>Open or close the to-do panel</td></tr>
+            <tr><td><kbd>T</kbd></td><td>Open or close the to-do column</td></tr>
             <tr><td><kbd>P</kbd></td><td>Start or pause the study timer</td></tr>
             <tr><td><kbd>1</kbd> to <kbd>9</kbd></td><td>Open your 1st to 9th course</td></tr>
             <tr><td><kbd>G</kbd> then <kbd>D</kbd></td><td>Dashboard</td></tr>

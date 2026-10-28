@@ -223,17 +223,55 @@ a {
   color: inherit;
 }
 .bl-next {
+  position: relative;
   display: grid;
   gap: 1px;
   min-width: 220px;
   max-width: 320px;
   padding: 10px 14px;
   border-radius: 16px;
-  text-decoration: none;
   box-shadow: 0 6px 20px rgba(90, 40, 60, 0.08);
 }
-a.bl-next:hover {
+.bl-next:has(> a.bl-next-link:hover) {
   background: rgba(255, 250, 251, 0.82);
+}
+.bl-next-link {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+  margin: 0;
+  color: inherit;
+  text-decoration: none;
+}
+/* the whole card opens the item, and the overdue line sits above that */
+a.bl-next-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+a.bl-next-link:focus-visible {
+  outline: none;
+}
+.bl-next:has(> a.bl-next-link:focus-visible) {
+  outline: 3px solid var(--bl-focus);
+  outline-offset: 2px;
+}
+.bl-next-late {
+  position: relative;
+  justify-self: start;
+  margin-top: 3px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--bl-hero-danger, var(--bl-danger, #a82d3c));
+  font-variant-numeric: tabular-nums;
+}
+.bl-next-late:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 .bl-next-label {
   font-size: 10px;
@@ -275,6 +313,11 @@ a.bl-next:hover {
   border: 0;
   border-bottom: 2px solid rgba(138, 65, 87, 0.35);
   border-radius: 0;
+}
+.bl-focus-input::placeholder {
+  color: var(--bl-hero-muted, #6b4a56);
+  opacity: 0.85;
+  font-weight: 400;
 }
 .bl-focus-input:focus-visible {
   outline: none;
@@ -389,6 +432,9 @@ a.bl-credit:hover {
   padding: 6px 12px;
   border-radius: 12px;
 }
+.bl-hero.is-slim .bl-next-late {
+  display: none;
+}
 .bl-hero.is-slim .bl-hero-foot {
   grid-column: auto;
 }
@@ -414,6 +460,7 @@ a.bl-credit:hover {
   --bl-hero-text: #f6ecef;
   --bl-hero-muted: #d9c3cb;
   --bl-hero-accent: #f0bcc8;
+  --bl-hero-danger: #f4a3ac;
   background:
     radial-gradient(60% 90% at 85% 20%, rgba(120, 60, 82, 0.6), transparent 70%),
     linear-gradient(120deg, #231a20, #2c1f27 50%, #211a1e);
@@ -437,7 +484,7 @@ a.bl-credit:hover {
   background: rgba(30, 22, 27, 0.6);
   border-color: rgba(255, 255, 255, 0.1);
 }
-:host-context(html.bl-dark) a.bl-next:hover,
+:host-context(html.bl-dark) .bl-next:has(> a.bl-next-link:hover),
 :host-context(html.bl-dark) .bl-glass-btn:hover {
   background: rgba(40, 28, 35, 0.8);
 }
@@ -984,16 +1031,24 @@ a.bl-item-title:hover {
   padding: 2px 6px;
   white-space: nowrap;
 }
+/* one shared kind column, as wide as the widest kind in the list */
 .bl-pal-list {
   list-style: none;
   margin: 0;
   padding: 6px;
   overflow-y: auto;
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  column-gap: 14px;
+  align-content: start;
+}
+.bl-pal-list > li {
+  grid-column: 1 / -1;
 }
 .bl-opt {
   display: grid;
-  grid-template-columns: 76px 1fr;
-  gap: 2px 12px;
+  grid-template-columns: subgrid;
+  gap: 2px 14px;
   align-items: center;
   padding: 9px 12px;
   border-radius: 12px;
@@ -1005,6 +1060,7 @@ a.bl-item-title:hover {
 }
 .bl-opt-kind {
   grid-row: span 2;
+  white-space: nowrap;
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -1108,6 +1164,7 @@ kbd {
 :host-context(html.bl-custom-colors) .bl-hero {
   --bl-hero-text: var(--bl-c-hero-text);
   --bl-hero-muted: var(--bl-c-hero-muted);
+  --bl-hero-danger: color-mix(in srgb, var(--bl-danger) 60%, var(--bl-c-hero-text));
   --bl-hero-accent: var(--bl-c-hero-accent);
   background:
     radial-gradient(
@@ -1146,7 +1203,7 @@ kbd {
   background: color-mix(in srgb, var(--bl-surface) 62%, transparent);
   border-color: color-mix(in srgb, var(--bl-surface) 70%, transparent);
 }
-:host-context(html.bl-custom-colors) a.bl-next:hover,
+:host-context(html.bl-custom-colors) .bl-next:has(> a.bl-next-link:hover),
 :host-context(html.bl-custom-colors) .bl-glass-btn:hover {
   background: color-mix(in srgb, var(--bl-surface) 85%, transparent);
 }
@@ -1603,6 +1660,7 @@ button.bl-calm-pet:focus-visible {
   --bl-hero-text: #fbf0f4 !important;
   --bl-hero-muted: #e2ccd6 !important;
   --bl-hero-accent: color-mix(in srgb, var(--bl-accent) 45%, #ffffff) !important;
+  --bl-hero-danger: #ffb0ba !important;
   background: #16152b !important;
   color: var(--bl-hero-text);
 }
@@ -1612,7 +1670,7 @@ button.bl-calm-pet:focus-visible {
   border-color: rgba(255, 255, 255, 0.16) !important;
   color: var(--bl-hero-text);
 }
-.bl-hero.is-stars a.bl-next:hover,
+.bl-hero.is-stars .bl-next:has(> a.bl-next-link:hover),
 .bl-hero.is-stars .bl-glass-btn:hover {
   background: rgba(255, 255, 255, 0.18) !important;
 }

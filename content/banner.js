@@ -15,6 +15,26 @@ function nextUp()
       .sort((a, b) => new Date(a.due) - new Date(b.due))[0] || null
   );
 }
+const overdueCount = () =>
+  state.items
+    ? state.items.filter(i => !isDone(i) && i.due && new Date(i.due).getTime() < Date.now()).length
+    : 0;
+// "in 1h 15m" while something is due within a day, otherwise null
+function untilShort(iso)
+{
+  const ms = new Date(iso).getTime() - Date.now();
+  if (!(ms > 0) || ms > 86400000) return null;
+  const mins = Math.max(1, Math.round(ms / 60000));
+  const h = Math.floor(mins / 60),
+    m = mins % 60;
+  return h ? `in ${h}h ${m}m` : `in ${m} min`;
+}
+function nextDueText(it)
+{
+  const until = untilShort(it.due);
+  const when = until ? `${fmtDue(it.due).replace(/^Today /, "")} · ${until}` : fmtDue(it.due);
+  return `${it.course}${it.course ? " · " : ""}${when}`;
+}
 const focusToday = () => (state.focus && state.focus.day === dayKey(new Date()) ? state.focus : null);
 function heroIsFull()
 {
@@ -42,7 +62,8 @@ function focusHTML(full)
   {
     return `<form class="bl-focus" data-act="focus-set">
         <label class="bl-focus-q" for="bl-focus-in">What is your main focus today?</label>
-        <input class="bl-focus-input" id="bl-focus-in" data-fk="focus-input" maxlength="120" autocomplete="off">
+        <input class="bl-focus-input" id="bl-focus-in" data-fk="focus-input" maxlength="120" autocomplete="off"
+          placeholder="One thing, then press Enter">
       </form>`;
   }
   return `<div class="bl-focus is-set">
@@ -51,7 +72,7 @@ function focusHTML(full)
         <input class="bl-check" type="checkbox" data-act="focus-done" data-fk="focus-done" ${f.done ? "checked" : ""}
           aria-label="Mark focus done: ${esc(f.text)}">
         <span class="bl-focus-text${f.done ? " is-done" : ""}">${esc(f.text)}</span>
-        <button class="bl-glass-btn is-small" type="button" data-act="focus-clear" data-fk="focus-clear" aria-label="Clear today's focus">${ICON.close}</button>
+        <button class="bl-glass-btn is-small" type="button" data-act="focus-clear" data-fk="focus-clear" aria-label="Clear today's focus" title="Clear today's focus">${ICON.close}</button>
       </div>
     </div>`;
 }
@@ -75,6 +96,7 @@ function renderHero()
   const draft = draftEl ? draftEl.value : "";
 
   const nu = nextUp();
+  const late = overdueCount();
   const a = settings.artSource === "stars" ? null : art.current;
   const credit =
     a && a.kind === "art"
@@ -93,19 +115,22 @@ function renderHero()
       <p class="bl-clock" aria-hidden="true" data-clock>${clockText()}</p>
       ${
         nu
-          ? `<a class="bl-next" href="${esc(nu.url || "#")}" data-fk="next">
-            <span class="bl-next-label">Next up</span>
-            <span class="bl-next-title">${esc(nu.title)}</span>
-            <span class="bl-next-due">${esc(nu.course)}${nu.course ? " · " : ""}${esc(fmtDue(nu.due))}</span>
-          </a>`
-          : `<p class="bl-next is-clear"><span class="bl-next-label">Next up</span><span class="bl-next-title">${state.items ? "Nothing due." : "Loading…"}</span></p>`
+          ? `<div class="bl-next is-link">
+            <a class="bl-next-link" href="${esc(nu.url || "#")}" data-fk="next">
+              <span class="bl-next-label">Next up</span>
+              <span class="bl-next-title">${esc(nu.title)}</span>
+              <span class="bl-next-due" data-next-due="${esc(nu.key || "")}">${esc(nextDueText(nu))}</span>
+            </a>
+            ${lateHTML(late)}
+          </div>`
+          : `<div class="bl-next is-clear"><p class="bl-next-link"><span class="bl-next-label">Next up</span><span class="bl-next-title">${state.items ? "Nothing due." : "Loading…"}</span></p>${lateHTML(late)}</div>`
       }
     </div>
     <div class="bl-hero-foot">
       ${credit}
       ${location.pathname === "/" ? '<button class="bl-stress-btn" type="button" data-act="stress" data-fk="stress">AHHH I\'M STRESSED. SUPER DECLUTTER</button>' : ""}
-      <button class="bl-glass-btn" type="button" data-act="shuffle" data-fk="shuffle" aria-label="Show a different picture" ${art.busy ? 'aria-busy="true"' : ""}>${ICON.shuffle}</button>
-      <button class="bl-glass-btn" type="button" data-act="size" data-fk="size" aria-label="${full ? "Make banner smaller" : "Make banner bigger"}">${full ? ICON.shrink : ICON.grow}</button>
+      <button class="bl-glass-btn" type="button" data-act="shuffle" data-fk="shuffle" aria-label="Show a different picture" title="Different picture" ${art.busy ? 'aria-busy="true"' : ""}>${ICON.shuffle}</button>
+      <button class="bl-glass-btn" type="button" data-act="size" data-fk="size" aria-label="${full ? "Make banner smaller" : "Make banner bigger"}" title="${full ? "Smaller banner" : "Bigger banner"}">${full ? ICON.shrink : ICON.grow}</button>
     </div>`;
 
   const newDraft = heroRoot.querySelector('[data-fk="focus-input"]');
@@ -117,11 +142,21 @@ function renderHero()
   }
 }
 
+const lateHTML = n =>
+  n
+    ? `<button class="bl-next-late" type="button" data-act="overdue" data-fk="overdue">+${n} overdue</button>`
+    : "";
+
 function tickClock()
 {
   clearTimeout(clockTimer);
   if (heroRoot)
   {
+    const due = heroRoot.querySelector("[data-next-due]");
+    const nu = due && nextUp();
+    // once the next item comes due it moves to overdue, so draw the whole card again
+    if (due && (!nu || (nu.key || "") !== due.dataset.nextDue)) renderHero();
+    else if (due) due.textContent = nextDueText(nu);
     const c = heroRoot.querySelector("[data-clock]");
     if (c) c.textContent = clockText();
     const g = heroRoot.querySelector("[data-greet]");
@@ -249,6 +284,10 @@ async function buildHero()
       renderHero();
       const input = heroRoot.querySelector('[data-fk="focus-input"]');
       if (input) input.focus();
+    }
+    else if (act === "overdue")
+    {
+      openOverdue();
     }
     else if (act === "stress")
     {
