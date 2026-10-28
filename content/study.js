@@ -283,7 +283,7 @@
     const stg = p < 0.25 ? 0 : p < 0.6 ? 1 : 2;
     return `<div class="sb-garden" aria-label="Your garden: ${(state.plants || []).length} plants">
         <div class="sb-bed">
-          ${plants.map((pl, i) => `<span class="sb-plant${state.lastDone && pl.t === state.lastDone ? " is-new" : ""}">${plantSVG(pl.k, 3, i)}</span>`).join("")}
+          ${plants.map((pl, i) => `<span class="sb-plant${justDone(state) && pl.t === state.lastDone ? " is-new" : ""}">${plantSVG(pl.k, 3, i)}</span>`).join("")}
           ${growing ? `<span class="sb-plant is-growing" data-stage="${stg}" title="Growing">${plantSVG(0, stg)}</span>` : ""}
           ${!plants.length && !growing ? '<span class="sb-empty">Finish a 25 minute focus to plant your first flower.</span>' : ""}
         </div>
@@ -409,7 +409,10 @@
     laneMO = null,
     lastMood = "",
     lastKind = "",
-    plantsKey = "";
+    plantsKey = "",
+    growKey = "",
+    poppedAt = 0,
+    poppedWall = 0;
   const GRASS = '<svg class="sb-grass" aria-hidden="true" preserveAspectRatio="none"></svg>';
   let grassKey = "";
   // grass that looks drawn by hand: two layers of blades with different heights and a little lean
@@ -573,49 +576,69 @@
         // a calm stroll: about 22 px a second whatever the banner width (the walk keyframes rest ~12% of the loop)
         stage.style.setProperty("--sb-walk-dur", `${Math.max(40, Math.round((H.width * 2) / 22 / 0.88))}s`);
         drawGrass(Math.round(H.width), slim);
-        renderPlants(true);
+        renderPlants();
       }
     }
     if (stage) stage.hidden = !stageOn || !settings.study;
     if (was !== stageOn) render(true);
   }
 
-  // spread the plants along the ground, keeping clear of the sign
-  function renderPlants(force)
+  // spread the plants along the ground, keeping clear of the signs
+  function renderPlants()
   {
-    if (!stage || !state) return;
+    // nothing to draw while the garden is hidden, and drawing then would use up a new plant's fade
+    if (!stage || !state || !stageOn) return;
     const box = stage.querySelector(".sb-plants");
     const W = stage.clientWidth || 600;
     const slim = stage.dataset.size === "slim";
-    const pw = slim ? 13 : 16;
+    const pw = slim ? 15 : 19;
     const signX = +stage.dataset.signX || W / 2;
+    const stressX = +stage.dataset.stressX || 0;
+    const clear = slim ? 50 : 58;
+    const max = Math.max(4, Math.floor(W / (pw + 4)) - 6);
+    const list = (state.plants || []).slice(-max);
+
+    // grown plants only redraw when the ground or the garden changes, so nothing restarts when the clock ticks
+    const key = `${W}|${slim}|${signX}|${stressX}|${list.length}|${state.lastDone}`;
+    if (key !== plantsKey)
+    {
+      plantsKey = key;
+      growKey = "";
+      const gaps = [signX, stressX].filter(Boolean).sort((a, b) => a - b);
+      const usable = W - 24 - clear * 2 * gaps.length;
+      // a plant that grew in the last minute fades up once. a rebuild while it's still fading keeps the fade going
+      const recent = state.lastDone && Date.now() - state.lastDone < 60000;
+      const fading = state.lastDone === poppedAt && Date.now() - poppedWall < 700;
+      const fresh = recent && (state.lastDone !== poppedAt || fading) ? state.lastDone : 0;
+      box.innerHTML =
+        list
+          .map((pl, i) =>
+          {
+            let x = 12 + rnd((pl.t || 0) + i * 7919) * usable;
+            for (const g of gaps) if (x > g - clear) x += clear * 2; // hop over the signs
+            const tilt = (rnd(i + 31) - 0.5) * 8;
+            const isNew = fresh && pl.t === fresh;
+            return `<span class="sb-plant${isNew ? " is-new" : ""}" style="left:${x.toFixed(0)}px;--t:${tilt.toFixed(1)}deg">${plantSVG(pl.k, 3, i)}</span>`;
+          })
+          .join("") + '<span class="sb-plant is-growing" hidden></span>';
+      if (fresh && fresh !== poppedAt)
+      {
+        poppedAt = fresh;
+        poppedWall = Date.now();
+      }
+    }
+
+    // the sprout by the sign keeps one element and only swaps its drawing as it grows, so its sway never jumps
     const p = progress(state);
     const growing = state.mode === "focus" && (state.running || p > 0);
     const stg = p < 0.25 ? 0 : p < 0.6 ? 1 : 2;
-    const max = Math.max(4, Math.floor(W / (pw + 4)) - 6);
-    const list = (state.plants || []).slice(-max);
-    const stressX = +stage.dataset.stressX || 0;
-    const key = `${W}|${slim}|${signX}|${stressX}|${list.length}|${state.lastDone}|${growing}|${stg}`;
-    if (!force && key === plantsKey) return;
-    plantsKey = key;
-    const clear = slim ? 50 : 58;
-    // plants keep clear of the pomodoro sign and the stressed sign, if it's up
-    const gaps = [signX, stressX].filter(Boolean).sort((a, b) => a - b);
-    const usable = W - 24 - clear * 2 * gaps.length;
-    box.innerHTML =
-      list
-        .map((pl, i) =>
-        {
-          let x = 12 + rnd((pl.t || 0) + i * 7919) * usable;
-          for (const g of gaps) if (x > g - clear) x += clear * 2; // hop over the signs
-          const tilt = (rnd(i + 31) - 0.5) * 8;
-          const fresh = state.lastDone && pl.t === state.lastDone;
-          return `<span class="sb-plant${fresh ? " is-new" : ""}" style="left:${x.toFixed(0)}px;--t:${tilt.toFixed(1)}deg">${plantSVG(pl.k, 3, i)}</span>`;
-        })
-        .join("") +
-      (growing
-        ? `<span class="sb-plant is-growing" style="left:${(signX + clear - 6).toFixed(0)}px">${plantSVG(0, stg)}</span>`
-        : "");
+    const gk = `${growing}|${stg}|${signX}`;
+    const sprout = box.querySelector(".is-growing");
+    if (!sprout || gk === growKey) return;
+    growKey = gk;
+    sprout.hidden = !growing;
+    sprout.style.left = `${(signX + clear - 6).toFixed(0)}px`;
+    if (growing) sprout.innerHTML = plantSVG(0, stg);
   }
 
   function renderStage()
@@ -651,7 +674,7 @@
       lastMood = m;
       lastKind = kind;
     }
-    renderPlants(false);
+    renderPlants();
   }
 
   function startTick()

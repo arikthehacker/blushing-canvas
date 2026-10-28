@@ -157,6 +157,7 @@
       "--bl-c-hero-bg": c.bg,
       "--bl-c-hero-tint": accent,
       "--bl-sky-glow": c.glow || accent, // the soft color blobs behind the stars
+      "--bl-on-wood": readableOn(accent, "#EFD5B0", 4.5), // writing on the wooden signs
       "color-scheme": dark ? "dark" : "light",
     };
   }

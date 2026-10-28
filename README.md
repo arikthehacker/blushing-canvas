@@ -4,7 +4,7 @@
 
 **Blush for Canvas** is a chrome extension that makes canvas dusty pink, faster to get around, and a little kinder to you. it adds a greeting banner, a to-do column that syncs with your canvas planner, quick jump and keyboard shortcuts, your own colors and fonts, and a study buddy that grows a garden while you focus.
 
-![the canvas dashboard with blush on: a greeting banner with a painting, a pomodoro sign in the grass, and the to-do column on the right](docs/images/dashboard-light.png)
+![the canvas dashboard with blush in the night sky theme: a starry greeting banner, a garden with a pomodoro sign, class cards, and the to-do column on the right](docs/images/dashboard.png)
 
 ## quickstart
 

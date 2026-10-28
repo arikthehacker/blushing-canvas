@@ -19,7 +19,7 @@ most settings live in the popup. click the blush icon in chrome's toolbar to ope
 
 ## the banner
 
-![the banner with the date, a greeting, the clock, next up and a painting](docs/images/banner.png)
+![the banner with the date, a greeting, the clock, next up and a starry night sky](docs/images/banner.png)
 
 the banner sits above every canvas page. on the dashboard it's full size, and on other pages it shrinks to a slim strip. the arrow button on the right switches between the two.
 
@@ -27,8 +27,6 @@ the banner sits above every canvas page. on the dashboard it's full size, and on
 - **today's focus.** on the dashboard, type what you want to get done and press enter. it turns into a checkbox you can tick off.
 - **next up.** your nearest due item. click it to open the assignment.
 - **the picture.** a public domain painting from the art institute of chicago, a new one each day. the shuffle button swaps it, and the name of the painting links to it. under **banner** in the popup you can pick paintings, your own photos, both, or stars.
-
-![the stars banner, a night sky with twinkling stars](docs/images/stars-banner.png)
 
 drag a picture from your computer onto the banner to add it to your photos.
 
@@ -49,7 +47,7 @@ the slim banner on course pages is about 1735 x 135 on a 1920 x 1080 screen.
 
 ## the to-do column
 
-![the dashboard with the to-do column on the right](docs/images/dashboard-light.png)
+![the dashboard with the to-do column on the right](docs/images/dashboard.png)
 
 the column on the right shows your week. canvas shrinks to make room for it, and on the dashboard it replaces canvas's own to-do sidebar. press `t` or the `»` button to fold it into a slim rail, and `t` again to open it.
 
@@ -72,7 +70,7 @@ under **dashboard** in the popup, three switches tidy up canvas's own dashboard:
 
 ## quick jump and shortcuts
 
-![quick jump open with the search bio](docs/images/quick-jump.png)
+![quick jump open with the search deep](docs/images/quick-jump.png)
 
 press `ctrl+k` (`cmd+k` on a mac) or `/` on any canvas page. type part of a course name, a section, an assignment, or a page you opened recently, then press enter. `ctrl+enter` opens it in a new tab. try "bio grades" to jump straight to the grades of a biology course.
 
@@ -156,7 +154,7 @@ upload single poses into their slots under **study buddy > or draw your own**, o
 
 auto follows your computer's light or dark setting. light and dark stay put. the moon and sun button on the to-do column switches it too.
 
-![the course page in dark mode](docs/images/course-dark.png)
+![a course page with blush on](docs/images/course.png)
 
 ### colors
 
@@ -168,8 +166,6 @@ turn on **use my colors** to swap dusty pink for your own palette.
 - or upload a palette. it takes a palette picture, a coolors link, `.ase` and `.gpl` files, or any file with hex codes in it. you can also paste hex codes or a coolors link.
 - tap a role (accent, background, cards, text, sidebar), then a swatch to fill it. **auto-pick light** and **auto-pick dark** build a full theme from the palette for you.
 - blush warns you when text gets hard to read on your background.
-
-![canvas with the night sky preset: an indigo page, gold accents and a starry banner](docs/images/night-sky.png)
 
 ### fonts
 

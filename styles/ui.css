@@ -1242,7 +1242,7 @@ a.bl-calm-title:hover {
   font-size: clamp(24px, 3.4vw, 34px);
   font-weight: 800;
   letter-spacing: 0.01em;
-  color: var(--bl-accent-strong);
+  color: var(--bl-on-wood, var(--bl-accent-strong));
   white-space: nowrap;
 }
 .bl-calm-sign:hover .bl-calm-sign-board {

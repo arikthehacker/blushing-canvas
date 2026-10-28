@@ -1,5 +1,11 @@
 # changelog
 
+## 3.5.1
+
+- the YOU GOT THIS!!! sign on super declutter is readable with every color preset. it used the accent color, which disappeared on the wood with night sky's gold
+- garden flowers are a little bigger
+- calmer garden animations: a new flower fades up once, the growing sprout sways gently, and grown flowers hold still. the garden used to redraw every time the clock ticked, which restarted the animations
+
 ## 3.5.0
 
 - dashboard switches: hide the dashboard header, the course images on cards, or the icon row under each card

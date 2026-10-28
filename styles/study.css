@@ -358,11 +358,18 @@ p {
   animation: sb-sway 2.4s ease-in-out infinite;
   transform-origin: 32px 56px;
 }
+/* plants: a new one fades up once, the growing sprout sways a little */
 .is-motion .sb-plant.is-new {
-  animation: sb-pop 0.7s cubic-bezier(0.3, 1.6, 0.5, 1) both;
+  animation: sb-arrive 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 .is-motion .sb-plant.is-growing {
-  animation: sb-sway 3s ease-in-out infinite;
+  animation: sb-sprout 4.5s ease-in-out infinite;
+  transform-origin: 50% 100%;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sb-plant {
+    animation: none !important;
+  }
 }
 .sb-heart {
   position: absolute;
@@ -401,12 +408,23 @@ p {
     transform: rotate(3deg);
   }
 }
-@keyframes sb-pop {
-  0% {
-    transform: scale(0);
+@keyframes sb-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.85);
   }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes sb-sprout {
+  0%,
   100% {
-    transform: scale(1);
+    transform: rotate(-2deg);
+  }
+  50% {
+    transform: rotate(2deg);
   }
 }
 @keyframes sb-float {
