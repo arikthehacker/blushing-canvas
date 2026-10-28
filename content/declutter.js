@@ -151,7 +151,7 @@ function stampStressDay(fresh)
   }
 }
 
-const leftText = endAt =>
+const focusLeftText = endAt =>
 {
   const sec = Math.max(0, Math.ceil((endAt - Date.now()) / 1000));
   return `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, "0")}`;
@@ -162,12 +162,12 @@ function calmFocusHTML()
   const name = esc(st.petName || "Mochi");
   if (st.mode && st.mode !== "focus") return '<p class="bl-calm-focusing" tabindex="-1">On a break</p>';
   if (st.running)
-    return `<p class="bl-calm-focusing" tabindex="-1">Focusing · <span data-calm-left>${leftText(st.endAt)}</span> left</p>`;
+    return `<p class="bl-calm-focusing" tabindex="-1">Focusing · <span data-calm-left>${focusLeftText(st.endAt)}</span> left</p>`;
   const min = st.focusMin || 25;
   const paused = st.left > 0 && st.left < min * 60000;
   return `<button class="bl-calm-focus-btn" type="button" data-calm-focus>${
     paused
-      ? `Keep focusing with ${name} · ${leftText(Date.now() + st.left)} left`
+      ? `Keep focusing with ${name} · ${focusLeftText(Date.now() + st.left)} left`
       : `Start a ${esc(min)} min focus with ${name}`
   }</button>`;
 }
@@ -192,7 +192,7 @@ function paintCalmFocus()
       calmTick = 0;
       return;
     }
-    left.textContent = leftText(calmStudy.endAt);
+    left.textContent = focusLeftText(calmStudy.endAt);
   }, 1000);
 }
 document.addEventListener("visibilitychange", () =>
