@@ -35,9 +35,13 @@ chrome.storage.onChanged.addListener((ch, area) =>
   }
 });
 let calmPet = { kind: "mochi", name: "Mochi" };
+let calmStudy = {};
 store.get("local", "bl:study").then(st =>
 {
-  if (st) calmPet = { kind: st.petKind || "mochi", name: st.petName || "Mochi" };
+  if (!st) return;
+  calmStudy = st;
+  calmPet = { kind: st.petKind || "mochi", name: st.petName || "Mochi" };
+  if (calmOn()) paintCalmFocus();
 });
 store.get("local", "bl:pet:custom").then(c =>
 {
@@ -50,9 +54,20 @@ chrome.storage.onChanged.addListener((ch, area) =>
   {
     const st = ch["bl:study"].newValue;
     const changed = st.petKind !== calmPet.kind;
+    calmStudy = st;
     calmPet = { kind: st.petKind || "mochi", name: st.petName || "Mochi" };
     if (changed && calmOn()) renderCalm();
+    else if (calmOn()) paintCalmFocus();
   }
+});
+// the popup and the garden sign turn stress on through synced settings, so the calm screen follows them
+chrome.storage.onChanged.addListener((ch, area) =>
+{
+  if (area !== "sync" || !ch.settings) return;
+  const was = !!(ch.settings.oldValue || {}).stress;
+  if (!!settings.stress === was) return;
+  if (settings.stress) stampStressDay(true);
+  renderCalm();
 });
 // YOU GOT THIS!!! comes up often, mixed in with the ML wisdom
 const pickQuote = () =>
@@ -91,6 +106,100 @@ function tonightItems()
     .filter(i => !isDone(i) || i.calmSeen)
     .sort((a, b) => new Date(a.due) - new Date(b.due));
 }
+// overdue work stays out of tonight's list but gets one quiet mention
+function lateItems()
+{
+  if (!state.items) return [];
+  const start = startOfDay(new Date()).getTime();
+  return state.items
+    .filter(i => i.due && new Date(i.due).getTime() < start)
+    .filter(i => !isDone(i) || i.calmSeen)
+    .sort((a, b) => new Date(a.due) - new Date(b.due));
+}
+let calmLateOpen = false;
+
+// super declutter is for one rough night, so it turns itself off the next morning after 5 am
+function stampStressDay(fresh)
+{
+  if (!settingsLoaded) return;
+  const now = new Date();
+  const today = dayKey(now);
+  if (!settings.stress)
+  {
+    // turning it off somewhere else can leave the old day behind
+    if (settings.stressDay)
+    {
+      delete settings.stressDay;
+      saveSettings();
+    }
+    return;
+  }
+  if (fresh || !settings.stressDay)
+  {
+    if (settings.stressDay === today) return;
+    settings.stressDay = today;
+    saveSettings();
+    return;
+  }
+  if (settings.stressDay < today && now.getHours() >= 5)
+  {
+    settings.stress = false;
+    delete settings.stressDay;
+    saveSettings();
+    applySettings();
+    if (location.pathname === "/") toast("Morning. Your dashboard is back.", true);
+  }
+}
+
+const leftText = endAt =>
+{
+  const sec = Math.max(0, Math.ceil((endAt - Date.now()) / 1000));
+  return `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, "0")}`;
+};
+function calmFocusHTML()
+{
+  const st = calmStudy || {};
+  const name = esc(st.petName || "Mochi");
+  if (st.mode && st.mode !== "focus") return '<p class="bl-calm-focusing" tabindex="-1">On a break</p>';
+  if (st.running)
+    return `<p class="bl-calm-focusing" tabindex="-1">Focusing · <span data-calm-left>${leftText(st.endAt)}</span> left</p>`;
+  const min = st.focusMin || 25;
+  const paused = st.left > 0 && st.left < min * 60000;
+  return `<button class="bl-calm-focus-btn" type="button" data-calm-focus>${
+    paused
+      ? `Keep focusing with ${name} · ${leftText(Date.now() + st.left)} left`
+      : `Start a ${esc(min)} min focus with ${name}`
+  }</button>`;
+}
+// the countdown only ticks while the calm screen is showing in a visible tab
+let calmTick = 0;
+function paintCalmFocus()
+{
+  clearInterval(calmTick);
+  calmTick = 0;
+  const slot = uiRoot && uiRoot.querySelector("#bl-calm:not([hidden]) .bl-calm-focus");
+  if (!slot) return;
+  const had = slot.contains(uiRoot.activeElement);
+  slot.innerHTML = calmFocusHTML();
+  if (had && slot.firstElementChild) slot.firstElementChild.focus();
+  const left = slot.querySelector("[data-calm-left]");
+  if (!left || document.hidden) return;
+  calmTick = setInterval(() =>
+  {
+    if (!left.isConnected || document.hidden)
+    {
+      clearInterval(calmTick);
+      calmTick = 0;
+      return;
+    }
+    left.textContent = leftText(calmStudy.endAt);
+  }, 1000);
+}
+document.addEventListener("visibilitychange", () =>
+{
+  if (!document.hidden && calmOn()) paintCalmFocus();
+});
+
 function untilText(iso)
 {
   const ms = new Date(iso).getTime() - Date.now();
@@ -99,10 +208,13 @@ function untilText(iso)
     m = Math.round((ms % 3600000) / 60000);
   return h ? `in ${h}h ${m}m` : `in ${m} min`;
 }
-function calmItemHTML(it)
+function calmItemHTML(it, late)
 {
   const done = isDone(it);
-  const time = new Date(it.due).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+  const time = late
+    ? new Date(it.due).toLocaleDateString([], { month: "short", day: "numeric" })
+    : new Date(it.due).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+  const when = done ? "done" : late ? (it.missing ? "missing" : "still open") : untilText(it.due);
   const title = it.url
     ? `<a class="bl-calm-title" href="${esc(it.url)}">${esc(it.title)}</a>`
     : `<span class="bl-calm-title">${esc(it.title)}</span>`;
@@ -113,18 +225,21 @@ function calmItemHTML(it)
       ${title}
       <p class="bl-calm-meta">${esc(it.course)}${it.course ? " · " : ""}${it.points != null ? `${esc(it.points)} pts` : ""}</p>
     </div>
-    <div class="bl-calm-when"><strong>${esc(time)}</strong><span>${done ? "done" : esc(untilText(it.due))}</span></div>
+    <div class="bl-calm-when"><strong>${esc(time)}</strong><span>${esc(when)}</span></div>
   </li>`;
 }
 function renderCalm()
 {
   if (!uiRoot) return;
+  stampStressDay(false);
   let el = uiRoot.querySelector("#bl-calm");
   const on = calmOn();
   root.classList.toggle("bl-stress", on);
   if (!on)
   {
     if (el) el.hidden = true;
+    clearInterval(calmTick);
+    calmTick = 0;
     return;
   }
   if (!el)
@@ -146,6 +261,15 @@ function renderCalm()
       if (it) it.calmSeen = true; // keep it on screen, crossed off
       setItemDone(key, e.target.checked);
     });
+    // toggle does not bubble, so listen on the way down
+    el.addEventListener(
+      "toggle",
+      e =>
+      {
+        if (e.target.matches && e.target.matches(".bl-calm-late")) calmLateOpen = e.target.open;
+      },
+      true,
+    );
     el.addEventListener("click", e =>
     {
       if (e.target.closest("[data-calm-quote]"))
@@ -169,9 +293,22 @@ function renderCalm()
           );
         return;
       }
+      if (e.target.closest("[data-calm-focus]"))
+      {
+        try
+        {
+          chrome.runtime.sendMessage({ type: "bl:study", act: "start" }, () => void chrome.runtime.lastError);
+        }
+        catch (err)
+        {
+          /* blush was reloaded while this tab stayed open */
+        }
+        return;
+      }
       if (e.target.closest("[data-calm-exit]"))
       {
         settings.stress = false;
+        delete settings.stressDay;
         saveSettings();
         applySettings();
         renderCalm();
@@ -190,16 +327,27 @@ function renderCalm()
   else if (!open.length) sub = "All of tonight is done. You did it.";
   else
     sub = `${open.length === 1 ? "Just one thing is" : `${open.length} things are`} due before midnight. That is it. Everything else can wait.`;
+  const late = lateItems();
+  const lateOpen = late.filter(i => !isDone(i)).length;
+  let lateText = "Everything from before today is done too.";
+  if (lateOpen === 1)
+    lateText = "1 thing from before today is still open. It can wait until tonight is done.";
+  else if (lateOpen > 1)
+    lateText = `${lateOpen} things from before today are still open. They can wait until tonight is done.`;
+  const focusing = calmStudy.running && calmStudy.mode === "focus";
   el.querySelector(".bl-calm-wrap").innerHTML = `
     <div class="bl-calm-inner">
       <p class="bl-eyebrow"><b>//</b> super declutter</p>
       <h2 class="bl-calm-h" id="bl-calm-h" tabindex="-1">${list && list.length && !open.length ? "Tonight is handled." : "Just tonight."}</h2>
       <p class="bl-calm-sub">${esc(sub)}</p>
-      ${list && list.length ? `<ol class="bl-calm-list">${list.map(calmItemHTML).join("")}</ol>` : ""}
+      ${list && list.length ? `<ol class="bl-calm-list">${list.map(i => calmItemHTML(i)).join("")}</ol>` : ""}
+      ${open.length || focusing ? '<div class="bl-calm-focus"></div>' : ""}
+      ${late.length ? `<details class="bl-calm-late"${calmLateOpen ? " open" : ""}><summary>${esc(lateText)}</summary><ol class="bl-calm-list">${late.map(i => calmItemHTML(i, true)).join("")}</ol></details>` : ""}
       ${next ? `<p class="bl-calm-next">Next thing on the horizon: <a href="${esc(next.url || "#")}">${esc(next.title)}</a> · ${esc(fmtDue(next.due))}</p>` : ""}
       ${calmBuddyHTML()}
       <button class="bl-calm-exit" type="button" data-calm-exit>I feel better. Bring my dashboard back.</button>
     </div>`;
+  paintCalmFocus();
   if (wasHidden)
   {
     const h = el.querySelector("#bl-calm-h");

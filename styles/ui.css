@@ -1348,6 +1348,68 @@ a.bl-calm-title:hover {
 .bl-calm-item.is-done .bl-calm-title {
   text-decoration: line-through;
 }
+/* start a focus right from the calm screen, and the quiet countdown once it runs */
+.bl-calm-focus {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
+.bl-calm-focusing {
+  margin: 0;
+  line-height: 44px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--bl-muted);
+  font-variant-numeric: tabular-nums;
+  outline: none;
+}
+/* the one quiet line about overdue work, open it to see the list */
+.bl-calm-late {
+  margin-top: 22px;
+}
+.bl-calm-late summary {
+  cursor: pointer;
+  width: max-content;
+  max-width: 100%;
+  list-style: none;
+  font-size: 14px;
+  color: var(--bl-muted);
+  border-radius: 6px;
+}
+.bl-calm-late summary::-webkit-details-marker {
+  display: none;
+}
+.bl-calm-late summary::before {
+  content: "›";
+  display: inline-block;
+  width: 1em;
+  margin-right: 4px;
+  text-align: center;
+  transition: transform 0.15s ease;
+}
+.bl-calm-late[open] summary::before {
+  transform: rotate(90deg);
+}
+.bl-calm-late summary:hover {
+  color: var(--bl-text);
+}
+.bl-calm-late summary:focus-visible {
+  outline: 3px solid var(--bl-focus);
+  outline-offset: 3px;
+}
+.bl-calm-late .bl-calm-list {
+  margin-top: 12px;
+  gap: 8px;
+}
+.bl-calm-late .bl-calm-item,
+.bl-calm-late .bl-calm-item:first-child:not(.is-done) {
+  padding: 12px 16px;
+  border-color: var(--bl-border);
+  box-shadow: none;
+}
+.bl-calm-late .bl-calm-title {
+  font-size: 15px;
+}
 .bl-calm-next {
   margin: 22px 0 0;
   font-size: 14px;
@@ -1687,7 +1749,8 @@ button.bl-calm-pet:focus-visible {
   border-color: rgba(255, 255, 255, 0.35);
 }
 
-.bl-calm-exit {
+.bl-calm-exit,
+.bl-calm-focus-btn {
   margin-top: 28px;
   min-height: 44px;
   padding: 0 18px;
@@ -1699,6 +1762,10 @@ button.bl-calm-pet:focus-visible {
   font: inherit;
   font-weight: 600;
 }
-.bl-calm-exit:hover {
+.bl-calm-focus .bl-calm-focus-btn {
+  margin-top: 0;
+}
+.bl-calm-exit:hover,
+.bl-calm-focus-btn:hover {
   background: var(--bl-surface-2);
 }
