@@ -152,6 +152,8 @@ chrome.storage.sync.get("settings", ({ settings }) =>
   stress.addEventListener("click", async () =>
   {
     s.stress = !s.stress;
+    // the calm screen remembers the day it went on, so turning it off here forgets that day too
+    if (!s.stress) delete s.stressDay;
     paintStress();
     await save();
     if (!s.stress) return;
