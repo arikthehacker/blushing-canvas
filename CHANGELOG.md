@@ -1,5 +1,9 @@
 # changelog
 
+## 3.5.2
+
+- fixed a "Duplicate script ID 'blush-schools'" error after turning blush on for your school's own address. allowing the site started two syncs at once, and the second tried to register the same scripts again. syncs now run one at a time and update the registration in place
+
 ## 3.5.1
 
 - the YOU GOT THIS!!! sign on super declutter is readable with every color preset. it used the accent color, which disappeared on the wood with night sky's gold

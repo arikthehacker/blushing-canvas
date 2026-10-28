@@ -481,25 +481,41 @@ chrome.runtime.onMessage.addListener((msg, _sender, reply) =>
 const SCHOOL_SCRIPTS = "blush-schools";
 const BUILT_IN = /\.instructure\.com$|artic\.edu$|fonts\.(googleapis|gstatic)\.com$/;
 
-async function syncSchools()
+// Allowing a site fires permissions.onAdded and the popup's own "bl:schools" message at the same moment,
+// so syncs run one at a time, and each one updates the registration instead of adding a second copy.
+let schoolSync = Promise.resolve();
+function syncSchools()
+{
+  const run = schoolSync.then(writeSchoolScripts);
+  schoolSync = run.catch(() =>
+  {});
+  return run;
+}
+
+async function writeSchoolScripts()
 {
   const { origins = [] } = await chrome.permissions.getAll();
   const matches = origins.filter(
     o => /^https:\/\/[^*]+\/\*$/.test(o) && !BUILT_IN.test(new URL(o.slice(0, -1)).hostname),
   );
+  const existing = await chrome.scripting.getRegisteredContentScripts({ ids: [SCHOOL_SCRIPTS] });
+  if (!matches.length)
+  {
+    if (existing.length) await chrome.scripting.unregisterContentScripts({ ids: [SCHOOL_SCRIPTS] });
+    return;
+  }
   const cs = chrome.runtime.getManifest().content_scripts[0];
-  await chrome.scripting.unregisterContentScripts({ ids: [SCHOOL_SCRIPTS] }).catch(() =>
-  {});
-  if (!matches.length) return;
-  await chrome.scripting.registerContentScripts([
-    { id: SCHOOL_SCRIPTS, matches, css: cs.css, js: cs.js, runAt: cs.run_at, allFrames: false },
-  ]);
+  const script = { id: SCHOOL_SCRIPTS, matches, css: cs.css, js: cs.js, runAt: cs.run_at, allFrames: false };
+  if (existing.length) await chrome.scripting.updateContentScripts([script]);
+  else await chrome.scripting.registerContentScripts([script]);
 }
 
-chrome.runtime.onInstalled.addListener(syncSchools);
-chrome.runtime.onStartup.addListener(syncSchools);
-chrome.permissions.onAdded.addListener(syncSchools);
-chrome.permissions.onRemoved.addListener(syncSchools);
+const syncQuietly = () =>
+  syncSchools().catch(err => console.warn("Blush could not update your school's address", err));
+chrome.runtime.onInstalled.addListener(syncQuietly);
+chrome.runtime.onStartup.addListener(syncQuietly);
+chrome.permissions.onAdded.addListener(syncQuietly);
+chrome.permissions.onRemoved.addListener(syncQuietly);
 chrome.runtime.onMessage.addListener((msg, _sender, reply) =>
 {
   if (msg && msg.type === "bl:schools")
