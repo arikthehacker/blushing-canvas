@@ -2,17 +2,17 @@
 
 everything blush for canvas does, and where to find it. if you haven't installed it yet, start with the [quickstart](README.md#quickstart).
 
-most settings live in the popup. click the blush icon in chrome's toolbar to open it, and every change saves right away.
+most settings live in the popup. click the blush icon in chrome's toolbar to open it, and every change saves right away. the everyday switches come first, and the deeper ones (making your own palette, drawing your own buddy) are folded away until you open them. the bottom of the popup links back to this manual and shows which version you have.
 
 - [the banner](#the-banner)
 - [the to-do column](#the-to-do-column)
-- [your dashboard](#your-dashboard)
+- [clean up canvas](#clean-up-canvas)
 - [quick jump and shortcuts](#quick-jump-and-shortcuts)
 - [super declutter](#super-declutter)
 - [the study buddy](#the-study-buddy)
 - [your look](#your-look)
 - [you](#you)
-- [speed and focus](#speed-and-focus)
+- [speed](#speed)
 - [your school's own address](#your-schools-own-address)
 - [updating without losing your garden](#updating-without-losing-your-garden)
 - [when something looks off](#when-something-looks-off)
@@ -24,8 +24,8 @@ most settings live in the popup. click the blush icon in chrome's toolbar to ope
 the banner sits above every canvas page. on the dashboard it's full size, and on other pages it shrinks to a slim strip. the arrow button on the right switches between the two.
 
 - **greeting and clock.** the greeting uses your canvas name, or the name you set in the popup under **you**.
-- **today's focus.** on the dashboard, type what you want to get done and press enter. it turns into a checkbox you can tick off.
-- **next up.** your nearest due item. click it to open the assignment.
+- **today's focus.** on the dashboard, type one thing you want to get done and press enter. it turns into a checkbox you can tick off.
+- **next up.** your nearest due item, with how long you have left when it's due within a day, like "9:59 PM · in 1h 15m". click it to open the assignment. when something is overdue, a small **+1 overdue** line under it opens the to-do column at the overdue group.
 - **the picture.** a public domain painting from the art institute of chicago, a new one each day. the shuffle button swaps it, and the name of the painting links to it. under **banner** in the popup you can pick paintings, your own photos, both, or stars.
 
 drag a picture from your computer onto the banner to add it to your photos.
@@ -51,19 +51,25 @@ the slim banner on course pages is about 1735 x 135 on a 1920 x 1080 screen.
 
 the column on the right shows your week. canvas shrinks to make room for it, and on the dashboard it replaces canvas's own to-do sidebar. press `t` or the `»` button to fold it into a slim rail, and `t` again to open it.
 
-- **due soon** groups everything from your canvas planner into overdue, today, tomorrow, the next 7 days and later. checking an item marks it done in your real canvas planner too. submitted work shows a submitted tag, and missing work shows a missing tag.
+- **due soon** groups everything from your canvas planner into overdue, today, tomorrow, the next 7 days and later, with a count on each, like "TODAY · 2". a group worth 100 points or more shows its total too.
+- **each item** shows when it's due first. under today and tomorrow that's just the time, plus "in 1h 15m" in bold when it's due within a day. overdue items say how late they are, like "1 day late". the course and points sit on the line below, and submitted or missing tags sit next to the time.
+- **checking an item** marks it done in your real canvas planner too.
+- **overdue** shows the 3 most recent items, with missing ones first. **show 4 more overdue** opens the rest.
 - **my list** is your own to-do list for anything canvas doesn't know about. it stays in chrome on your computer.
 - **the ring** shows how much of this week's work is done, next to your day streak. you keep the streak by checking off at least one thing a day.
-- **cheers.** checking something off pops up a small note like "Progress, logged." you can turn these off under **speed and focus**.
+- **cheers.** checking something off pops up a small note like "Progress, logged." you can turn these off under **speed**.
 
-the column loads from a saved copy first, so it shows up right away and then refreshes from canvas.
+the column shows a saved copy right away, then checks canvas again, so something you just submitted shows up as submitted. the line at the bottom says when it last updated, and the refresh button next to it checks again. if canvas can't be reached it says so and shows the time of the list you're looking at.
 
-## your dashboard
+the first time you open canvas with blush, a small card at the top of the column shows the main keys. tap **got it** and it doesn't come back.
+
+## clean up canvas
 
 ![the dashboard with the header, course images and card icons hidden](docs/images/dashboard-tidy.png)
 
-under **dashboard** in the popup, three switches tidy up canvas's own dashboard:
+under **clean up canvas** in the popup, four switches tidy up canvas itself:
 
+- **hide canvas extras** hides the footer, the canvas logo and canvas's own to-do list.
 - **hide the dashboard header** hides the dashboard title, the switch to new dashboard view button and its menu.
 - **hide course images** shows every card with its plain color instead of the course picture. photos you added to a card yourself still show.
 - **hide card icons** hides the row of announcements, discussions and assignments icons under each card.
@@ -72,9 +78,11 @@ under **dashboard** in the popup, three switches tidy up canvas's own dashboard:
 
 ![quick jump open with the search deep](docs/images/quick-jump.png)
 
-press `ctrl+k` (`cmd+k` on a mac) or `/` on any canvas page. type part of a course name, a section, an assignment, or a page you opened recently, then press enter. `ctrl+enter` opens it in a new tab. try "bio grades" to jump straight to the grades of a biology course.
+press `ctrl+k` (`cmd+k` on a mac) or `/` on any canvas page. type part of a course name, a section, an assignment, or a page you opened recently, then press enter. `ctrl+enter` opens it in a new tab.
 
-the highlighted result starts loading while you look at it, so enter usually lands right away.
+type a course's name and its open assignments come right after it, marked **due** with how long you have left. a few of its sections follow. name the section too, like "bio grades", to jump straight there.
+
+when the highlighted result is a course page or a section, it starts loading while you look at it, so enter usually lands right away.
 
 ![the keyboard shortcut list](docs/images/shortcuts.png)
 
@@ -106,7 +114,7 @@ inside a course:
 | `g` then `f` | files |
 | `g` then `p` | pages |
 
-single-key shortcuts pause while you type, and you can turn them off under **speed and focus**.
+single-key shortcuts pause while you type, and you can turn them off under **speed**. hover any of blush's icon buttons to see what it does and its key.
 
 ## super declutter
 
@@ -117,9 +125,12 @@ for nights when the whole dashboard is too much. tap **AHHH I'M STRESSED. SUPER 
 - checking an item marks it done in your canvas planner and crosses it off.
 - when nothing is due tonight, it says so and shows the next thing coming up.
 - your buddy holds a YOU GOT THIS!!! sign. tap the sign or your buddy for a secret quote.
+- **start a focus** with the button under the list. it starts the study timer with your buddy, and while it runs the button turns into a countdown.
+- if something from before today is still open, one quiet line says so. tap it to see those items. they can wait until tonight is done.
 - it stays on, even after a refresh, until you tap **I feel better. Bring my dashboard back.** clicking an assignment still opens it normally.
+- it turns itself off the next morning after 5 am, with a little "Morning. Your dashboard is back."
 
-the button on the banner shows on the dashboard and hides when the window is narrower than 900 px. turn on **stressed sign in the grass** under **banner** to move it onto a little wooden sign next to the pomodoro sign instead. the one in the popup works from any page, and the calm screen shows up once you're back on the dashboard.
+the button on the banner shows on the dashboard and hides when the window is narrower than 900 px. turn on **stressed sign in the grass** under **banner** to move it onto a little wooden sign next to the pomodoro sign instead. the button in the popup takes your canvas tab to the dashboard. from a page that isn't canvas, it opens the next time you visit your dashboard.
 
 ## the study buddy
 
@@ -127,10 +138,10 @@ the button on the banner shows on the dashboard and hides when the window is nar
 
 a pomodoro timer with a little pet and a garden along the bottom of the banner.
 
-- **the timer** lives on the tiny pomodoro sign in the grass. press play, or `p` anywhere on canvas. focus sessions are 15, 25 or 50 minutes (pick under **study buddy** in the popup). breaks start on their own, 5 minutes after a short session, 10 after a 50, and 15 after every fourth.
+- **the timer** lives on the tiny pomodoro sign in the grass. press play, or `p` anywhere on canvas. while you focus the sign only shows pause, so a slip can't skip your session. skip shows up when you pause or take a break. focus sessions are 15, 25 or 50 minutes (pick under **study buddy** in the popup). breaks start on their own, 5 minutes after a short session, 10 after a 50, and 15 after every fourth.
 - **the timer keeps going** across pages and tabs, and chrome sends a notification when a session ends.
 - **the garden** grows one plant for every 25 focused minutes, and your buddy levels up as it grows. hover the sign to see the count.
-- **your buddy** walks back and forth through the grass, stops to read while you focus, and hops when a plant grows. tap it to make it stop and stay put, and tap again to let it wander. it only talks when you tap it.
+- **your buddy** walks back and forth through the grass, stops to read while you focus, and hops when a plant grows. tap it to make it stop and stay put, and tap again to let it wander. it only talks when you tap it. if your computer is set to reduce motion, your buddy stays put unless you turn **walks around** on.
 
 ![the study buddy section of the popup with the seven buddies](docs/images/popup-study.png)
 
@@ -146,7 +157,7 @@ under **study buddy** in the popup you can pick from seven buddies (mochi, a bun
 
 the `templates/` folder has two files to draw on, and the popup has a link to download the sheet. `pet-template-256.png` is one 256 px box. `pet-template-sheet.png` has all four poses side by side, with guide lines and a faint mochi to trace. draw on a new layer, hide the guide layer, and export only your drawing as a transparent PNG.
 
-upload single poses into their slots under **study buddy > or draw your own**, or upload the whole sheet with **upload the whole sheet**. blush cuts out each pose and skips empty boxes. your buddy switches to your drawing and shows up as "yours" in the picker.
+open **draw your own buddy** under **study buddy** in the popup. upload single poses into their slots, or upload the whole sheet with **upload the whole sheet**. blush cuts out each pose and skips empty boxes. your buddy switches to your drawing and shows up as "yours" in the picker.
 
 ## your look
 
@@ -164,12 +175,14 @@ turn on **use my colors** to swap dusty pink for your own palette.
 
 - start from a preset: blush, sage, lavender, ocean, cocoa, night or night sky. night sky also switches the banner to the stars.
 - or upload a palette. it takes a palette picture, a coolors link, `.ase` and `.gpl` files, or any file with hex codes in it. you can also paste hex codes or a coolors link.
-- tap a role (accent, background, cards, text, sidebar), then a swatch to fill it. **auto-pick light** and **auto-pick dark** build a full theme from the palette for you.
+- open **make your own palette** to upload or paste one, then tap a role (accent, background, cards, text, sidebar) and a swatch to fill it. **auto-pick light** and **auto-pick dark** build a full theme from the palette for you.
 - blush warns you when text gets hard to read on your background.
 
 ### fonts
 
 paste a google fonts link, or just the font's name, for body text and headings. the popup links to google fonts so you can browse.
+
+### text size
 
 the **text size** slider, from 85% to 130%, makes everything on your canvas pages bigger or smaller, blush included. it works like chrome's zoom, but only on canvas.
 
@@ -191,12 +204,11 @@ one button switches all of canvas to **arik hand**, a handwriting font that come
 - **your greetings.** write your own greeting for morning, afternoon, evening and late night, like "Lock in, {name}!". `{name}` turns into your name, and a box you leave empty keeps the normal greeting.
 - **your quotes.** type your own motivational quotes, one per line, up to 100. your buddy says them when you tap it, on the banner and on super declutter. they come up twice as often as the built-in ones, or turn on **only my quotes** to hear just yours.
 
-## speed and focus
+## speed
 
 | switch | what it does |
 | --- | --- |
-| calm mode | turns off canvas's own animations |
-| declutter | hides the footer, card images and the duplicate to-do list |
+| turn off canvas animations | menus and trays open right away without sliding or fading |
 | instant navigation | starts loading a link the moment you press it, so pages open faster |
 | single-key shortcuts | the one-letter shortcuts above. `ctrl+k` always works |
 | cheers | the little notes when you finish something |
@@ -225,6 +237,6 @@ chrome treats an unpacked extension in a different folder as a different extensi
 
 - **parts of a page stay light in dark mode.** pages built with canvas's newer components, and tools embedded from other sites, can stay partly light. the text editor you type assignments into also stays light, because it runs in a separate frame.
 - **the stressed button is missing.** it only shows on the dashboard banner, and it hides when the window is narrower than 900 px. if **stressed sign in the grass** is on, look for the sign next to the pomodoro sign. the button at the top of the popup always works.
-- **your buddy stands still.** check that **walks around** is on under **study buddy**.
+- **your buddy stands still.** check that **walks around** is on under **study buddy**. with reduce motion on in your computer's settings, it only walks when that switch is on.
 - **a font won't load.** the box under the font field says why. check the spelling against google fonts.
 - **nothing changed after an update.** click the reload arrow on the blush card, then refresh canvas.

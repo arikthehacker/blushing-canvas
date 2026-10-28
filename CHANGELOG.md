@@ -1,5 +1,37 @@
 # changelog
 
+## 3.7.0
+
+to-do column
+
+- each item shows when it's due first, with "in 1h 15m" in bold when it's within a day and "1 day late" when it's overdue. the course and points move to the line below, and a wrapped line never starts with a stray dot
+- the column checks canvas again every time you open the dashboard, so something you just submitted shows as submitted. the bottom line says when it last updated, has a refresh button, and tells you when canvas couldn't be reached
+- groups show a count, and their points when they add up to 100 or more
+- overdue shows the 3 most recent items, missing ones first, with a button for the rest
+- a one-time welcome card shows the main keys
+
+banner and quick jump
+
+- next up shows how long you have left, and a "+1 overdue" line that opens the column at the overdue group
+- the focus box says "One thing, then press Enter"
+- quick jump puts a course's open assignments right after the course, labels sections as sections, shows 4 of them until you name one, and no longer cuts off its labels
+- icon buttons show what they do and their key when you hover them
+
+super declutter
+
+- start a focus session with your buddy right from the calm screen
+- one quiet line mentions work from before today that's still open, and opens to show it
+- it turns itself off the next morning after 5 am
+- the popup's button takes your canvas tab to the dashboard
+
+popup and study buddy
+
+- the everyday switches come first, and making your own palette and drawing your own buddy fold away. the footer links to the manual
+- clearer names: "turn off canvas animations", and "hide canvas extras" in a new "clean up canvas" section
+- the pomodoro sign's buttons are easier to hit, and only pause shows while you focus, so a slip can't skip the session
+- your buddy stays put when your computer asks for less motion, unless you turn walking on
+- wording fixes: "to-do column" everywhere, and "paintings + mine"
+
 ## 3.6.0
 
 fixes
