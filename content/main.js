@@ -7,13 +7,15 @@ async function init()
   applySettings();
   await buildUI();
 
-  const [todos, wins, recents, focus] = await Promise.all([
+  const [todos, wins, recents, focus, welcomed] = await Promise.all([
     store.get("local", lk("todos")),
     store.get("local", "bl:wins"),
     store.get("local", lk("recents")),
     store.get("local", "bl:focus"),
+    store.get("local", "bl:welcomed"),
   ]);
   state.focus = focus || null;
+  state.welcomed = !!welcomed;
   state.todos = Array.isArray(todos) ? todos : [];
   state.wins = wins || {};
   state.recents = Array.isArray(recents) ? recents : [];
@@ -40,16 +42,21 @@ async function init()
       if (pal.open) updatePalette();
     }
   });
-  swr("items", 3 * 60e3, loadItems, (v, err) =>
+  // the dashboard always asks Canvas again after the saved copy, so a just-submitted assignment shows as done
+  if (location.pathname === "/")
   {
-    if (v)
+    store.get("local", lk("items")).then(cached =>
     {
-      state.items = v;
-      state.itemsError = false;
-    }
-    else if (err) state.itemsError = true;
-    renderPanels();
-  });
+      if (cached) setItems(cached.v, null, cached.t);
+      refreshItems();
+    });
+    document.addEventListener("visibilitychange", () =>
+    {
+      if (document.visibilityState === "visible" && Date.now() - state.itemsAt > 60e3) refreshItems();
+    });
+  }
+  else swr("items", 3 * 60e3, loadItems, setItems);
+  setInterval(tickPanels, 30e3);
 }
 
 // only Canvas's app pages get Blush (not the login screen or raw API responses),

@@ -46,17 +46,18 @@ async function apiPage(path, { method = "GET", body } = {})
 async function swr(name, maxAgeMs, loader, onData)
 {
   const cached = await store.get("local", lk(name));
-  if (cached) onData(cached.v);
+  if (cached) onData(cached.v, null, cached.t);
   if (cached && Date.now() - cached.t < maxAgeMs) return;
+  const t = Date.now();
   try
   {
     const v = await loader();
-    await store.set("local", lk(name), { t: Date.now(), v });
-    onData(v);
+    await store.set("local", lk(name), { t, v });
+    onData(v, null, t);
   }
   catch (err)
   {
-    if (!cached) onData(null, err);
+    onData(null, err);
   }
 }
 
@@ -65,7 +66,10 @@ const state = {
   courses: [],
   colors: {},
   items: null,
+  itemsAt: 0,
   itemsError: false,
+  itemsBusy: false,
+  welcomed: true,
   todos: [],
   wins: {},
   recents: [],
@@ -139,3 +143,52 @@ const loadItems = async () =>
 };
 
 const isDone = it => it.submitted || it.marked;
+
+// t is when that copy was asked for, which the column shows as "Updated 3 min ago"
+function setItems(v, err, t)
+{
+  if (v)
+  {
+    const old = new Map((state.items || []).map(i => [i.key, i]));
+    for (const it of v)
+    {
+      const o = old.get(it.key);
+      if (!o) continue;
+      if (o.calmSeen) it.calmSeen = true;
+      // a check made while this copy was on its way wins over it
+      if (o.markedAt > t)
+      {
+        it.marked = o.marked;
+        it.markedAt = o.markedAt;
+        it.overrideId = it.overrideId || o.overrideId;
+      }
+    }
+    state.items = v;
+    state.itemsAt = t;
+    state.itemsError = false;
+  }
+  else if (err) state.itemsError = true;
+  renderPanels();
+}
+// asks Canvas for the planner again and keeps showing the saved copy if that fails
+async function refreshItems()
+{
+  if (state.itemsBusy) return;
+  state.itemsBusy = true;
+  renderPanels();
+  const t = Date.now();
+  let v = null,
+    err = null;
+  try
+  {
+    v = await loadItems();
+    await store.set("local", lk("items"), { t, v });
+  }
+  catch (e)
+  {
+    err = e;
+  }
+  state.itemsBusy = false;
+  setItems(v, err, t);
+  return !err;
+}

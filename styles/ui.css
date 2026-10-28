@@ -610,6 +610,14 @@ a.bl-credit:hover {
 .bl-group-title.is-overdue {
   color: var(--bl-danger);
 }
+.bl-group-count {
+  color: var(--bl-muted);
+  font-weight: 600;
+}
+.bl-more {
+  width: 100%;
+  margin-top: 6px;
+}
 .bl-list {
   list-style: none;
   margin: 0;
@@ -626,6 +634,9 @@ a.bl-credit:hover {
   border-radius: 12px;
   border: 1px solid var(--bl-border);
   background: var(--bl-surface);
+}
+.bl-item.is-due {
+  grid-template-columns: auto 1fr;
 }
 .bl-item:hover {
   border-color: var(--bl-border-ui);
@@ -654,33 +665,44 @@ a.bl-item-title:hover {
   text-underline-offset: 2px;
 }
 .bl-item-meta {
-  margin: 2px 0 0;
+  margin: 3px 0 0;
   font-size: 12px;
   color: var(--bl-muted);
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 4px 6px;
+  gap: 4px 8px;
   font-variant-numeric: tabular-nums;
 }
-.bl-seg {
+.bl-when {
+  flex: 1 1 auto;
+}
+.bl-nw {
   white-space: nowrap;
 }
-.bl-seg + .bl-seg::before {
-  content: "\00B7";
-  margin-right: 6px;
+.bl-left {
+  font-weight: 600;
+  color: var(--bl-text);
+}
+.bl-item-course {
+  margin: 1px 0 0;
+  font-size: 12px;
+  color: var(--bl-muted);
+  font-variant-numeric: tabular-nums;
 }
 .bl-dot {
+  display: inline-block;
   width: 8px;
   height: 8px;
+  margin-right: 6px;
   border-radius: 3px;
   background: var(--c, var(--bl-accent));
-  flex: none;
 }
 .bl-tag {
   font-size: 11px;
   font-weight: 700;
-  padding: 2px 8px;
+  line-height: 1.3;
+  padding: 1px 8px;
   border-radius: 999px;
   white-space: nowrap;
   align-self: center;
@@ -806,6 +828,74 @@ a.bl-item-title:hover {
   margin: 12px 2px 0;
   font-size: 12px;
   color: var(--bl-muted);
+}
+.bl-updated {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 12px 2px 0;
+}
+.bl-updated-text {
+  margin: 0;
+  font-size: 12px;
+  color: var(--bl-muted);
+}
+.bl-updated.is-error .bl-updated-text {
+  color: var(--bl-text);
+}
+.bl-icon-btn.bl-refresh {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  color: var(--bl-muted);
+}
+.bl-icon-btn.bl-refresh:hover {
+  color: var(--bl-text);
+}
+.bl-icon-btn.bl-refresh svg {
+  width: 15px;
+  height: 15px;
+}
+.bl-refresh.is-busy {
+  opacity: 0.6;
+  cursor: progress;
+}
+@media (prefers-reduced-motion: no-preference) {
+  :host-context(html.bl-motion) .bl-refresh.is-busy svg {
+    animation: bl-spin 0.9s linear infinite;
+  }
+}
+@keyframes bl-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* one-time welcome card */
+.bl-welcome {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border: 1px solid var(--bl-border-ui);
+  border-radius: 14px;
+  background: var(--bl-accent-soft);
+}
+.bl-welcome-text {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.bl-welcome kbd {
+  font-size: 11px;
+  padding: 0 5px;
+  background: var(--bl-surface);
+}
+.bl-welcome .bl-row-end {
+  margin-top: 8px;
+}
+.bl-welcome .bl-btn-ghost {
+  min-height: 32px;
+  background: var(--bl-surface);
 }
 
 /* ---------- toast ---------- */

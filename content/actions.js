@@ -8,6 +8,7 @@ async function setItemDone(key, done)
   const it = state.items && state.items.find(i => i.key === key);
   if (!it || it.submitted) return;
   it.marked = done;
+  it.markedAt = Date.now();
   recordWin(done ? 1 : -1);
   renderPanels();
   if (done) cheer();
@@ -20,11 +21,13 @@ async function setItemDone(key, done)
   try
   {
     await run;
-    store.set("local", lk("items"), { t: Date.now(), v: state.items });
+    store.set("local", lk("items"), { t: state.itemsAt || Date.now(), v: state.items });
   }
   catch (e)
   {
-    it.marked = !done;
+    // a refresh may have swapped in a new copy of the item meanwhile
+    const cur = state.items.find(i => i.key === key) || it;
+    it.marked = cur.marked = !done;
     recordWin(done ? -1 : 1);
     renderPanels();
     toast("Could not sync that with Canvas. Try again in a moment.", false);
@@ -132,6 +135,30 @@ function handlePanelEvents(container, m)
     else if (act === "close")
     {
       closeDrawer();
+    }
+    else if (act === "refresh")
+    {
+      refreshItems().then(ok =>
+      {
+        const live = uiRoot.querySelector("#bl-live");
+        if (!live || ok === undefined) return;
+        live.textContent = "";
+        setTimeout(() =>
+        {
+          live.textContent = ok ? "Your list is up to date." : "Couldn't refresh. Showing your saved list.";
+        }, 30);
+      });
+    }
+    else if (act === "overdue")
+    {
+      overdueOpen = !overdueOpen;
+      renderPanels();
+    }
+    else if (act === "welcomed")
+    {
+      state.welcomed = true;
+      store.set("local", "bl:welcomed", true);
+      renderPanels();
     }
     else if (act === "tab")
     {

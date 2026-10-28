@@ -17,35 +17,146 @@ function themeBtnHTML()
 {
   const dark = isDark();
   return `<button class="bl-icon-btn" type="button" data-act="theme" data-fk="theme"
-    aria-label="Switch to ${dark ? "light" : "dark"} theme">${dark ? ICON.sun : ICON.moon}</button>`;
+    aria-label="Switch to ${dark ? "light" : "dark"} theme" title="${dark ? "Light" : "Dark"} theme">${dark ? ICON.sun : ICON.moon}</button>`;
 }
 
-function itemHTML(m, it)
+const REFRESH_ICON =
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>';
+const DAY_MS = 86400000;
+const timeOf = t => new Date(t).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+
+// "in 1h 15m" for anything due within a day, empty otherwise
+function leftText(iso)
+{
+  const min = Math.ceil((new Date(iso).getTime() - Date.now()) / 60000);
+  if (min <= 0 || min > 1440) return "";
+  if (min < 60) return `in ${min} min`;
+  return `in ${Math.floor(min / 60)}h${min % 60 ? ` ${min % 60}m` : ""}`;
+}
+function lateText(iso)
+{
+  const d = new Date(iso);
+  const days = Math.round((startOfDay(new Date()) - startOfDay(d)) / DAY_MS);
+  if (days >= 1) return `${days} day${days > 1 ? "s" : ""} late`;
+  const min = Math.max(1, Math.floor((Date.now() - d.getTime()) / 60000));
+  return min < 60 ? `${min} min late` : `${Math.floor(min / 60)}h late`;
+}
+function whenHTML(it, short)
+{
+  const when = short ? timeOf(it.due) : fmtDue(it.due);
+  let extra = "";
+  if (!isDone(it) && new Date(it.due).getTime() < Date.now()) extra = esc(lateText(it.due));
+  else if (!isDone(it) && leftText(it.due))
+    extra = `<b class="bl-left" data-left="${esc(it.due)}">${esc(leftText(it.due))}</b>`;
+  // the no-break space keeps a wrapped line from starting with the dot
+  return `<span class="bl-when">${esc(when)}${extra ? `<span class="bl-nw">&nbsp;· ${extra}</span>` : ""}</span>`;
+}
+
+function updatedText()
+{
+  const t = state.itemsAt;
+  if (!t) return "";
+  if (state.itemsError)
+  {
+    const from =
+      dayKey(new Date(t)) === dayKey(new Date()) ? timeOf(t) : fmtDue(t).replace(/^Yesterday/, "yesterday");
+    return `Couldn't refresh. Showing your list from ${from}.`;
+  }
+  const min = Math.floor((Date.now() - t) / 60000);
+  if (min < 1) return "Updated just now";
+  if (min < 60) return `Updated ${min} min ago`;
+  if (min < 1440) return `Updated ${Math.floor(min / 60)} hr ago`;
+  return `Updated ${new Date(t).toLocaleDateString([], { month: "short", day: "numeric" })}`;
+}
+function updatedHTML()
+{
+  const busy = state.itemsBusy;
+  return `<div class="bl-updated${state.itemsError ? " is-error" : ""}">
+    <p class="bl-updated-text" data-updated>${esc(updatedText())}</p>
+    <button class="bl-icon-btn bl-refresh${busy ? " is-busy" : ""}" type="button" data-act="refresh" data-fk="refresh"
+      aria-label="Refresh from Canvas" title="Refresh from Canvas"${busy ? ' aria-busy="true"' : ""}>${REFRESH_ICON}</button>
+  </div>`;
+}
+// keeps "Updated 3 min ago" and the countdowns current without redrawing the column
+function tickPanels()
+{
+  if (document.hidden) return;
+  for (const m of mounts)
+  {
+    if (!m.el.isConnected || m.el.hidden) continue;
+    const u = m.el.querySelector("[data-updated]");
+    if (u) u.textContent = updatedText();
+    for (const el of m.el.querySelectorAll("[data-left]"))
+    {
+      const left = leftText(el.dataset.left);
+      // something just came due, so it moves to Overdue
+      if (!left) return renderPanels();
+      el.textContent = left;
+    }
+  }
+}
+
+function welcomeHTML()
+{
+  if (state.welcomed) return "";
+  return `<div class="bl-welcome">
+    <p class="bl-eyebrow"><b>//</b> new here</p>
+    <p class="bl-welcome-text"><kbd>Ctrl+K</kbd> jumps anywhere. <kbd>T</kbd> folds this column. <kbd>?</kbd> lists every shortcut. Your settings are under the Blush icon in Chrome's toolbar.</p>
+    <div class="bl-row-end"><button class="bl-btn bl-btn-ghost" type="button" data-act="welcomed" data-fk="welcomed">Got it</button></div>
+  </div>`;
+}
+
+function itemHTML(m, it, short)
 {
   const done = isDone(it);
   const cid = `bl-${m.id}-${it.key.replace(/[^a-z0-9]/gi, "-")}`;
   const color = it.courseId ? courseColor(it.courseId) : "";
-  const meta = [
-    `<span class="bl-dot" style="${color ? `--c:${esc(color)}` : ""}" aria-hidden="true"></span>`,
-    it.course ? `<span class="bl-seg">${esc(it.course)}</span>` : "",
-    `<span class="bl-seg">${esc(fmtDue(it.due))}</span>`,
-    it.points != null ? `<span class="bl-seg">${esc(it.points)} pts</span>` : "",
-  ].join("");
   const tag = it.submitted
     ? '<span class="bl-tag is-submitted">Submitted</span>'
     : it.missing && !it.marked
       ? '<span class="bl-tag is-missing">Missing</span>'
-      : "<span></span>";
+      : "";
+  const pts = it.points != null ? `${esc(it.points)} pts` : "";
+  const course = it.course
+    ? `${esc(it.course)}${pts ? `<span class="bl-nw">&nbsp;· ${pts}</span>` : ""}`
+    : `<span class="bl-nw">${pts}</span>`;
   const title = it.url
     ? `<a class="bl-item-title" href="${esc(it.url)}" data-fk="link:${esc(it.key)}">${esc(it.title)}</a>`
     : `<span class="bl-item-title">${esc(it.title)}</span>`;
-  return `<li class="bl-item${done ? " is-done" : ""}">
+  return `<li class="bl-item is-due${done ? " is-done" : ""}">
     <input class="bl-check" type="checkbox" id="${cid}" data-act="item" data-key="${esc(it.key)}" data-fk="item:${esc(it.key)}"
       ${done ? "checked" : ""} ${it.submitted ? "disabled" : ""}
-      aria-label="${it.submitted ? "Submitted: " : "Mark done: "}${esc(it.title)}">
-    <div class="bl-item-body">${title}<p class="bl-item-meta">${meta}</p></div>
-    ${tag}
+      aria-label="${it.submitted ? "Submitted: " : "Mark done: "}${esc(it.title)}"${it.submitted ? "" : ' title="Marks it done in your Canvas planner too"'}>
+    <div class="bl-item-body">${title}
+      <p class="bl-item-meta">${whenHTML(it, short)}${tag}</p>
+      <p class="bl-item-course"><span class="bl-dot" style="${color ? `--c:${esc(color)}` : ""}" aria-hidden="true"></span>${course}</p>
+    </div>
   </li>`;
+}
+
+// the overdue pile folds to its 3 most pressing items, open or closed for this page only
+let overdueOpen = false;
+const OVERDUE_SHOWN = 3;
+
+function groupHTML(m, g)
+{
+  const pts = g.list.reduce((sum, i) => sum + (i.points || 0), 0);
+  const count = `${g.list.length}${pts >= 100 ? ` · ${Math.round(pts * 10) / 10} pts` : ""}`;
+  const short = g.name === "Today" || g.name === "Tomorrow";
+  const fold = g.name === "Overdue" && g.list.length > OVERDUE_SHOWN;
+  const list = fold && !overdueOpen ? g.list.slice(0, OVERDUE_SHOWN) : g.list;
+  const listId = `bl-list-${m.id}-${g.name.toLowerCase().replace(/\W+/g, "-")}`;
+  const more = fold
+    ? `<button class="bl-btn bl-btn-ghost bl-more" type="button" data-act="overdue" data-fk="overdue"
+        aria-expanded="${overdueOpen}" aria-controls="${listId}">${
+          overdueOpen ? "Show fewer overdue" : `Show ${g.list.length - OVERDUE_SHOWN} more overdue`
+        }</button>`
+    : "";
+  return `<section class="bl-group" aria-label="${g.name}">
+      <h3 class="bl-group-title ${g.cls || ""}"><span>${g.name}<span class="bl-group-count">&nbsp;· ${count}</span></span></h3>
+      <ul class="bl-list" id="${listId}">${list.map(it => itemHTML(m, it, short)).join("")}</ul>
+      ${more}
+    </section>`;
 }
 
 function dueHTML(m)
@@ -58,12 +169,11 @@ function dueHTML(m)
   }
   const now = Date.now();
   const today = startOfDay(new Date()).getTime();
-  const day = 86400000;
   const groups = [
     { name: "Overdue", cls: "is-overdue", test: t => t < now, list: [] },
-    { name: "Today", test: t => t < today + day, list: [] },
-    { name: "Tomorrow", test: t => t < today + 2 * day, list: [] },
-    { name: "Next 7 days", test: t => t < today + 8 * day, list: [] },
+    { name: "Today", test: t => t < today + DAY_MS, list: [] },
+    { name: "Tomorrow", test: t => t < today + 2 * DAY_MS, list: [] },
+    { name: "Next 7 days", test: t => t < today + 8 * DAY_MS, list: [] },
     { name: "Later", test: () => true, list: [] },
   ];
   const items = state.items
@@ -79,21 +189,14 @@ function dueHTML(m)
     }
     groups.find(g => g.test(t)).list.push(it);
   }
+  // missing first, then the most recent
+  groups[0].list.sort((a, b) => b.missing - a.missing || new Date(b.due) - new Date(a.due));
   const shown = groups.filter(g => g.list.length);
   if (!shown.length)
   {
-    return '<div class="bl-empty"><strong>All clear ✦</strong>Nothing due in the next four weeks. Enjoy the quiet.</div>';
+    return `<div class="bl-empty"><strong>All clear ✦</strong>Nothing due in the next four weeks. Enjoy the quiet.</div>${updatedHTML()}`;
   }
-  return (
-    shown
-      .map(
-        g => `<section class="bl-group" aria-label="${g.name}">
-      <h3 class="bl-group-title ${g.cls || ""}">${g.name}</h3>
-      <ul class="bl-list">${g.list.map(it => itemHTML(m, it)).join("")}</ul>
-    </section>`,
-      )
-      .join("") + '<p class="bl-note">Checking an item marks it done in your Canvas planner too.</p>'
-  );
+  return shown.map(g => groupHTML(m, g)).join("") + updatedHTML();
 }
 
 function todosHTML(m)
@@ -137,9 +240,10 @@ function panelHTML(m)
       </div>
       <div class="bl-head-actions">
         ${themeBtnHTML()}
-        ${m.withClose ? `<button class="bl-icon-btn" type="button" data-act="close" data-fk="close" aria-label="Collapse panel" aria-keyshortcuts="t">${ICON.collapse}</button>` : ""}
+        ${m.withClose ? `<button class="bl-icon-btn" type="button" data-act="close" data-fk="close" aria-label="Collapse panel" aria-keyshortcuts="t" title="Fold column (T)">${ICON.collapse}</button>` : ""}
       </div>
     </div>
+    ${welcomeHTML()}
     <div class="bl-stats">
       ${ringSVG(done, total)}
       <div>
