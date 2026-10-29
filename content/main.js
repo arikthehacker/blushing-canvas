@@ -7,13 +7,15 @@ async function init()
   applySettings();
   await buildUI();
 
-  const [todos, wins, recents, focus, welcomed] = await Promise.all([
+  const [todos, wins, recents, focus, welcomed, stickers] = await Promise.all([
     store.get("local", lk("todos")),
     store.get("local", "bl:wins"),
     store.get("local", lk("recents")),
     store.get("local", "bl:focus"),
     store.get("local", "bl:welcomed"),
+    store.get("local", "bl:stickers"),
   ]);
+  party.load(stickers);
   state.focus = focus || null;
   state.welcomed = !!welcomed;
   state.todos = Array.isArray(todos) ? todos : [];

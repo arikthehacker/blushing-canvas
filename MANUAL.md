@@ -58,6 +58,13 @@ the column on the right shows your week. canvas shrinks to make room for it, and
 - **my list** is your own to-do list for anything canvas doesn't know about. it stays in chrome on your computer.
 - **the ring** shows how much of this week's work is done, next to your day streak. you keep the streak by checking off at least one thing a day.
 - **cheers.** checking something off pops up a small note like "Progress, logged." you can turn these off under **speed**.
+- **celebrations.** checking something off also sets off a little celebration from the checkbox. pick one under **celebrations** in the popup:
+  - **match** picks petals for blush, leaves for sage, confetti for lavender, bubbles for ocean, candy sprinkles for cocoa and stardust for night and night sky. your own palette gets confetti in its colors.
+  - **confetti**, **stardust** (gold stars, a shooting star and glitter), **petals**, **leaves**, **bubbles** and **sprinkles** always use that one.
+  - **stickers** slaps a sticker like "nice!" or a gold star onto the row, and it stays there while the item is checked.
+  - **off** turns them off. the cheers notes still show.
+
+  when the last thing due this week gets checked off, the whole screen celebrates: confetti cannons, a meteor shower, a petal shower, a wave of bubbles, or a big "week done!" sticker. if your computer is set to reduce motion, nothing flies and the checkbox glows softly instead.
 
 the column shows a saved copy right away, then checks canvas again, so something you just submitted shows up as submitted. the line at the bottom says when it last updated, and the refresh button next to it checks again. if canvas can't be reached it says so and shows the time of the list you're looking at.
 

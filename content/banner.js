@@ -266,10 +266,12 @@ async function buildHero()
   section.addEventListener("change", e =>
   {
     if (e.target.dataset.act !== "focus-done" || !state.focus) return;
+    party.note(e.target, "focus", "focus");
     state.focus.done = e.target.checked;
     store.set("local", "bl:focus", state.focus);
     recordWin(state.focus.done ? 1 : -1);
     renderHero();
+    if (state.focus.done) party.play(false);
     if (state.focus.done && settings.cheers) toast("Main focus, done. That was the big one.", true);
   });
   section.addEventListener("click", e =>

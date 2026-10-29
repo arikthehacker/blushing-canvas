@@ -123,14 +123,15 @@ function itemHTML(m, it, short)
   const title = it.url
     ? `<a class="bl-item-title" href="${esc(it.url)}" data-fk="link:${esc(it.key)}">${esc(it.title)}</a>`
     : `<span class="bl-item-title">${esc(it.title)}</span>`;
-  return `<li class="bl-item is-due${done ? " is-done" : ""}">
+  const sticker = done ? party.stickerHTML(it.key) : "";
+  return `<li class="bl-item is-due${done ? " is-done" : ""}${sticker ? " has-sticker" : ""}">
     <input class="bl-check" type="checkbox" id="${cid}" data-act="item" data-key="${esc(it.key)}" data-fk="item:${esc(it.key)}"
       ${done ? "checked" : ""} ${it.submitted ? "disabled" : ""}
       aria-label="${it.submitted ? "Submitted: " : "Mark done: "}${esc(it.title)}"${it.submitted ? "" : ' title="Marks it done in your Canvas planner too"'}>
     <div class="bl-item-body">${title}
       <p class="bl-item-meta">${whenHTML(it, short)}${tag}</p>
       <p class="bl-item-course"><span class="bl-dot" style="${color ? `--c:${esc(color)}` : ""}" aria-hidden="true"></span>${course}</p>
-    </div>
+    </div>${sticker}
   </li>`;
 }
 
@@ -204,14 +205,16 @@ function todosHTML(m)
   const inputId = `bl-add-${m.id}`;
   const list = state.todos.length
     ? `<ul class="bl-list" style="margin-top:12px">${state.todos
-      .map(
-        t => `<li class="bl-item${t.done ? " is-done" : ""}">
+      .map(t =>
+      {
+        const sticker = t.done ? party.stickerHTML("todo:" + t.id) : "";
+        return `<li class="bl-item${t.done ? " is-done" : ""}${sticker ? " has-sticker" : ""}">
         <input class="bl-check" type="checkbox" data-act="todo" data-id="${esc(t.id)}" data-fk="todo:${esc(t.id)}" ${t.done ? "checked" : ""}
           aria-label="Mark done: ${esc(t.text)}">
-        <div class="bl-item-body"><span class="bl-item-title">${esc(t.text)}</span></div>
+        <div class="bl-item-body"><span class="bl-item-title">${esc(t.text)}</span></div>${sticker}
         <button class="bl-del" type="button" data-act="del" data-id="${esc(t.id)}" data-fk="del:${esc(t.id)}" aria-label="Delete: ${esc(t.text)}">${ICON.trash}</button>
-      </li>`,
-      )
+      </li>`;
+      })
       .join("")}</ul>`
     : '<div class="bl-empty"><strong>Your list is empty</strong>Add anything: readings, emails, a nap.</div>';
   const anyDone = state.todos.some(t => t.done);

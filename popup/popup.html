@@ -195,8 +195,27 @@
     <div class="row"><label for="shortcuts">Single-key shortcuts<small>Press <kbd>?</kbd> on Canvas for the list</small></label><input class="switch" type="checkbox" id="shortcuts"></div>
     <div class="row"><label for="cheers">Cheers<small>Little notes when you finish things</small></label><input class="switch" type="checkbox" id="cheers"></div>
   </fieldset>
+
+  <fieldset>
+    <legend>Celebrations</legend>
+    <div class="field">
+      <span id="party-label" style="font-weight:600">When you check something off</span>
+      <div class="seg" role="radiogroup" aria-labelledby="party-label">
+        <input type="radio" name="party" id="p-match" value="match"><label for="p-match">Match</label>
+        <input type="radio" name="party" id="p-confetti" value="confetti"><label for="p-confetti">Confetti</label>
+        <input type="radio" name="party" id="p-stardust" value="stardust"><label for="p-stardust">Stardust</label>
+        <input type="radio" name="party" id="p-petals" value="petals"><label for="p-petals">Petals</label>
+        <input type="radio" name="party" id="p-leaves" value="leaves"><label for="p-leaves">Leaves</label>
+        <input type="radio" name="party" id="p-bubbles" value="bubbles"><label for="p-bubbles">Bubbles</label>
+        <input type="radio" name="party" id="p-sprinkles" value="sprinkles"><label for="p-sprinkles">Sprinkles</label>
+        <input type="radio" name="party" id="p-stickers" value="stickers"><label for="p-stickers">Stickers</label>
+        <input type="radio" name="party" id="p-off" value="off"><label for="p-off">Off</label>
+      </div>
+      <p class="hint">Match picks petals for Blush, leaves for Sage, confetti for Lavender, bubbles for Ocean, sprinkles for Cocoa and stardust for the Night themes. Stickers stay on the row while it's checked. Finish everything due this week for the big one.</p>
+    </div>
+  </fieldset>
   <p class="foot"><kbd>Ctrl</kbd> + <kbd>K</kbd> opens quick jump on any Canvas page.</p>
-  <p class="foot"><a class="link" href="https://github.com/arikthehacker/blushing-canvas/blob/main/MANUAL.md" target="_blank" rel="noopener">Manual</a> · <span id="version">v3.6.0</span></p>
+  <p class="foot"><a class="link" href="https://github.com/arikthehacker/blushing-canvas/blob/main/MANUAL.md" target="_blank" rel="noopener">Manual</a> · <span id="version">v3.8.0</span></p>
 </main>
 <script src="../shared/look.js"></script>
 <script src="../shared/pets.js"></script>

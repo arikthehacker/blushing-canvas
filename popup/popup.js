@@ -18,6 +18,7 @@ const DEFAULTS = {
   hideCardIcons: false,
   stressSign: false,
   textSize: 100,
+  celebration: "match",
 };
 const BOOLS = [
   "calm",
@@ -200,6 +201,16 @@ chrome.storage.sync.get("settings", ({ settings }) =>
       },
       300,
     ),
+  );
+
+  const partyPick = document.getElementById(`p-${s.celebration}`) || document.getElementById("p-match");
+  partyPick.checked = true;
+  document.querySelectorAll('input[name="party"]').forEach(r =>
+    r.addEventListener("change", () =>
+    {
+      s.celebration = r.value;
+      save();
+    }),
   );
 
   document.getElementById(`s-${s.artSource}`).checked = true;

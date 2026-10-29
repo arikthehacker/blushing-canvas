@@ -21,6 +21,7 @@ const DEFAULTS = {
   hideCardIcons: false,
   stressSign: false,
   textSize: 100,
+  celebration: "match",
 };
 const root = document.documentElement;
 const darkMQ = matchMedia("(prefers-color-scheme: dark)");
@@ -99,9 +100,12 @@ chrome.storage.onChanged.addListener((changes, area) =>
 {
   if (area === "sync" && (changes.settings || changes.look))
   {
+    const was = settings.celebration;
     if (changes.settings) settings = { ...DEFAULTS, ...(changes.settings.newValue || {}) };
     if (changes.look) look = changes.look.newValue || null;
     applySettings();
+    // stickers show or hide on the rows, and they take the new theme's colors
+    if (ready && (settings.celebration === "stickers" || was !== settings.celebration)) renderPanels();
   }
   if (area === "local" && changes["bl:bgimg"]) applyPageImage(changes["bl:bgimg"].newValue || null);
   if (area === "local" && changes["bl:art:current"] && changes["bl:art:current"].newValue)

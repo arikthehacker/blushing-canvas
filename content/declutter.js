@@ -259,6 +259,7 @@ function renderCalm()
       if (!key) return;
       const it = state.items.find(i => i.key === key);
       if (it) it.calmSeen = true; // keep it on screen, crossed off
+      party.note(e.target, key, "item");
       setItemDone(key, e.target.checked);
     });
     // toggle does not bubble, so listen on the way down

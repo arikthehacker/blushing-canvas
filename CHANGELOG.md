@@ -1,5 +1,15 @@
 # changelog
 
+## 3.8.0
+
+celebrations
+
+- checking something off sets off a little celebration from the checkbox: confetti, stardust, petals, leaves, bubbles, sprinkles or stickers
+- match (the default) picks the one that fits your theme, like stardust for night sky and bubbles for ocean
+- stickers stay on the row while the item is checked
+- finishing everything due this week gets a bigger one across the whole screen
+- with reduce motion on, the checkbox glows instead, and nothing runs once the celebration is over
+
 ## 3.7.0
 
 to-do column

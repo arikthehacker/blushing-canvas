@@ -11,7 +11,7 @@ async function setItemDone(key, done)
   it.markedAt = Date.now();
   recordWin(done ? 1 : -1);
   renderPanels();
-  if (done) cheer();
+  if (done) cheer(it);
   const run = (itemSync.get(key) || Promise.resolve()).then(() => syncItem(it, done));
   itemSync.set(
     key,
@@ -77,14 +77,18 @@ const CHEERS = [
   "Done and dusted.",
   "Another one handled.",
 ];
-function cheer()
+function cheer(item)
 {
+  const { done, total } = weekProgress();
+  // the big one only when this item was the last thing left this week
+  const [a, b] = weekBounds();
+  const inWeek = item && item.due && new Date(item.due) >= a && new Date(item.due) < b;
+  party.play(!!inWeek && !!total && done === total);
   if (!settings.cheers) return;
   const today = state.wins[dayKey(new Date())] || 0;
-  const { done, total } = weekProgress();
   const s = streak();
   let msg = CHEERS[Math.floor(Math.random() * CHEERS.length)];
-  if (total && done === total) msg = "Everything due this week is done. Take a breather.";
+  if (inWeek && total && done === total) msg = "Everything due this week is done. Take a breather.";
   else if (today === 1 && s > 1) msg = `${s} day streak. Keep it glowing.`;
   else if (today === 3 || today === 5 || today === 10)
     msg = `${today} things done today. That is a real day.`;
@@ -185,11 +189,16 @@ function handlePanelEvents(container, m)
   container.addEventListener("change", e =>
   {
     const el = e.target;
-    if (el.dataset.act === "item") setItemDone(el.dataset.key, el.checked);
+    if (el.dataset.act === "item")
+    {
+      party.note(el, el.dataset.key, "item");
+      setItemDone(el.dataset.key, el.checked);
+    }
     if (el.dataset.act === "todo")
     {
       const t = state.todos.find(x => x.id === el.dataset.id);
       if (!t) return;
+      party.note(el, "todo:" + t.id, "todo");
       t.done = el.checked;
       recordWin(t.done ? 1 : -1);
       saveTodos();
