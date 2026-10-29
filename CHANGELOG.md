@@ -4,7 +4,7 @@
 
 new buddies
 
-- three new buddies redrawn from arik's own sketches: melody the music fish (with note bubbles), turdy turt the turtle, and best the cat
+- three new buddies redrawn chibi style from arik's own sketches: melody the music fish (with note bubbles), turdy turt the turtle, and best the cat
 - each one has the same moods as the others: a blink, reading while you focus, and a happy face on breaks
 
 ## 3.8.0
