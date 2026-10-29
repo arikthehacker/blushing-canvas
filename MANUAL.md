@@ -152,7 +152,7 @@ a pomodoro timer with a little pet and a garden along the bottom of the banner.
 
 ![the study buddy section of the popup with the seven buddies](docs/images/popup-study.png)
 
-under **study buddy** in the popup you can pick from seven buddies (mochi, a bunny, a kitty, a frog, a duckling, a bear cub and a penguin), rename yours, turn walking off with **walks around**, change the focus length, or restart the timer.
+under **study buddy** in the popup you can pick from ten buddies (mochi, a bunny, a kitty, a frog, a duckling, a bear cub, a penguin, and three drawn from arik's sketches: melody the music fish, turdy turt the turtle and best the cat), rename yours, turn walking off with **walks around**, change the focus length, or restart the timer.
 
 **next plant** picks what grows at the end of your next focus session: tulip, daisy, round bloom, lavender, mushroom or cactus. after that one grows, the garden goes back to surprising you. **surprise me** clears your pick.
 

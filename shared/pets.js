@@ -16,6 +16,9 @@
     { id: "duck", label: "Duckling", name: "Puddle" },
     { id: "bear", label: "Bear cub", name: "Honey" },
     { id: "penguin", label: "Penguin", name: "Pebble" },
+    { id: "fish", label: "Music fish", name: "Melody" },
+    { id: "turtle", label: "Turtle", name: "Turdy Turt" },
+    { id: "best", label: "Best cat", name: "Best" },
   ];
 
   // a round body every pet shares, with a soft outline so it reads on light banners
@@ -108,6 +111,90 @@
       <path d="M32 21 C42 21 47 28 46 36 C45 47 39 53 32 53 C25 53 19 47 18 36 C17 28 22 21 32 21Z" fill="#FFFFFF"/>
       ${cheeks(38, 10)}${eyes(mood, 32, 6.5)}
       <path d="M29 36.5 L35 36.5 L32 40.5Z" fill="#F59E4C"/>`,
+
+    // the next three are redrawn from Arik's own sketches
+
+  // pink betta with music notes, swimming a little above the grass with note bubbles
+  fish: mood =>
+  {
+    const eye = mood === "focus"
+      ? `<path d="M44 33.5 q2.2 1.8 4.4 0" fill="none" stroke="${INK}" stroke-width="1.5" stroke-linecap="round"/>`
+      : mood === "happy"
+        ? `<path d="M44 34 q2.2 -2.6 4.4 0" fill="none" stroke="${INK}" stroke-width="1.5" stroke-linecap="round"/>`
+        : `<g class="sb-blink" style="transform-origin:46px 33px"><ellipse cx="46.2" cy="33" rx="2" ry="2.3" fill="${INK}"/><circle cx="46.9" cy="32.2" r=".7" fill="#FFFFFF"/></g>`;
+    const note = (x, y, s = 1) => `<g transform="translate(${x} ${y}) scale(${s})" fill="${INK}" stroke="${INK}"><path d="M0 0 V-6 L5 -7.2 V-1.2" fill="none" stroke-width=".9"/><path d="M0 -6 L5 -7.2 L5 -5.6 L0 -4.4Z" stroke="none"/><ellipse cx="-1" cy="0.2" rx="1.4" ry="1.05" transform="rotate(-20 -1 .2)" stroke="none"/><ellipse cx="4" cy="-1" rx="1.4" ry="1.05" transform="rotate(-20 4 -1)" stroke="none"/></g>`;
+    const bubble = (x, y, r, inner) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#FFFFFF" fill-opacity=".75" stroke="#B8C9E8" stroke-width=".6"/><path d="M${x - r * 0.45} ${y - r * 0.35} q${r * 0.3} -${r * 0.35} ${r * 0.7} -${r * 0.2}" stroke="#FFFFFF" stroke-width=".7" fill="none" stroke-linecap="round"/>${inner || ""}`;
+    const tiny = (x, y) => `<g fill="${INK}"><ellipse cx="${x}" cy="${y}" rx=".9" ry=".7"/><path d="M${x + 0.8} ${y} V${y - 3.2}" stroke="${INK}" stroke-width=".6"/></g>`;
+    return `
+      <g class="sb-swim" transform="translate(32 34) scale(1.12) translate(-32 -34)">
+        <path d="M17 33 C12 26 6 22 1.5 22.5 C4 27 4.5 30 3 33 C5.5 34 6.5 37 4 41.5 C9 42 13 39 17 35Z" fill="#F7B3CB" stroke="${INK}" stroke-width=".8" stroke-linejoin="round"/>
+        <path d="M5 26 C8 28 11 30 14 32.5 M4 33.6 C8 33.6 11 33.8 14.5 34 M5.5 39.5 C8.5 38 11.5 36.6 14.5 35.2" stroke="#E57FA8" stroke-width=".7" fill="none" stroke-linecap="round"/>
+        <path d="M32 27.5 C30 20 26 13 20 9.5 C21.5 16 23 22 24 29Z" fill="#F4A3C2" stroke="${INK}" stroke-width=".8" stroke-linejoin="round"/>
+        <path d="M37 39 C33 46 26 51 17 52.5 C22 48 26 44 29 39.5Z" fill="#F4A3C2" stroke="${INK}" stroke-width=".8" stroke-linejoin="round"/>
+        <path d="M15.5 33.5 C20 27.5 30 25.5 40 27 C48 28.2 54.5 31 55.5 34.5 C54.5 38.5 48 40.6 40 41 C30 41.5 20 39.5 15.5 35Z" fill="#F9C4D6" stroke="${INK}" stroke-width=".9" stroke-linejoin="round"/>
+        <path d="M40 27.4 C48 28.2 54.5 31 55.5 34.5 C54.5 38.5 48 40.6 40 41 C43 37 43 31 40 27.4Z" fill="#FCD8E3"/>
+        <path d="M21 29.5 q1.2 5 0 9.5 M24.5 28.4 q1.4 5.6 0 11.4 M28 28 q1 5.6 -.2 11.6" stroke="#E57FA8" stroke-width=".7" fill="none" stroke-linecap="round"/>
+        <path d="M15.5 33.5 C20 27.5 30 25.5 40 27" stroke="#F6B26B" stroke-width=".6" fill="none" opacity=".8" transform="translate(-.6 -.6)"/>
+        <path d="M40 41 C30 41.5 20 39.5 15.5 35" stroke="#8CB6E8" stroke-width=".6" fill="none" opacity=".8" transform="translate(.6 .7)"/>
+        ${note(32, 36.5, 0.95)}
+        ${eye}
+        <ellipse cx="44" cy="37" rx="2" ry="1.2" fill="var(--bl-sb-cheek, #F5A9BC)" opacity=".8"/>
+        <path d="M54.2 35.4 q-1 .9 -2.2 .7" stroke="${INK}" stroke-width=".8" fill="none" stroke-linecap="round"/>
+      </g>
+      <g class="sb-bubbles">${bubble(59, 25, 3.4, tiny(58.7, 26.4))}${bubble(61, 15, 2.2)}${bubble(57.5, 8, 1.4)}</g>`;
+  },
+
+  // Turdy Turt: big speckled dome shell, bulgy eyes on top of the head, chunky white feet
+  turtle: mood =>
+  {
+    const eyeIn = (x, y) => mood === "focus"
+      ? `<path d="M${x - 2.3} ${y + .2} q2.3 1.9 4.6 0" fill="none" stroke="${INK}" stroke-width="1.3" stroke-linecap="round"/>`
+      : mood === "happy"
+        ? `<path d="M${x - 2.3} ${y + .8} q2.3 -2.6 4.6 0" fill="none" stroke="${INK}" stroke-width="1.3" stroke-linecap="round"/>`
+        : `<g class="sb-blink" style="transform-origin:${x}px ${y}px"><circle cx="${x}" cy="${y}" r="2.1" fill="${INK}"/><circle cx="${x + .7}" cy="${y - .7}" r=".6" fill="#FFFFFF"/></g>`;
+    return `
+      <path d="M41 44 C44 42 45 39 46 36" stroke="#CFC6B9" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M9 55 C8 51 10 49 13.5 49.5 C16.5 50 17 53 16 55.5Z M19 56 C18.5 52 21 50.5 24 51.2 C26.6 52 26.6 54.6 25.5 56.5Z M30 56.5 C29.6 52.6 32 51.2 35 52 C37.4 52.8 37.4 55 36.4 57Z M38 55.5 C38 52.4 40.5 51.2 43 52 C45.2 52.8 45 55 44 56.5Z" fill="#FBF8F3" stroke="${LINE}" stroke-width=".9"/>
+      <path d="M5 47 C4 32 13 19 27 18.5 C40 18 47 29 46.5 43 C46.3 48 43 50.5 37 51 C28 51.8 15 51.6 9.5 50.6 C6.5 50 5.2 49 5 47Z" fill="#D9D0C3" stroke="${INK}" stroke-width=".9" stroke-opacity=".55"/>
+      <path d="M12 27 C16 24 21 23 24 25 M30 21.5 C35 22 39 25 41 29 M9 39 C12 37 15 37.5 17 40 M22 33 C26 31 30 32 32 35 M36 37 C39 36 42 37.5 43.5 40 M15 46 C18 44.5 22 45 24 47.5 M30 45.5 C33 44 37 44.5 39 47" stroke="#B3A595" stroke-width="1.3" fill="none" stroke-linecap="round" opacity=".75"/>
+      <circle cx="19" cy="31" r="1.1" fill="#B3A595" opacity=".7"/><circle cx="34" cy="28" r=".9" fill="#B3A595" opacity=".7"/><circle cx="28" cy="40" r="1" fill="#B3A595" opacity=".7"/>
+      <path d="M45 37 C45 31 49.5 28.5 54 29 C59 29.5 62 33 61.5 38 C61 43 57 46 52 46 C47.5 46 45 42.5 45 37Z" fill="#E4DDD3" stroke="${INK}" stroke-width=".9" stroke-opacity=".55"/>
+      <circle cx="48.8" cy="29.6" r="4.4" fill="#E4DDD3" stroke="${INK}" stroke-width=".9" stroke-opacity=".55"/>
+      <circle cx="57.6" cy="30.2" r="4.4" fill="#E4DDD3" stroke="${INK}" stroke-width=".9" stroke-opacity=".55"/>
+      <circle cx="48.8" cy="29.6" r="3" fill="#FFFFFF"/><circle cx="57.6" cy="30.2" r="3" fill="#FFFFFF"/>
+      ${eyeIn(49.1, 29.8)}${eyeIn(57.9, 30.4)}
+      <ellipse cx="53.6" cy="39.2" rx="5.6" ry="4" fill="#D3CABE"/>
+      <ellipse cx="51.6" cy="38.6" rx=".8" ry=".6" fill="${INK}" opacity=".6"/><ellipse cx="55.6" cy="38.6" rx=".8" ry=".6" fill="${INK}" opacity=".6"/>
+      ${mood === "focus" ? `<path d="M51.8 42.4 h3.6" stroke="${INK}" stroke-width="1.1" stroke-linecap="round"/>` : `<path d="M50.8 42 q2.8 2.2 5.6 0" stroke="${INK}" stroke-width="1.1" fill="none" stroke-linecap="round"/>`}
+      <ellipse cx="47.2" cy="40.6" rx="1.8" ry="1.1" fill="var(--bl-sb-cheek, #F5A9BC)" opacity=".75"/><ellipse cx="60" cy="40.6" rx="1.8" ry="1.1" fill="var(--bl-sb-cheek, #F5A9BC)" opacity=".75"/>`;
+  },
+
+  // Best: purple line-drawn cat face on soft butter yellow, one eyebrow raised
+  best: mood =>
+  {
+    const P = "#7B68D6";
+    const eyes = mood === "focus"
+      ? `<path d="M22 35 q3 2.2 6 0 M36.5 35 q3 2.2 6 0" fill="none" stroke="${P}" stroke-width="1.8" stroke-linecap="round"/>`
+      : mood === "happy"
+        ? `<path d="M22 36 q3 -3.2 6 0 M36.5 36 q3 -3.2 6 0" fill="none" stroke="${P}" stroke-width="1.8" stroke-linecap="round"/>`
+        : `<g class="sb-blink" style="transform-origin:32px 34px"><ellipse cx="25" cy="34.5" rx="2.2" ry="3.3" fill="${P}"/><ellipse cx="39.5" cy="34.5" rx="2.2" ry="3.3" fill="${P}"/></g>`;
+    return `
+      <ellipse cx="24" cy="56.2" rx="4.6" ry="2.3" fill="#FFF3CF" stroke="${P}" stroke-width="1.1"/><ellipse cx="40" cy="56.2" rx="4.6" ry="2.3" fill="#FFF3CF" stroke="${P}" stroke-width="1.1"/>
+      <path d="M12.5 27 L14 10 C14.3 8.8 15.4 8.6 16.2 9.4 L26 18.5 M38 18.2 L47.6 8.6 C48.4 7.8 49.6 8.2 49.8 9.4 L51.5 27" fill="#FFF3CF" stroke="${P}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M12.5 27 C10.5 33 10.4 40 13 45.5 C17 53.5 25 56 32 56 C39.5 56 47 53.5 51 46 C53.6 40.5 53.6 33 51.5 27 C48 20 41 17 32 17 C23 17 16 20 12.5 27Z" fill="#FFF3CF"/>
+      <path d="M16.5 13.5 L17.2 21.4 M47 13.2 L46.4 21" stroke="#C8B8F2" stroke-width="2.2" stroke-linecap="round"/>
+      <path d="M26 18.5 C29 17.5 31 17.8 32 18.6 C33.5 17.4 35.6 17.4 38 18.2" fill="none" stroke="${P}" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="2.2 1.4"/>
+      <path d="M12.5 27 C10.5 33 10.4 40 13 45.5" fill="none" stroke="${P}" stroke-width="1.5" stroke-linecap="round" opacity=".85"/>
+      <path d="M51.5 27 C53.6 33 53.6 40.5 51 46" fill="none" stroke="${P}" stroke-width="1.5" stroke-linecap="round" opacity=".85"/>
+      <path d="M11.6 34 l-2.6 -1.4 M11.4 37.4 l-2.8 -.2 M51.8 34 l2.4 -1.6" stroke="${P}" stroke-width="1.2" stroke-linecap="round" opacity=".7"/>
+      <path d="M21.6 29.4 q3.2 -1.6 6.4 -.4" stroke="${P}" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+      <path d="M36 27.6 q3.4 -2.6 7.2 -.6" stroke="${P}" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+      ${eyes}
+      <path d="M30.2 40.4 L34 40.2 L32.3 43.2Z" fill="#B57FD6" stroke="#B57FD6" stroke-width=".8" stroke-linejoin="round"/>
+      <path d="M32.3 43.2 C32.4 44.6 31.6 45.6 30.2 45.4" stroke="#B57FD6" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+      ${mood === "focus" ? `<path d="M26 48 q6 1.6 12 0" stroke="${P}" stroke-width="1.6" fill="none" stroke-linecap="round"/>` : `<path d="M20.5 45.5 C25 51.5 39 51.5 44 45" stroke="${P}" stroke-width="1.7" fill="none" stroke-linecap="round"/>`}
+      <path d="M8 41 C12 40 16 40.4 19.4 41.4 M8.6 45 C12 43.8 16 43.4 19.6 43.6 M44.6 41.6 C48 40.4 52 40.2 56 41 M44.4 44 C48 43.6 52 43.8 55.4 45.2" stroke="#9A8BE0" stroke-width="1" fill="none" stroke-linecap="round"/>`;
+  },
   };
 
   // your own pet: PNG poses uploaded in the popup
